@@ -24,6 +24,7 @@ const Add : NextPage = () => {
 
 	const handleOnSubmit = async (formValues: PlaceEditForm) => {
 		axios.post('/api/places/update', {...formValues});
+		router.back();
 	};
 
 	if(!place) {

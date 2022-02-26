@@ -31,7 +31,7 @@ export const UploadFileFormControl = ({onUploadFinished, accept} : UploadFileFor
 	};
 
 	return(
-		<Form.Group className='mb-3' as={Col} lg={{ span: 4, offset: 2 }}>
+		<Form.Group className='mb-3'>
 			<Form.Label>Image</Form.Label>
 			<Form.Control type='file' onChange={handleUploadImage} accept={accept}/>
 		</Form.Group>

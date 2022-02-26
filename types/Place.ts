@@ -10,5 +10,11 @@ export type PlaceWithQuests = Place & {
 }
 
 export type Quest = {
+    _id: string
+    description: string
+    imageGuid: string
     name: string
+    place: string
+    questState: string
+    creatorId: number
 }

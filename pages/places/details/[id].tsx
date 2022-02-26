@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ListGroup, Button, ListGroupItem, Image } from 'react-bootstrap';
+import { ListGroup, Button, ListGroupItem, Image, Col, Row } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { Place, PlaceWithQuests, Quest } from '../../../types/Place';
 
@@ -33,23 +33,28 @@ const Details : NextPage = () => {
 
 	return(
 		<Layout>
-			<h4>{place.name}</h4>
-			<div className='d-flex justify-content-center'>
-				<Image src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
-			</div>
+			<Row>
+				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
+					<h4>{place.name}</h4>
+					<div className='d-flex justify-content-center'>
+						<Image src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
+					</div>
 			
-			<h6 className='mt-4'>Description</h6>
-			<div>{place.description}</div>
+					<h6 className='mt-4'>Description</h6>
+					<div>{place.description}</div>
 
-			<h6 className='mt-4 mb-3'>Quests</h6>
-			<div>
-				<ListGroup>
-					{mapQuests(place.quests ?? [])}
-				</ListGroup>
-			</div>
-			<div className='d-grid mt-4'>
-				<Button href={`/places/edit/${place._id}`}> Edit </Button>
-			</div>
+					<h6 className='mt-4 mb-3'>Quests</h6>
+					<div>
+						<ListGroup>
+							{mapQuests(place.quests ?? [])}
+						</ListGroup>
+					</div>
+					<div className='d-grid mt-4'>
+						<Button href={`/places/edit/${place._id}`}> Edit </Button>
+					</div>
+				</Col>
+			</Row>
+			
 		</Layout>
 	);
 };
