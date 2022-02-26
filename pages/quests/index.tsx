@@ -27,12 +27,12 @@ const Page : NextPage = () => {
 		<Layout>
 			<Row>
 				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h5 className='mb-4'>Quests</h5>
-					
+					<h5>Quests</h5>
+					<hr className='my-4'></hr>
 					<ListGroup>
 						{mapQuests()}
 					</ListGroup>
-
+					<hr className='my-4'></hr>
 					<div className='d-grid mt-2'>
 						<Button onClick={() => router.push('/quests/add')}>Add Quest</Button>
 					</div>	

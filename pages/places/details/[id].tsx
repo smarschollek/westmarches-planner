@@ -36,21 +36,22 @@ const Details : NextPage = () => {
 			<Row>
 				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
 					<h4>{place.name}</h4>
+					<hr className='my-4'></hr>
 					<div className='d-flex justify-content-center'>
-						<Image src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
+						<Image fluid src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
 					</div>
-			
-					<h6 className='mt-4'>Description</h6>
+					<hr className='my-4'></hr>
+					<h6>Description</h6>
 					<div>{place.description}</div>
-
-					<h6 className='mt-4 mb-3'>Quests</h6>
-					<div>
-						<ListGroup>
-							{mapQuests(place.quests ?? [])}
-						</ListGroup>
-					</div>
-					<div className='d-grid mt-4'>
+					<hr className='my-4'></hr>
+					<h6>Quests</h6>
+					<ListGroup>
+						{mapQuests(place.quests ?? [])}
+					</ListGroup>
+					<hr className='my-4'></hr>
+					<div className='d-grid'>
 						<Button href={`/places/edit/${place._id}`}> Edit </Button>
+						<Button className='mt-2' variant='success' onClick={() => router.back()}>Back</Button>
 					</div>
 				</Col>
 			</Row>

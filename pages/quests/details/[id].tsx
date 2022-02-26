@@ -28,17 +28,19 @@ const Page : NextPage = () => {
 			<Row>
 				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
 					<h4>{quest.name}</h4>
-			
+					<hr className='my-4'></hr>
 					{
 						quest.imageGuid && (
 							<div className='d-flex justify-content-center'>
-								<Image style={{maxHeight: '500px'}} rounded src={`/uploads/${quest.imageGuid}`} alt='quest'/>
+								<Image fluid style={{maxHeight: '500px'}} rounded src={`/uploads/${quest.imageGuid}`} alt='quest'/>
 							</div>
 						)
 					}
-
-					<h6 className='mt-4'>Description</h6>
+					<hr className='my-4'></hr>
+					<h6>Description</h6>
 					<div>{quest.description}</div>
+					<hr className='my-4'></hr>
+
 					<div className='d-grid mt-4'>
 						{
 							userId === quest.creatorId && (
@@ -50,7 +52,7 @@ const Page : NextPage = () => {
 						}
 						{/* {renderSubscribeOrUnsubscribeButton()} */}
 						<Button variant='success' onClick={() => router.back()}>Back</Button>
-				
+						<Button variant='danger' onClick={() => router.back()}>Cancel</Button>
 					</div>	
 				</Col>
 			</Row>

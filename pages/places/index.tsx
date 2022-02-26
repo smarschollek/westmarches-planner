@@ -28,11 +28,13 @@ const Index : NextPage = () => {
 		<Layout>
 			<Row>
 				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h5 className='mb-4'>Places</h5>
+					<h5>Places</h5>
+					<hr className='my-4'></hr>
 					<ListGroup>
 						{mapPlaces()}
 					</ListGroup>
-					<div className='d-grid mt-2'>
+					<hr className='my-4'></hr>
+					<div className='d-grid'>
 						<Button onClick={() => router.push('/places/add')}>Add Place</Button>
 					</div>	
 				</Col>

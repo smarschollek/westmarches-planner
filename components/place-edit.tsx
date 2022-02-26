@@ -36,7 +36,7 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 					{
 						imageGuid && (
 							<div className='d-flex justify-content-center'>
-								<Image src={`/uploads/${imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
+								<Image fluid src={`/uploads/${imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
 							</div>
 						)
 					}
