@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import { PlaceEdit } from '../../components/place-edit';
+import { Layout } from '../../layout/layout';
 import { Place } from '../../types/Place';
 
 const Index : NextPage = () => {
@@ -22,9 +23,11 @@ const Index : NextPage = () => {
 	};
 
 	return(
-		<ListGroup>
-			{mapPlaces()}
-		</ListGroup>
+		<Layout>
+			<ListGroup>
+				{mapPlaces()}
+			</ListGroup>
+		</Layout>
 	);
 };
 

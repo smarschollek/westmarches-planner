@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ListGroup, Button, ListGroupItem, Image } from 'react-bootstrap';
+import { Layout } from '../../../layout/layout';
 import { Place, PlaceWithQuests, Quest } from '../../../types/Place';
 
 const Details : NextPage = () => {
@@ -31,7 +32,7 @@ const Details : NextPage = () => {
 	}
 
 	return(
-		<>
+		<Layout>
 			<h4>{place.name}</h4>
 			<div className='d-flex justify-content-center'>
 				<Image src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
@@ -49,7 +50,7 @@ const Details : NextPage = () => {
 			<div className='d-grid mt-4'>
 				<Button href={`/places/edit/${place._id}`}> Edit </Button>
 			</div>
-		</>
+		</Layout>
 	);
 };
 

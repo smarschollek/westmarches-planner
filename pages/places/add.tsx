@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NextPage } from 'next';
 import { PlaceEdit, PlaceEditForm } from '../../components/place-edit';
+import { Layout } from '../../layout/layout';
 
 const add : NextPage = () => {
 	
@@ -9,7 +10,10 @@ const add : NextPage = () => {
 	};
 
 	return(
-		<PlaceEdit onSubmit={handleOnSubmit}/>
+		<Layout>
+			<PlaceEdit onSubmit={handleOnSubmit}/>
+		</Layout>
+		
 	);
 };
 

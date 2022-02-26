@@ -3,8 +3,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { PlaceEditForm, PlaceEdit } from '../../../components/place-edit';
-import { Place } from '../../../types/Place';
-
+import { Layout } from '../../../layout/layout';
 
 const Add : NextPage = () => {
 	const router  = useRouter();
@@ -32,7 +31,10 @@ const Add : NextPage = () => {
 	}
 
 	return(
-		<PlaceEdit onSubmit={handleOnSubmit} defaultValues={place}/>
+		<Layout>
+			<PlaceEdit onSubmit={handleOnSubmit} defaultValues={place}/>
+		</Layout>
+		
 	);
 };
 
