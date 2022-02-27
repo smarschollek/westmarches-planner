@@ -14,7 +14,7 @@ const Register : NextPage = () => {
 	const router = useRouter();
 
 	const onSubmit = async (formValues: RegisterFormValues) => {
-		
+		axios.post('/api/auth/register', formValues);
 		router.push('/login');
 	};
 

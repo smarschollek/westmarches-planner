@@ -78,7 +78,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 						<Form.Label>Place</Form.Label>
 						<Form.Select {...register('placeId')}>
 							{ places.map((place, index) => {
-								return <option key={index} value={place._id}>{place.name}</option>;
+								return <option key={index} value={place._id.toString()}>{place.name}</option>;
 							}) }
 						</Form.Select>
 					</Form.Group>

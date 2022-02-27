@@ -27,7 +27,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		await mongoDbHelper.add('users', {
 			...user,
-			password: hashedPassword
+			password: hashedPassword,
+			isAdmin: false,
+			isGamemaster: false
 		});
 
 		res.status(201).json({message: 'user created'});

@@ -1,11 +1,9 @@
-import axios from 'axios';
 import { NextPage } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Image } from 'react-bootstrap';
-import { signIn } from 'next-auth/react';
+import { signIn, SignInResponse } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import Link from 'next/link';
 
 
 type LoginFormValues = {
@@ -19,7 +17,14 @@ const Login : NextPage = () => {
 	const onSubmit = async (formValues: LoginFormValues) => {
 		try {
 			const response = await signIn('credentials', {...formValues, redirect: false});
-			console.log(response);
+			if(response) {
+				const signInResponse = response as SignInResponse;
+				if(signInResponse.error) {
+					alert(signInResponse.error);
+				} else {
+					router.push('/');
+				}
+			}
 		} catch {
 			
 		}
@@ -60,7 +65,7 @@ const Login : NextPage = () => {
 							</Form.Group>
 							<div className='text-center'>
                                 or <br/>
-								<a href='/register'>Register</a>
+								<Link href='/register'>Register</Link>
 							</div>
 						</Form>
 					</Card>

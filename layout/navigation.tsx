@@ -2,12 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReactElement } from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
+import {useSession, signOut} from 'next-auth/react';
 
 export const Navigation = (): ReactElement => {
 	const username = 'User';
-
+	const session = useSession();
+	console.log(session);
+	
 	const handleLogout = () => {
-        
+		signOut();
 	};
 
 	return(

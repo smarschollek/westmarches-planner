@@ -19,6 +19,7 @@ const authorizeSchema = object({
 });
 
 export default NextAuth({
+	secret: process.env.AUTH_SECRET,
 	providers: [
 		Credentials({
 			authorize: async (credentials): Promise<AuthUser> => {

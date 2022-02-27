@@ -38,8 +38,7 @@ const Index : NextPage = () => {
 						<Button onClick={() => router.push('/places/add')}>Add Place</Button>
 					</div>	
 				</Col>
-			</Row>
-			
+			</Row>	
 		</Layout>
 	);
 };
