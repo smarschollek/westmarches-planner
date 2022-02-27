@@ -12,7 +12,7 @@ const Details : NextPage = () => {
 	useEffect(() => {
 		(async () => {
 			if(router.query.id) {
-				const response = await fetch(`/api/places/get?id=${router.query.id}`);
+				const response = await fetch(`/api/places/get?id=${router.query.id}&includeQuests=true`);
 				const data = await response.json();
 				setPlace(data);
 			}

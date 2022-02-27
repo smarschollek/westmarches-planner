@@ -1,17 +1,15 @@
 import { object, string } from 'yup';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { mongoDbHelper } from '../../../helper/mongodb';
-
-
-type Response = {
-
-}
+import { apiProtector } from '../../../helper/api-protector';
 
 const validationSchema = object({
 	name: string().required(),
 });
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
+
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
 

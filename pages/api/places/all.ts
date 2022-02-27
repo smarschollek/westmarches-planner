@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { apiProtector } from '../../../helper/api-protector';
 import { mongoDbHelper } from '../../../helper/mongodb';
 import { Place, Quest } from '../../../types/dtos';
 
 type Response = {
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {	
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
+
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {	
 	const {client, database} = await mongoDbHelper.connect();
 	
 	const placesCollection = database.collection('places');

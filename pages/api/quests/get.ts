@@ -1,12 +1,15 @@
 import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { apiProtector } from '../../../helper/api-protector';
 import { mongoDbHelper } from '../../../helper/mongodb';
 import { Quest } from '../../../types/dtos';
 
 type Response = {
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
+
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 	let {id} = req.query;
 	
 	try {
