@@ -32,7 +32,7 @@ export const Navigation = (): ReactElement => {
 						{ data && data.isAdmin && <Nav.Link eventKey='/users' href='/users'>Users</Nav.Link> }
 					</Nav>
 					<Nav>
-						<Nav.Link eventKey='my' href={'/my'}>{data?.user?.name}</Nav.Link>
+						<Nav.Link eventKey='my' href={'/user'}>{data?.user?.name}</Nav.Link>
 						<Nav.Link onClick={handleLogout}>Logout</Nav.Link>
 					</Nav>
 				</Navbar.Collapse>

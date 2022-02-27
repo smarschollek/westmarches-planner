@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Badge, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../layout/layout';
@@ -11,11 +12,15 @@ const Home: NextPage = () => {
 
 	useEffect(() => {
 		(async () => {
-			const responseQuests = await axios.get<Quest[]>('/api/quests/open');
-			setQuests(responseQuests.data);
+			try {
+				const responseQuests = await axios.get<Quest[]>('/api/quests/open');
+				setQuests(responseQuests.data);
 
-			const responsePlaces = await axios.get<Place[]>('/api/places/all');
-			setPlaces(responsePlaces.data);
+				const responsePlaces = await axios.get<Place[]>('/api/places/all');
+				setPlaces(responsePlaces.data);
+			} catch (error) {
+				
+			}
 		})();
 	}, []);
 

@@ -1,10 +1,12 @@
-import NextAuth, {  IncomingRequest } from 'next-auth';
+import { ObjectId } from 'mongodb';
+import NextAuth, { Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
 import { mongoDbHelper } from '../../../helper/mongodb';
 
 type User = {
+	_id: ObjectId
     name: string
 	password: string
     email: string
@@ -21,6 +23,12 @@ type AuthUser = {
 	test: string
 }
 
+export type ExtendedSession = Session & {
+	isGamemaster: boolean,
+	isAdmin: boolean,
+	id: ObjectId
+}
+
 const authorizeSchema = object({
 	email: string().email().required(),
 	password: string().required()
@@ -29,7 +37,7 @@ const authorizeSchema = object({
 export default NextAuth({
 	secret: process.env.AUTH_SECRET,
 	callbacks: {
-		async session({ session, token, user }) {
+		async session({ session , token, user }) {
 			if(session.user && session.user.email) {
 				const {client, database} = await mongoDbHelper.connect();
 				const collection = database.collection('users');
@@ -38,6 +46,7 @@ export default NextAuth({
 				if(storeUser) {
 					session.isAdmin = storeUser.isAdmin;
 					session.isGamemaster = storeUser.isGamemaster;
+					session.id = storeUser._id;
 				}
 
 				await client.close();
