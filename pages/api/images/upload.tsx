@@ -7,7 +7,7 @@ type IncomingFileMessage = IncomingMessage & {
     file: Express.Multer.File
 }
 
-const upload = multer({dest: 'public/uploads/'});
+const upload = multer({dest: 'uploads/'});
 
 const apiRoute = nextConnect();
 

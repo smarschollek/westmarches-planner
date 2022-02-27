@@ -8,7 +8,7 @@ import { Place, PlaceWithQuests, Quest } from '../../../types/dtos';
 const Details : NextPage = () => {
 	const router  = useRouter();
 	const [place, setPlace] = useState<PlaceWithQuests>();
-
+	
 	useEffect(() => {
 		(async () => {
 			if(router.query.id) {
@@ -41,7 +41,7 @@ const Details : NextPage = () => {
 						place.imageGuid && (
 							<>
 								<div className='d-flex justify-content-center'>
-									<Image fluid src={`/uploads/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
+									<Image fluid src={`/api/images/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
 								</div>
 								<hr className='my-4'></hr>
 							</>

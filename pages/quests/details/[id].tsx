@@ -32,7 +32,7 @@ const Page : NextPage = () => {
 					{
 						quest.imageGuid && (
 							<div className='d-flex justify-content-center'>
-								<Image fluid style={{maxHeight: '500px'}} rounded src={`/uploads/${quest.imageGuid}`} alt='quest'/>
+								<Image fluid style={{maxHeight: '500px'}} rounded src={`/api/images/${quest.imageGuid}`} alt='quest'/>
 							</div>
 						)
 					}

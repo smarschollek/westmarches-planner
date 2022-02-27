@@ -127,19 +127,9 @@ const query = async <T>(collectionName: CollectionNames, filter: Filter<T>) : Pr
 };
 
 export interface MongoDbHelper {
-    add<T>(collectionName: CollectionNames, document: T) : Promise<void>
-    update<T>(collectionName: CollectionNames, id: string, document: T) : Promise<void>
-    delete(collectionName: CollectionNames, id: string) : Promise<void>
-    getAll<T>(collectionName: CollectionNames) : Promise<WithId<T>[]>
-    get<T>(collectionName: CollectionNames, id: string) : Promise<WithId<T>>
-	query<T>(collectionName: CollectionNames, find: Filter<T>) : Promise<WithId<T>[]>
+    getClient() : MongoClient
 }
 
 export const mongoDbHelper : MongoDbHelper = {
-	add,
-	update,
-	delete: _delete,
-	getAll,
-	get,
-	query
+	getClient
 };

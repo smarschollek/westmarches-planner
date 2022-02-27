@@ -62,7 +62,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 					{
 						imageGuid && (
 							<div className='d-flex justify-content-center'>
-								<Image fluid src={`/uploads/${imageGuid}`} style={{maxHeight: '500px'}} alt='quest'/>
+								<Image fluid src={`/api/images/${imageGuid}`} style={{maxHeight: '500px'}} alt='quest'/>
 							</div>
 						)
 					}

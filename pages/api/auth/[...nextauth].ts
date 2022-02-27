@@ -5,12 +5,20 @@ import { authHelper } from '../../../helper/auth';
 import { mongoDbHelper } from '../../../helper/mongodb';
 
 type User = {
-    password: string
+    name: string
+	password: string
     email: string
+	isGamemaster: boolean
+	isAdmin: boolean
+	
 }
 
 type AuthUser = {
-    email: string
+    name: string
+	email: string,
+	isGamemaster: boolean,
+	isAdmin: boolean,
+	test: string
 }
 
 const authorizeSchema = object({
@@ -20,8 +28,24 @@ const authorizeSchema = object({
 
 export default NextAuth({
 	secret: process.env.AUTH_SECRET,
+	callbacks: {
+		async session({ session, token, user }) {
+			if(session.user && session.user.email) {
+				const users = await mongoDbHelper.query<User>('users', {'email' : session.user.email});
+
+				if(users.length > 0) {
+					const user = users[0];
+					session.isAdmin = user.isAdmin;
+					session.isGamemaster = user.isGamemaster;
+				}
+			}
+			
+			return session;
+		}
+	},
 	providers: [
 		Credentials({
+
 			authorize: async (credentials): Promise<AuthUser> => {
 				if(credentials) {
 					await authorizeSchema.validate(credentials);
@@ -39,7 +63,11 @@ export default NextAuth({
 					}
 
 					return {
-						email: user.email
+						name: user.name,
+						email: user.email,
+						isAdmin: user.isAdmin,
+						isGamemaster: user.isGamemaster,
+						test: 'test'
 					};
 				}
                 
