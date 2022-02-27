@@ -7,3 +7,12 @@ export type PlaceModel = {
     imageGuid: string
     questCount: number
 }
+
+export type User = {
+    _id: ObjectId,
+    name: string,
+    email: string,
+    isAdmin: boolean,
+    isGamemaster: boolean
+    subscribesQuests: ObjectId[]
+}

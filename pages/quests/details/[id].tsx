@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ObjectId } from 'mongodb';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -18,6 +19,17 @@ const Page : NextPage = () => {
 			}
 		})();
 	}, [router.query.id]);
+
+	const renderSubscribeOrUnsubscribeButton = (questId: ObjectId) => {
+		const handleSubscribe = async () => {
+			await axios.post<Quest>('/api/quests/subscribe', {
+				questId,
+				characterId: 'Test'
+			});
+		};
+		
+		return <Button onClick={handleSubscribe}>Subscribe</Button>;
+	};
 
 	if(!quest) {
 		return <></>;
@@ -50,7 +62,7 @@ const Page : NextPage = () => {
 								</>
 							)
 						}
-						{/* {renderSubscribeOrUnsubscribeButton()} */}
+						{renderSubscribeOrUnsubscribeButton(quest._id)}
 						<Button variant='success' onClick={() => router.back()}>Back</Button>
 					</div>	
 				</Col>

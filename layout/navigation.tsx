@@ -5,7 +5,6 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import {useSession, signOut} from 'next-auth/react';
 
 export const Navigation = (): ReactElement => {
-	const username = 'User';
 	const {data} = useSession();
 	
 	const handleLogout = () => {
@@ -33,7 +32,7 @@ export const Navigation = (): ReactElement => {
 						{ data && data.isAdmin && <Nav.Link eventKey='/users' href='/users'>Users</Nav.Link> }
 					</Nav>
 					<Nav>
-						<Nav.Link eventKey='my' href={'/my'}>{username}</Nav.Link>
+						<Nav.Link eventKey='my' href={'/my'}>{data?.user?.name}</Nav.Link>
 						<Nav.Link onClick={handleLogout}>Logout</Nav.Link>
 					</Nav>
 				</Navbar.Collapse>
