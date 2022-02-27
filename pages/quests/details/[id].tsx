@@ -20,15 +20,8 @@ const Page : NextPage = () => {
 		})();
 	}, [router.query.id]);
 
-	const renderSubscribeOrUnsubscribeButton = (questId: ObjectId) => {
-		const handleSubscribe = async () => {
-			await axios.post<Quest>('/api/quests/subscribe', {
-				questId,
-				characterId: 'Test'
-			});
-		};
-		
-		return <Button onClick={handleSubscribe}>Subscribe</Button>;
+	const renderSubscribeOrUnsubscribeButton = (questId: ObjectId) => {		
+		return <Button href={`/quests/subscribe/${questId}`}>Subscribe</Button>;
 	};
 
 	if(!quest) {
