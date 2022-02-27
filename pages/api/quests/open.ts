@@ -6,8 +6,11 @@ type Response = {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
-	const data = await mongoDbHelper.query<Quest>('quests', {'questState' : 'Open'});
+	const {client, database} = await mongoDbHelper.connect();
+	const collection = database.collection('quests');
+	const data = await collection.find({'questState' : 'Open'}).toArray();
 	res.status(200).json(data);
+	client.close();
 };
 
 export default handler;

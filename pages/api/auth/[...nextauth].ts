@@ -31,13 +31,16 @@ export default NextAuth({
 	callbacks: {
 		async session({ session, token, user }) {
 			if(session.user && session.user.email) {
-				const users = await mongoDbHelper.query<User>('users', {'email' : session.user.email});
+				const {client, database} = await mongoDbHelper.connect();
+				const collection = database.collection('users');
+				const storeUser = await collection.findOne<User>({'email' : session.user.email});
 
-				if(users.length > 0) {
-					const user = users[0];
-					session.isAdmin = user.isAdmin;
-					session.isGamemaster = user.isGamemaster;
+				if(storeUser) {
+					session.isAdmin = storeUser.isAdmin;
+					session.isGamemaster = storeUser.isGamemaster;
 				}
+
+				client.close();
 			}
 			
 			return session;
@@ -49,13 +52,15 @@ export default NextAuth({
 			authorize: async (credentials): Promise<AuthUser> => {
 				if(credentials) {
 					await authorizeSchema.validate(credentials);
-                
-					const users = await mongoDbHelper.query<User>('users', {'email' : credentials.email});
-					if(users.length === 0) {
+					
+					const {client, database} = await mongoDbHelper.connect();
+					const collection = database.collection('users');
+
+					const user = await collection.findOne<User>({'email' : credentials.email});
+					if(!user) {
 						throw new Error('login failed');
 					}
 
-					const user = users[0];
 					const isValid =  await authHelper.verifyPassword(credentials.password, user.password);
 
 					if(!isValid) {

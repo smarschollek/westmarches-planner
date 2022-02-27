@@ -20,12 +20,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const hashedPassword = await authHelper.hashPassword(req.body.password);
 		
-		const existingUsers = await mongoDbHelper.query('users', {'email' : user.email });
-		if(existingUsers.length !== 0) {
+		const {client, database} = await mongoDbHelper.connect();
+		const collection = database.collection('users');
+
+		const existingUsers = await collection.findOne({'email' : user.email });
+		if(existingUsers) {
 			throw new Error('user with same email already exists');
 		}
 
-		await mongoDbHelper.add('users', {
+		await collection.insertOne({
 			...user,
 			password: hashedPassword,
 			isAdmin: false,
@@ -33,6 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 
 		res.status(201).json({message: 'user created'});
+		client.close();
 	} catch (error : any) {
 		res.status(500).json({message: error.message});
 	}

@@ -16,13 +16,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
 
-		const entity = {
+		const quest = {
 			...req.body,
 			placeId: new ObjectId(req.body.placeId)
 		};
 
-		await mongoDbHelper.update('quests', req.body._id, entity);
+		const {client, database} = await mongoDbHelper.connect();
+		const collection = database.collection('quests');
+		collection.updateOne(req.body._id, quest);
+
 		res.status(200).json('');
+		client.close();
 	} catch (error) {
 		res.status(500).json(error);
 	}

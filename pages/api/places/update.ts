@@ -13,8 +13,16 @@ const validationSchema = object({
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
-		await mongoDbHelper.update('places', req.body._id, req.body);
+		
+		const {client, database} = await mongoDbHelper.connect();
+		const collection = database.collection('places');
+
+		const id = req.body._id;
+		delete req.body._id;
+		
+		await collection.updateOne({'_id' : id}, req.body);
 		res.status(200).json('');
+		client.close();
 	} catch (error) {
 		res.status(500).json(error);
 	}

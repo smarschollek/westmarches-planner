@@ -4,7 +4,7 @@ import { mongoDbHelper } from '../../../helper/mongodb';
 type Response = {
 }
 
-const handler = (req: NextApiRequest, res: NextApiResponse<Response>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 	try {
 		const {id} = req.query;
 
@@ -12,13 +12,17 @@ const handler = (req: NextApiRequest, res: NextApiResponse<Response>) => {
 			throw new Error('id is not set');
 		}
 
+		const { client, database } = await mongoDbHelper.connect();
+		const collection = database.collection('places');
+		
 		if(Array.isArray(id)) {
-			mongoDbHelper.delete('places', id[0]);
+			collection.deleteOne({'_id' : id[0]});
 		} else{
-			mongoDbHelper.delete('places', id);
+			collection.deleteOne({'_id' : id});
 		}
 
 		res.status(200).json('');
+		client.close();
 	}
 	catch(error : any) {
 		res.status(500).json(error);

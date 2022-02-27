@@ -1,112 +1,8 @@
-import { Document, Filter, MongoClient, ObjectId, WithId } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 
 export type CollectionNames = 'quests' | 'sessions' | 'places' | 'users'
 
-type OptionalId = {
-    _id?: string
-}
-
-const add = async <T>(collectionName: CollectionNames, document: T) : Promise<void> => {
-	const uri = process.env.MONGODB_URI;
-	const database = process.env.MONGODB_DB;
-
-	if(!uri) {
-		throw new Error('process.env.MONGODB_URI is not set');
-	}
-
-	if(!database) {
-		throw new Error('process.env.MONGODB_DB is not set');
-	}
-    
-	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	await db.collection(collectionName).insertOne(document);
-	client.close();    
-};
-
-const update = async <T extends OptionalId>(collectionName: CollectionNames, id: string, document: T) : Promise<void> => {
-	const uri = process.env.MONGODB_URI;
-	const database = process.env.MONGODB_DB;
-
-	if(!uri) {
-		throw new Error('process.env.MONGODB_URI is not set');
-	}
-
-	if(!database) {
-		throw new Error('process.env.MONGODB_DB is not set');
-	}
-    
-	delete document._id;
-
-	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	await db.collection(collectionName).updateOne({'_id' : new ObjectId(id)}, {'$set' : document});
-	client.close();    
-};
-
-const _delete = async (collectionName: CollectionNames, id: string) : Promise<void> => {
-	const uri = process.env.MONGODB_URI;
-	const database = process.env.MONGODB_DB;
-
-	if(!uri) {
-		throw new Error('process.env.MONGODB_URI is not set');
-	}
-
-	if(!database) {
-		throw new Error('process.env.MONGODB_DB is not set');
-	}
-    
-	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	await db.collection(collectionName).deleteOne({'_id' : new ObjectId(id)});
-	client.close(); 
-};
-
-const getAll = async <T>(collectionName: CollectionNames) : Promise<WithId<T>[]> => {
-	const uri = process.env.MONGODB_URI;
-	const database = process.env.MONGODB_DB;
-
-	if(!uri) {
-		throw new Error('process.env.MONGODB_URI is not set');
-	}
-
-	if(!database) {
-		throw new Error('process.env.MONGODB_DB is not set');
-	}
-    
-	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	const data = await db.collection<T>(collectionName).find({}).toArray();
-	client.close(); 
-
-	return data;
-};
-
-const get = async <T>(collectionName: CollectionNames, id: string) : Promise<WithId<T>> => {
-	const uri = process.env.MONGODB_URI;
-	const database = process.env.MONGODB_DB;
-
-	if(!uri) {
-		throw new Error('process.env.MONGODB_URI is not set');
-	}
-
-	if(!database) {
-		throw new Error('process.env.MONGODB_DB is not set');
-	}
-    
-	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	const data = (await db.collection(collectionName).findOne({'_id' : new ObjectId(id)}) as WithId<T>);
-	client.close(); 
-
-	if(!data) {
-		throw new Error('no data found');
-	}
-
-	return data;
-};
-
-const query = async <T>(collectionName: CollectionNames, filter: Filter<T>) : Promise<WithId<T>[]> => {
+const connect = async () : Promise<{ client: MongoClient, database : Db }> => {
 	const uri = process.env.MONGODB_URI;
 	const database = process.env.MONGODB_DB;
 
@@ -119,17 +15,17 @@ const query = async <T>(collectionName: CollectionNames, filter: Filter<T>) : Pr
 	}
 
 	const client = await MongoClient.connect(uri);
-	const db = client.db(database);
-	const data = await db.collection(collectionName).find(filter).toArray();
-	client.close(); 
-
-	return data as WithId<T>[];
+	
+	return {
+		client,
+		database: client.db(database)
+	};
 };
 
 export interface MongoDbHelper {
-    getClient() : MongoClient
+    connect() : Promise<{ client: MongoClient, database : Db }>
 }
 
 export const mongoDbHelper : MongoDbHelper = {
-	getClient
+	connect
 };
