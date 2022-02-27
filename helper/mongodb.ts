@@ -1,6 +1,6 @@
-import { Document, MongoClient, ObjectId, WithId } from 'mongodb';
+import { Document, Filter, MongoClient, ObjectId, WithId } from 'mongodb';
 
-export type CollectionNames = 'quests' | 'sessions' | 'places'
+export type CollectionNames = 'quests' | 'sessions' | 'places' | 'users'
 
 type OptionalId = {
     _id?: string
@@ -106,6 +106,25 @@ const get = async <T>(collectionName: CollectionNames, id: string) : Promise<Wit
 	return data;
 };
 
+const query = async <T>(collectionName: CollectionNames, filter: Filter<T>) : Promise<WithId<T>[]> => {
+	const uri = process.env.MONGODB_URI;
+	const database = process.env.MONGODB_DB;
+
+	if(!uri) {
+		throw new Error('process.env.MONGODB_URI is not set');
+	}
+
+	if(!database) {
+		throw new Error('process.env.MONGODB_DB is not set');
+	}
+
+	const client = await MongoClient.connect(uri);
+	const db = client.db(database);
+	const data = await db.collection(collectionName).find(filter).toArray();
+	client.close(); 
+
+	return data as WithId<T>[];
+};
 
 export interface MongoDbHelper {
     add<T>(collectionName: CollectionNames, document: T) : Promise<void>
@@ -113,6 +132,7 @@ export interface MongoDbHelper {
     delete(collectionName: CollectionNames, id: string) : Promise<void>
     getAll<T>(collectionName: CollectionNames) : Promise<WithId<T>[]>
     get<T>(collectionName: CollectionNames, id: string) : Promise<WithId<T>>
+	query<T>(collectionName: CollectionNames, find: Filter<T>) : Promise<WithId<T>[]>
 }
 
 export const mongoDbHelper : MongoDbHelper = {
@@ -120,5 +140,6 @@ export const mongoDbHelper : MongoDbHelper = {
 	update,
 	delete: _delete,
 	getAll,
-	get
+	get,
+	query
 };

@@ -1,8 +1,11 @@
+import { ObjectId } from 'mongodb';
+
 export type Place = {
-    _id: string,
+    _id: ObjectId,
     name: string,
     description?: string
     imageGuid: string
+    questCount: number
 }
 
 export type PlaceWithQuests = Place & {
@@ -10,7 +13,7 @@ export type PlaceWithQuests = Place & {
 }
 
 export type Quest = {
-    _id: string
+    _id: ObjectId
     description: string
     imageGuid: string
     name: string

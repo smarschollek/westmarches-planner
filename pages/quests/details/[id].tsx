@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button,Image } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../types/Place';
+import { Quest } from '../../../types/dtos';
 
 const Page : NextPage = () => {
 	const router = useRouter();
@@ -52,7 +52,6 @@ const Page : NextPage = () => {
 						}
 						{/* {renderSubscribeOrUnsubscribeButton()} */}
 						<Button variant='success' onClick={() => router.back()}>Back</Button>
-						<Button variant='danger' onClick={() => router.back()}>Cancel</Button>
 					</div>	
 				</Col>
 			</Row>

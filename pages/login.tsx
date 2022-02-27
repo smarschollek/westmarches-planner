@@ -1,43 +1,62 @@
+import axios from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Image } from 'react-bootstrap';
-import { userService } from '../../services/user-service';
+import { signIn } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+
+
+type LoginFormValues = {
+	email: string,
+	password: string
+}
 
 const Login : NextPage = () => {
 	const router = useRouter();
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	
-	const handleLogin = async (event : React.FormEvent) => {
+		
+	const onSubmit = async (formValues: LoginFormValues) => {
 		try {
-			event.preventDefault();
-			// await userService.login(username, password);
-			const returnUrl = !!router.query.returnUrl ? router.query.returnUrl as string : '/';
-			router.push(returnUrl);
+			const response = await signIn('credentials', {...formValues, redirect: false});
+			console.log(response);
 		} catch {
-			// showAlert('Login failed', 'danger');
+			
 		}
 	};
+
+	const {register, handleSubmit, formState} = useForm<LoginFormValues>({
+		mode: 'onChange'
+	});
 
 	return(
 		<Container className='w-100 h-100 d-grid align-content-center'>
 			<Row className='h-100 align-items-center'>
 				<Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}} lg={{span: 4, offset: 4}}>
 					<Card className='p-3'>
-						<Image src='/images/logo.png' rounded className='mb-3' alt='logo'/>
-						<Form onSubmit={e => handleLogin(e)}>
+						<Image fluid src='/images/logo.png' rounded className='mb-3' alt='logo'/>
+						<Form onSubmit={handleSubmit(onSubmit)}>
 							<Form.Group className='mb-3'>
-								<Form.Control type='text' placeholder='Username' value={username} onChange={e => setUsername(e.currentTarget.value) }/>
+								<Form.Control 
+									type='email'
+								 	placeholder='Email'
+									{...register('email', {required: true})}
+								 />
 							</Form.Group>
 
 							<Form.Group className='mb-3'>
-								<Form.Control type='password' placeholder='Password' value={password} onChange={e => setPassword(e.currentTarget.value) }/>
+								<Form.Control 
+									type='password' 
+									placeholder='Password'
+									{...register('password', {required: true})}
+								/>
 							</Form.Group>
 
 							<Form.Group className='mb-3 d-grid'>
-								<Button type='submit'>Login</Button>
+								<Button 
+									disabled={!formState.isValid}
+									type='submit'
+								>Login</Button>
 							</Form.Group>
 							<div className='text-center'>
                                 or <br/>

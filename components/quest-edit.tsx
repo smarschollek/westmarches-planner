@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
 import { Form, Row, Col, Button, Image } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { Place, Quest } from '../types/Place';
+import { Place, Quest } from '../types/dtos';
 import { UploadFileFormControl } from './upload-file-formcontrol';
 
 export type QuestEditFormValues = {
 	name: string,
 	description: string,
-	place: string,
+	placeId: string,
 	imageGuid: string
 	questState: string
 }
@@ -76,9 +76,9 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 
 					<Form.Group className='mb-3'>
 						<Form.Label>Place</Form.Label>
-						<Form.Select {...register('place')}>
+						<Form.Select {...register('placeId')}>
 							{ places.map((place, index) => {
-								return <option key={index} value={place.name}>{place.name}</option>;
+								return <option key={index} value={place._id}>{place.name}</option>;
 							}) }
 						</Form.Select>
 					</Form.Group>

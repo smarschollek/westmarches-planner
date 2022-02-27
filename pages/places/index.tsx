@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Button, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../../layout/layout';
-import { Place } from '../../types/Place';
+import { Place } from '../../types/dtos';
 
 const Index : NextPage = () => {
 	const router = useRouter();
