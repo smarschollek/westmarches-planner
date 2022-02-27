@@ -18,8 +18,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const {client, database} = await mongoDbHelper.connect();
 		const collection = database.collection('places');
 		await collection.insertOne(req.body);
+		await client.close();
 		res.status(200).json('');
-		client.close();
 	} catch (error) {
 		res.status(500).json(JSON.stringify(error));
 	}

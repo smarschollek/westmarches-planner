@@ -40,7 +40,7 @@ export default NextAuth({
 					session.isGamemaster = storeUser.isGamemaster;
 				}
 
-				client.close();
+				await client.close();
 			}
 			
 			return session;

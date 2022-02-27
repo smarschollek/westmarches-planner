@@ -25,9 +25,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 		if(!data) {
 			throw new Error(`quest with ${id} not found`);
 		}
-
+		await client.close();
 		res.status(200).json(data);
-		client.close();
 	} catch(error : any) {
 		res.status(500).json(error);
 	}

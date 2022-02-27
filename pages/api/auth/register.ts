@@ -35,8 +35,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			isGamemaster: false
 		});
 
+		await client.close();
 		res.status(201).json({message: 'user created'});
-		client.close();
 	} catch (error : any) {
 		res.status(500).json({message: error.message});
 	}

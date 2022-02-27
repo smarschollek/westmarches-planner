@@ -19,8 +19,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 		place.questCount = quest.length;
 	}
 
+	await client.close();
 	res.status(200).json(places);
-	client.close();
 };
 
 export default handler;

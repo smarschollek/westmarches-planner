@@ -16,13 +16,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 		const collection = database.collection('quests');
 
 		if(Array.isArray(id)) {
-			collection.deleteOne({'_id' : id[0]});
+			await collection.deleteOne({'_id' : id[0]});
 		} else{
-			collection.deleteOne({'_id' : id});
+			await collection.deleteOne({'_id' : id});
 		}
-
+		await client.close();
 		res.status(200).json('');
-		client.close();
 	}
 	catch(error : any) {
 		res.status(500).json(error);

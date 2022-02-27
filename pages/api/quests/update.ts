@@ -23,10 +23,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const {client, database} = await mongoDbHelper.connect();
 		const collection = database.collection('quests');
-		collection.updateOne(req.body._id, quest);
-
+		await collection.updateOne(req.body._id, quest);
+		await client.close();
 		res.status(200).json('');
-		client.close();
 	} catch (error) {
 		res.status(500).json(error);
 	}

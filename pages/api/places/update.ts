@@ -21,8 +21,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		delete req.body._id;
 		
 		await collection.updateOne({'_id' : id}, req.body);
+		await client.close();
 		res.status(200).json('');
-		client.close();
 	} catch (error) {
 		res.status(500).json(error);
 	}

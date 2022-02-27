@@ -31,9 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 			...data,
 			quests
 		};
-
+		
+		await client.close();
 		res.status(200).json(result);
-		client.close();
 	} catch(error : any) {
 		res.status(500).json(error);
 	}
