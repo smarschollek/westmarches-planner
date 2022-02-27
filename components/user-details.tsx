@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { Row, Col, Badge, Button, Stack } from 'react-bootstrap';
+import { Row, Col, Badge, Button, Stack, ButtonGroup } from 'react-bootstrap';
 import { ExtendedSession } from '../pages/api/auth/[...nextauth]';
 
 const UserDetails = () => {
@@ -15,12 +15,13 @@ const UserDetails = () => {
 		<Row>
 			<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
 				<Stack gap={2}>
-					<div className='d-flex justify-content-center align-content-center'>
-						{/* <Circle className='shadow-lg'>
+					<hr className='my-4'></hr>
+					{/* <div className='d-flex justify-content-center align-content-center'>
+						<Circle className='shadow-lg'>
 							{user.name[0].toUpperCase()}
-						</Circle> */}
+						</Circle>
 					</div>
-				
+					<hr className='my-4'></hr> */}
 					<div className='mb-4 mt-4 d-flex justify-content-between'>
 						<div>Name:</div>
 						<div>{data.user.name}</div>
@@ -39,9 +40,13 @@ const UserDetails = () => {
 						<div>Email:</div>
 						<div>{data.user.email}</div>
 					</div>
-
-					<Button onClick={() => router.push(`/changepassword/${data.id}`)}> Change Password </Button>
-					{data.isAdmin && <Button onClick={() => router.push(`/changeroles/${data.id}`)}> Change Roles </Button>}
+					<hr className='my-4'></hr>
+					<ButtonGroup>
+						<Button onClick={() => router.push(`/changepassword/${data.id}`)}> Change Password </Button>
+						<Button variant='secondary' onClick={() => router.push(`/character/add/${data.id}`)}> Add Character </Button>
+						{data.isAdmin && <Button onClick={() => router.push(`/changeroles/${data.id}`)}> Change Roles </Button>}
+					</ButtonGroup>
+					
 				</Stack>
 			</Col>
 		</Row>
