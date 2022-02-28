@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { Badge, Button, ButtonGroup, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../../layout/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Quest } from '../../models/quest-model';
@@ -20,7 +20,18 @@ const Page : NextPage = () => {
 
 	const mapQuests = () => {
 		return quests.map((quest, index) => {
-			return <ListGroupItem action href={`/quests/details/${quest._id}`} key={index}>{quest.name}</ListGroupItem>;
+			return <ListGroupItem 
+				action
+			 	href={`/quests/details/${quest._id}`} 
+			 	key={index}
+				 className='d-flex justify-content-between align-items-center'
+			>
+				<div>
+					<div className='fs-6'>{quest.name}</div>
+					<div className='fw-bold' style={{fontSize: '0.9rem'}}>{quest.creator}</div>
+				</div>
+				{ quest.subscriber.length > 0 && <Badge> {`${quest.subscriber.length} subscriber`} </Badge>}
+			</ListGroupItem>;
 		});
 	};
 

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export interface Quest {
 	_id: string,
-	creatorId: string,
+	creator: string,
     name: string,
 	description: string,
 	placeId: string,
@@ -19,7 +19,7 @@ export interface Subscriber {
 }
 
 const questSchema = new mongoose.Schema<Quest>({
-	creatorId: String,
+	creator: String,
 	name: String,
 	description: String,
 	questState: String,
