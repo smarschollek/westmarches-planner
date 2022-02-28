@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
 import { Form, Row, Col, Button, Image } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { Place, Quest } from '../types/dtos';
+import { Place } from '../models/place-model';
 import { UploadFileFormControl } from './upload-file-formcontrol';
 
 export type QuestEditFormValues = {
@@ -15,7 +15,7 @@ export type QuestEditFormValues = {
 }
 
 type QuestEditProps = {
-	defaultValues?: Quest
+	defaultValues?: QuestEditFormValues
 	onSubmit: (formValues: QuestEditFormValues) => void
 }
 

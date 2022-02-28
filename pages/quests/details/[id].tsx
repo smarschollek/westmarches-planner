@@ -5,12 +5,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button,Image } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../types/dtos';
+import { Quest } from '../../../models/quest-model';
 
 const Page : NextPage = () => {
 	const router = useRouter();
 	const [quest,setQuest] = useState<Quest>();
-	const userId : number = 0;
+	
 	useEffect(() => {
 		(async() => {
 			if(router.query.id) {
@@ -20,7 +20,7 @@ const Page : NextPage = () => {
 		})();
 	}, [router.query.id]);
 
-	const renderSubscribeOrUnsubscribeButton = (questId: ObjectId) => {		
+	const renderSubscribeOrUnsubscribeButton = (questId: string) => {		
 		return <Button href={`/quests/subscribe/${questId}`}>Subscribe</Button>;
 	};
 
@@ -48,12 +48,12 @@ const Page : NextPage = () => {
 
 					<div className='d-grid mt-4'>
 						{
-							userId === quest.creatorId && (
-								<>
-									<Button className='mb-2' href={`/quests/edit/${quest._id}`}>Edit</Button>
-									<Button variant='danger' className='mb-2' href={`/quests/delete/${quest._id}`}>Delete</Button>
-								</>
-							)
+							// userId === quest.creatorId && (
+							// 	<>
+							// 		<Button className='mb-2' href={`/quests/edit/${quest._id}`}>Edit</Button>
+							// 		<Button variant='danger' className='mb-2' href={`/quests/delete/${quest._id}`}>Delete</Button>
+							// 	</>
+							// )
 						}
 						{renderSubscribeOrUnsubscribeButton(quest._id)}
 						<Button variant='success' onClick={() => router.back()}>Back</Button>

@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { NextApiRequest } from 'next';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
@@ -6,7 +5,7 @@ import { getSession } from 'next-auth/react';
 export type ExtendedSession = Session & {
 	isGamemaster: boolean,
 	isAdmin: boolean,
-	id: ObjectId
+	id: string
 }
 
 export const validateSession = async (req : NextApiRequest) : Promise<ExtendedSession> => {

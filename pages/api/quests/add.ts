@@ -2,17 +2,20 @@ import { object, string } from 'yup';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { dbConnect } from '../../../helper/db-connect';
 import { apiProtector } from '../../../helper/api-protector';
-import { QuestModel } from '../../../models/quest-model';
+import { Quest, QuestModel } from '../../../models/quest-model';
 
-interface AddQuestRequest {
+export interface AddQuestRequest {
 	name: string,
 	description?: string
 	placeId: string
+	imageGuid: string
+	creatorId: string
 }
 
 const validationSchema = object({
 	name: string().required(),
-	placeId: string().required()
+	placeId: string().required(),
+	creatorId: string().required(),
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
@@ -26,10 +29,12 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		dbConnect();
 		
 		QuestModel.create({
-			state: 'Planning',
+			questState: 'Planning',
 			name: body.name,
 			description: body.description ?? '',
-			placeId: body.placeId
+			placeId: body.placeId,
+			imageGuid: body.imageGuid,
+			creatorId: body.creatorId,
 		});
 	
 		res.status(200).json('');
