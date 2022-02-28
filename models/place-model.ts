@@ -9,7 +9,8 @@ export interface Place {
 
 const placeSchema = new mongoose.Schema<Place>({
 	name: String,
-	description: String
+	description: String,
+	imageGuid: String
 });
 
 export const PlaceModel = mongoose.models.Place || mongoose.model<Place>('Place', placeSchema);

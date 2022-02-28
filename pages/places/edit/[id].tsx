@@ -17,7 +17,7 @@ const Add : NextPage = () => {
 					setPlace(response.data);
 				}
 			} catch (error) {
-				router.back();
+				// router.back();
 			}
 		})();
 	}, [router, router.query.id]);

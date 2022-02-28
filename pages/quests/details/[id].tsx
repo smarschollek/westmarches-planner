@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { ObjectId } from 'mongodb';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -7,12 +6,15 @@ import { Row, Col, Button,Image, ButtonGroup } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { Quest } from '../../../models/quest-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faUnlink, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faUnlink, faAngleLeft, faPen } from '@fortawesome/free-solid-svg-icons';
+import { ExtendedSession } from '../../../helper/validate-session';
+import { useSession } from 'next-auth/react';
 
 const Page : NextPage = () => {
 	const router = useRouter();
 	const [quest,setQuest] = useState<Quest>();
-	
+	const data = useSession().data as ExtendedSession;
+
 	useEffect(() => {
 		(async() => {
 			if(router.query.id) {
@@ -22,18 +24,27 @@ const Page : NextPage = () => {
 		})();
 	}, [router.query.id]);
 
-	const renderSubscribeOrUnsubscribeButton = (questId: string) => {		
+	if(!quest) {
+		return <></>;
+	}
+
+	const renderSubscribeOrUnsubscribeButton = () => {				
+		if(data.id === quest.creatorId) {
+			return (
+				<Button href={`/quests/edit/${quest._id}`}>
+					<FontAwesomeIcon icon={faPen} className='me-2'/>
+					Edit
+				</Button>
+			);
+		}
+		
 		return (
-			<Button href={`/quests/subscribe/${questId}`}>
+			<Button href={`/quests/subscribe/${quest._id}`}>
 				<FontAwesomeIcon icon={faLink} className='me-2'/>
 				Subscribe
 			</Button>
 		);
 	};
-
-	if(!quest) {
-		return <></>;
-	}
 
 	return(
 		<Layout>
@@ -69,7 +80,7 @@ const Page : NextPage = () => {
 								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
 								Back
 							</Button>
-							{renderSubscribeOrUnsubscribeButton(quest._id)}
+							{renderSubscribeOrUnsubscribeButton()}
 						</ButtonGroup>
 					</div>	
 				</Col>

@@ -1,13 +1,16 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ListGroup, Button, ListGroupItem, Image, Col, Row } from 'react-bootstrap';
+import { ListGroup, Button, ListGroupItem, Image, Col, Row, ButtonGroup } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { Place, PlaceWithQuests, Quest } from '../../../types/dtos';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faAngleLeft, faPen } from '@fortawesome/free-solid-svg-icons';
+import { Quest } from '../../../models/quest-model';
+import { GetPlaceResponse } from '../../api/places/get';
 
 const Details : NextPage = () => {
 	const router  = useRouter();
-	const [place, setPlace] = useState<PlaceWithQuests>();
+	const [place, setPlace] = useState<GetPlaceResponse>();
 	
 	useEffect(() => {
 		(async () => {
@@ -62,8 +65,17 @@ const Details : NextPage = () => {
 						)
 					}
 					<div className='d-grid'>
-						<Button href={`/places/edit/${place._id}`}> Edit </Button>
-						<Button className='mt-2' variant='success' onClick={() => router.back()}>Back</Button>
+						<ButtonGroup>
+							<Button variant='success' onClick={() => router.back()}>
+								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
+								Back
+							</Button>
+							<Button href={`/places/edit/${place._id}`}> 
+								<FontAwesomeIcon icon={faPen} className='me-2'/>
+								Edit
+							</Button>
+						</ButtonGroup>
+						
 					</div>
 				</Col>
 			</Row>

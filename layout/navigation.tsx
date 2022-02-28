@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { ReactElement } from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import {useSession, signOut} from 'next-auth/react';
@@ -29,29 +28,29 @@ export const Navigation = (): ReactElement => {
 				<Navbar.Collapse id='navbar'>
 					<Nav className='me-auto'>
 						<Nav.Link eventKey='Dashboard' href={'/'}>
-							<FontAwesomeIcon icon={faColumns} className='me-2'/>
+							<FontAwesomeIcon icon={faColumns} className='me-2' style={{width: '16px'}}/>
 							Dashboard
 						</Nav.Link>
 						{ data && data.isGamemaster && <Nav.Link eventKey='/places' href='/places'>
-							<FontAwesomeIcon icon={faMap} className='me-2'/>
+							<FontAwesomeIcon icon={faMap} className='me-2' style={{width: '16px'}}/>
 							Places
 						</Nav.Link> }
 						{ data && data.isGamemaster && <Nav.Link eventKey='/quests' href='/quests'>
-							<FontAwesomeIcon icon={faQuestion} className='me-2'/>
+							<FontAwesomeIcon icon={faQuestion} className='me-2' style={{width: '16px'}}/>
 							Quests
 						</Nav.Link> }
 						{ data && data.isAdmin && <Nav.Link eventKey='/users' href='/users'>
-							<FontAwesomeIcon icon={faUserFriends} className='me-2'/>
+							<FontAwesomeIcon icon={faUserFriends} className='me-2' style={{width: '16px'}}/>
 							Users
 						</Nav.Link> }
 					</Nav>
 					<Nav>
 						<Nav.Link eventKey='my' href={'/user'}>
-							<FontAwesomeIcon icon={faUser} className='me-2'/>
+							<FontAwesomeIcon icon={faUser} className='me-2' style={{width: '16px'}}/>
 							{data?.user?.name}
 						</Nav.Link>
 						<Nav.Link onClick={handleLogout}>
-							<FontAwesomeIcon icon={faPowerOff} className='me-2'/>
+							<FontAwesomeIcon icon={faPowerOff} className='me-2' style={{width: '16px'}}/>
 							Logout
 						</Nav.Link>
 					</Nav>

@@ -1,11 +1,24 @@
-import { FunctionComponent, ReactElement } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-export const AuthGuard : FunctionComponent = ({children}): ReactElement => {
-	const {data, status} = useSession();
+interface AuthGuardProps {
+	componentName: string
+}
+
+export const AuthGuard = ({children, componentName} : PropsWithChildren<AuthGuardProps>): ReactElement => {
+	const {status} = useSession();
 	const router = useRouter();
-	console.log(status);
+	const unprotectedComponents = ['Login', 'Register'];
+	
+	if(unprotectedComponents.includes(componentName)) {
+		return(
+			<>
+				{children}
+			</>
+		);
+	}
+
 	if(status === 'loading') {
 		return <>Loading...</>;
 	}

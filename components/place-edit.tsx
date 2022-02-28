@@ -1,8 +1,10 @@
 import { useRouter } from 'next/router';
 import { ReactElement, useState } from 'react';
-import { Button, Col, Form, Row, Image} from 'react-bootstrap';
+import { Button, Col, Form, Row, Image, ButtonGroup} from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { UploadFileFormControl } from './upload-file-formcontrol';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
 
 export type PlaceEditForm = {
     name: string,
@@ -54,8 +56,16 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 					</Form.Group>
 
 					<Form.Group className='mb-3 d-grid'>
-						<Button type='submit' className='mb-3'>Save</Button>
-						<Button variant='danger' onClick={() => router.back()}>Cancel</Button>
+						<ButtonGroup>
+							<Button variant='danger' onClick={() => router.back()}>
+								<FontAwesomeIcon icon={faCancel} className='me-2'/>
+								Cancel
+							</Button>
+							<Button type='submit'>
+								<FontAwesomeIcon icon={faSave} className='me-2'/>
+								Save
+							</Button>
+						</ButtonGroup>
 					</Form.Group>
 				</Col>
 			</Row>

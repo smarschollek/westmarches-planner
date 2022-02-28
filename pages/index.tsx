@@ -50,7 +50,7 @@ const Home: NextPage = () => {
 								key={index}
 							>
 								<span className='text-truncate'>{place.name}</span>
-								<Badge>{place.questCount} Quest(s)</Badge>
+								{ place.questCount > 0 && <Badge>{place.questCount} Quest(s)</Badge>}
 							</ListGroupItem>
 						))}
 					</ListGroup>
