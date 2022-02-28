@@ -29,7 +29,7 @@ const Page : NextPage = () => {
 	}
 
 	const renderSubscribeOrUnsubscribeButton = () => {				
-		if(data.id === quest.creatorId) {
+		if(data.user?.name === quest.creator) {
 			return (
 				<Button href={`/quests/edit/${quest._id}`}>
 					<FontAwesomeIcon icon={faPen} className='me-2'/>

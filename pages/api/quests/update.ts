@@ -9,6 +9,7 @@ interface UpdateQuestRequest {
 	_id: string
 	name: string
 	placeId: string
+	imageGuid: string
 	state: string,
 	description: string
 }
@@ -35,6 +36,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			quest.description = body.description;
 			quest.state = body.state;
 			quest.placeId = body.placeId;
+			quest.imageGuid = body.imageGuid;
 			await quest.save();
 		}
 		res.status(200).json('');
