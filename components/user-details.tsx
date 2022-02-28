@@ -74,7 +74,7 @@ const UserDetails = () => {
 					<hr className='my-4'></hr>
 
 					<ButtonGroup>
-						<Button onClick={() => router.push(`/changepassword/${data.id}`)}> Change Password </Button>
+						<Button disabled onClick={() => router.push(`/changepassword/${data.id}`)}> Change Password </Button>
 						<Button variant='secondary' onClick={() => router.push('/character/add')}> Add Character </Button>
 						{data.isAdmin && <Button onClick={() => router.push(`/changeroles/${data.id}`)}> Change Roles </Button>}
 					</ButtonGroup>
