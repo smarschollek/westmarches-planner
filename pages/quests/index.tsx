@@ -2,10 +2,11 @@ import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Button, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../../layout/layout';
-import { Quest } from '../../types/dtos';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Quest } from '../../models/quest-model';
+import {faPlus, faAngleLeft} from '@fortawesome/free-solid-svg-icons';
 const Page : NextPage = () => {
 	const router = useRouter();
 	const [quests, setQuests] = useState<Quest[]>([]);
@@ -27,14 +28,23 @@ const Page : NextPage = () => {
 		<Layout>
 			<Row>
 				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h5>Quests</h5>
+					<h4>Quests</h4>
 					<hr className='my-4'></hr>
 					<ListGroup>
 						{mapQuests()}
 					</ListGroup>
 					<hr className='my-4'></hr>
 					<div className='d-grid mt-2'>
-						<Button onClick={() => router.push('/quests/add')}>Add Quest</Button>
+						<ButtonGroup>
+							<Button variant='success' onClick={() => router.back()}>
+								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
+								Back
+							</Button>
+							<Button onClick={() => router.push('/quests/add')}>
+								<FontAwesomeIcon icon={faPlus} className='me-2'/>
+								Add Quest
+							</Button>
+						</ButtonGroup>
 					</div>	
 				</Col>
 			</Row>

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-import { Form, Row, Col, Button, Image } from 'react-bootstrap';
+import { Form, Row, Col, Button, Image, ButtonGroup } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { Place } from '../models/place-model';
 import { UploadFileFormControl } from './upload-file-formcontrol';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
 
 export type QuestEditFormValues = {
 	name: string,
@@ -98,8 +100,16 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 					</Form.Group>
 
 					<Form.Group className='mb-3 d-grid'>
-						<Button type='submit' className='mb-3'>Save</Button>
-						<Button variant='danger' onClick={() => router.back()}>Cancel</Button>
+						<ButtonGroup>
+							<Button variant='danger' onClick={() => router.back()}>
+								<FontAwesomeIcon icon={faCancel} className='me-2'/>
+								Cancel
+							</Button>
+							<Button type='submit'>
+								<FontAwesomeIcon icon={faSave} className='me-2'/>
+								Save
+							</Button>
+						</ButtonGroup>
 					</Form.Group>
 				</Col>
 			</Row>

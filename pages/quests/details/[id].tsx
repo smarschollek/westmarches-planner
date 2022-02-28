@@ -3,9 +3,11 @@ import { ObjectId } from 'mongodb';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button,Image } from 'react-bootstrap';
+import { Row, Col, Button,Image, ButtonGroup } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { Quest } from '../../../models/quest-model';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLink, faUnlink, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Page : NextPage = () => {
 	const router = useRouter();
@@ -21,7 +23,12 @@ const Page : NextPage = () => {
 	}, [router.query.id]);
 
 	const renderSubscribeOrUnsubscribeButton = (questId: string) => {		
-		return <Button href={`/quests/subscribe/${questId}`}>Subscribe</Button>;
+		return (
+			<Button href={`/quests/subscribe/${questId}`}>
+				<FontAwesomeIcon icon={faLink} className='me-2'/>
+				Subscribe
+			</Button>
+		);
 	};
 
 	if(!quest) {
@@ -55,8 +62,15 @@ const Page : NextPage = () => {
 							// 	</>
 							// )
 						}
-						{renderSubscribeOrUnsubscribeButton(quest._id)}
-						<Button variant='success' onClick={() => router.back()}>Back</Button>
+						
+
+						<ButtonGroup>
+							<Button variant='success' onClick={() => router.back()}>
+								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
+								Back
+							</Button>
+							{renderSubscribeOrUnsubscribeButton(quest._id)}
+						</ButtonGroup>
 					</div>	
 				</Col>
 			</Row>
