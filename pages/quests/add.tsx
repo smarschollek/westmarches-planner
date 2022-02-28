@@ -13,8 +13,7 @@ const Page : NextPage = () => {
 
 	const handleOnSubmit = async (formValues: QuestEditFormValues) => {
 		const request : AddQuestRequest = {
-			...formValues,
-			creatorId: data.id
+			...formValues
 		};
 		
 		await axios.post('/api/quests/add', request);
