@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button,Image, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Button,Image, ButtonGroup, ListGroupItem, Badge } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { Quest } from '../../../models/quest-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,12 +45,37 @@ const Page : NextPage = () => {
 			);
 		}
 		
+		if(quest.subscriber.findIndex(x=>x.name === data.user?.name) !== -1) {
+			return (
+				<Button href={`/quests/subscribe/${quest._id}`}>
+					<FontAwesomeIcon icon={faUnlink} className='me-2'/>
+					Unsubscribe
+				</Button>
+			);	
+		}
+
 		return (
 			<Button href={`/quests/subscribe/${quest._id}`}>
 				<FontAwesomeIcon icon={faLink} className='me-2'/>
 				Subscribe
 			</Button>
 		);
+	};
+
+	const mapSubscriber = () => {
+		return quest.subscriber.map((sub, index) => {
+			return (
+				<ListGroupItem key={index}>
+					<div className='d-flex justify-content-between align-items-center'>
+						<span>{sub.characterName}</span>
+						<Badge>{`${sub.characterClass} (${sub.characterLevel})`}</Badge>
+					</div>
+					<div className='fw-bold' style={{fontSize: '0.9rem'}}>
+						{sub.name}
+					</div>
+				</ListGroupItem>
+			);
+		});
 	};
 
 	return(
@@ -70,7 +95,9 @@ const Page : NextPage = () => {
 					<h6>Description</h6>
 					<div>{quest.description}</div>
 					<hr className='my-4'></hr>
-
+					{mapSubscriber()}
+					<hr className='my-4'></hr>
+					
 					<div className='d-grid mt-4'>			
 
 						<ButtonGroup>
