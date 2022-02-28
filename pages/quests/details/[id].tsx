@@ -47,7 +47,7 @@ const Page : NextPage = () => {
 		
 		if(quest.subscriber.findIndex(x=>x.name === data.user?.name) !== -1) {
 			return (
-				<Button href={`/quests/subscribe/${quest._id}`}>
+				<Button href={`/quests/unsubscribe/${quest._id}`}>
 					<FontAwesomeIcon icon={faUnlink} className='me-2'/>
 					Unsubscribe
 				</Button>
