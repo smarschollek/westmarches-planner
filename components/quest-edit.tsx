@@ -32,8 +32,9 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 	const [places, setPlaces] = useState<Place[]>();
 	const [imageGuid, setImageGuid] = useState(defaultValues?.imageGuid ?? '');
 
-	const { register, handleSubmit, setValue } = useForm<QuestEditFormValues>({
-		defaultValues
+	const { register, handleSubmit, setValue, formState } = useForm<QuestEditFormValues>({
+		defaultValues,
+		mode: 'onChange'
 	});
 
 
@@ -73,7 +74,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 
 					<Form.Group className='mb-3'>
 						<Form.Label>Titel</Form.Label>
-						<Form.Control type='text' {...register('name')}/>
+						<Form.Control type='text' {...register('name', {required: true})}/>
 					</Form.Group>
 
 					<Form.Group className='mb-3'>
@@ -105,7 +106,10 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 								<FontAwesomeIcon icon={faCancel} className='me-2'/>
 								Cancel
 							</Button>
-							<Button type='submit'>
+							<Button 
+								type='submit'
+								disabled={!formState.isValid}
+							>
 								<FontAwesomeIcon icon={faSave} className='me-2'/>
 								Save
 							</Button>
