@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, ButtonGroup, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
 
 const classes: string[] = [
 	'Artificer',
@@ -70,16 +72,27 @@ export const CharacterEdit = ({defaultValues, onSubmit}: CharacterEditProps): Re
 				<Form.Control as='textarea' rows={5} style={{resize: 'none'}} {...register('comment')}/>
 			</Form.Group>
 			<Form.Group className='d-grid'>
-				<Button 
-					variant='primary' 
-					type='submit' 
-					disabled={!formState.isValid}
-				>
+				<ButtonGroup>
+					{/* <Button 
+						variant='primary' 
+						type='submit' 
+						disabled={!formState.isValid}
+					>
                     Submit
-				</Button>
-				<Button variant='danger' className='mt-2' onClick={() => router.back()}>
+					</Button>
+					<Button variant='danger' onClick={() => router.back()}>
                     Cancel
-				</Button>
+					</Button> */}
+					<Button variant='danger' onClick={() => router.back()}>
+						<FontAwesomeIcon icon={faCancel} className='me-2'/>
+								Cancel
+					</Button>
+					<Button type='submit' disabled={!formState.isValid}>
+						<FontAwesomeIcon icon={faSave} className='me-2'/>
+								Save
+					</Button>
+				</ButtonGroup>
+				
 			</Form.Group>
 		</Form>
 	);

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { Row, Col } from 'react-bootstrap';
 import { CharacterEdit, CharacterEditFormValues } from '../../components/character-edit';
 import { Layout } from '../../layout/layout';
 
 const Page : NextPage = () => {
+	const router = useRouter();
 	const defaultValues : CharacterEditFormValues = {
 		name: '',
 		class: 'Artificer',
@@ -15,6 +17,7 @@ const Page : NextPage = () => {
 	const handleOnSubmit = async (formValues: CharacterEditFormValues) => {
 		try {
 			await axios.post('/api/users/createCharacter', formValues);
+			router.back();
 		} catch (error) {
 			
 		}
