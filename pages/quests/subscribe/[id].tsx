@@ -3,11 +3,12 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button, Form, ButtonGroup } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { Layout } from '../../../layout/layout';
 import { Character } from '../../../models/user-model';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 type QuestSubscribeFromValues = {
     characterId: string
@@ -15,13 +16,15 @@ type QuestSubscribeFromValues = {
 
 const Subscribe : NextPage = () => {
 	const [characters, setCharacters] = useState<Character[]>([]);
+	const [fetched, setFetched] = useState(false);
 	const router = useRouter();
 
 	useEffect(() => {
 		(async () => {
 			try {
-				const response = await axios.get('/api/users/getCharacters');
+				const response = await axios.get<Character[]>('/api/users/getCharacters');
 				setCharacters(response.data);
+				setFetched(true);
 			} catch (error) {
 				console.log(error);
 			}
@@ -30,7 +33,7 @@ const Subscribe : NextPage = () => {
 	
 	const mapCharacters = (characters: Character[]) => {
 		return characters.map((character, index) => {
-			return <option selected={index === 0} key={index} value={character._id}>{character.name}</option>;
+			return <option key={index} value={character._id}>{character.name}</option>;
 		});
 	};
 
@@ -40,15 +43,28 @@ const Subscribe : NextPage = () => {
 				questId: router.query.id,
 				characterId: formValues.characterId
 			});
+			router.back();
 		}
 	};
 
-	const {register, handleSubmit} = useForm<QuestSubscribeFromValues>({
+	const {register, handleSubmit, formState} = useForm<QuestSubscribeFromValues>({
 		mode: 'onChange',
 		defaultValues: {
-			characterId: characters[0]._id
+			characterId: ''
 		}
 	});
+
+	if(fetched && characters.length === 0) {
+		return (
+			<Layout>
+				<Row>
+					<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
+						You need Characters to subscribe to a Quest. Create one <Link href='/user'>here</Link>
+					</Col>
+				</Row>
+			</Layout>
+		);
+	}
 
 	return (
 		<Layout>
@@ -57,7 +73,8 @@ const Subscribe : NextPage = () => {
 					<Form onSubmit={handleSubmit(onSubmit)}>
 						<Form.Group>
 							<Form.Label>Character</Form.Label>
-							<Form.Select {...register('characterId')}>
+							<Form.Select {...register('characterId', {required: true})}>
+								<option value={''}></option>;
 								{mapCharacters(characters)}
 							</Form.Select>
 						</Form.Group>
@@ -67,7 +84,10 @@ const Subscribe : NextPage = () => {
 									<FontAwesomeIcon icon={faCancel} className='me-2'/>
 									Cancel
 								 </Button>
-								<Button type='submit'> 
+								<Button
+									type='submit'
+									disabled={!formState.isValid}
+								> 
 									<FontAwesomeIcon icon={faSave} className='me-2'/>
 									Subscribe 
 								</Button>

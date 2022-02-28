@@ -6,7 +6,7 @@ import { Row, Col, Button,Image, ButtonGroup } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { Quest } from '../../../models/quest-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faUnlink, faAngleLeft, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faUnlink, faAngleLeft, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { useSession } from 'next-auth/react';
 
@@ -31,10 +31,17 @@ const Page : NextPage = () => {
 	const renderSubscribeOrUnsubscribeButton = () => {				
 		if(data.user?.name === quest.creator) {
 			return (
-				<Button href={`/quests/edit/${quest._id}`}>
-					<FontAwesomeIcon icon={faPen} className='me-2'/>
-					Edit
-				</Button>
+				<>
+					<Button href={`/quests/edit/${quest._id}`}>
+						<FontAwesomeIcon icon={faPen} className='me-2'/>
+						Edit
+					</Button>
+					<Button disabled variant='danger' href={`/quests/delete/${quest._id}`}>
+						<FontAwesomeIcon icon={faTrash} className='me-2'/>
+						Delete
+					</Button>
+				</>
+				
 			);
 		}
 		
@@ -64,16 +71,7 @@ const Page : NextPage = () => {
 					<div>{quest.description}</div>
 					<hr className='my-4'></hr>
 
-					<div className='d-grid mt-4'>
-						{
-							// userId === quest.creatorId && (
-							// 	<>
-							// 		<Button className='mb-2' href={`/quests/edit/${quest._id}`}>Edit</Button>
-							// 		<Button variant='danger' className='mb-2' href={`/quests/delete/${quest._id}`}>Delete</Button>
-							// 	</>
-							// )
-						}
-						
+					<div className='d-grid mt-4'>			
 
 						<ButtonGroup>
 							<Button variant='success' onClick={() => router.back()}>
