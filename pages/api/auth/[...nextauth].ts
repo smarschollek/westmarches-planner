@@ -3,7 +3,8 @@ import NextAuth, { Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
-import { mongoDbHelper } from '../../../helper/mongodb';
+import { dbConnect } from '../../../helper/db-connect';
+import { UserModel } from '../../../models/user-model';
 
 type User = {
 	_id: ObjectId
@@ -23,12 +24,6 @@ type AuthUser = {
 	test: string
 }
 
-export type ExtendedSession = Session & {
-	isGamemaster: boolean,
-	isAdmin: boolean,
-	id: ObjectId
-}
-
 const authorizeSchema = object({
 	email: string().email().required(),
 	password: string().required()
@@ -39,17 +34,14 @@ export default NextAuth({
 	callbacks: {
 		async session({ session , token, user }) {
 			if(session.user && session.user.email) {
-				const {client, database} = await mongoDbHelper.connect();
-				const collection = database.collection('users');
-				const storeUser = await collection.findOne<User>({'email' : session.user.email});
+				dbConnect();				
+				const storeUser = await UserModel.findOne<User>({'email' : session.user.email});
 
 				if(storeUser) {
 					session.isAdmin = storeUser.isAdmin;
 					session.isGamemaster = storeUser.isGamemaster;
 					session.id = storeUser._id;
 				}
-
-				await client.close();
 			}
 			
 			return session;
@@ -59,33 +51,36 @@ export default NextAuth({
 		Credentials({
 
 			authorize: async (credentials): Promise<AuthUser> => {
-				if(credentials) {
-					await authorizeSchema.validate(credentials);
+				try {
+					if(credentials) {
+						await authorizeSchema.validate(credentials);
+						
+						dbConnect();	
+						const user = await UserModel.findOne({'email' : credentials.email});
+						if(!user) {
+							throw new Error('login failed');
+						}
+	
+						const isValid =  await authHelper.verifyPassword(credentials.password, user.password);
+	
+						if(!isValid) {
+							throw new Error('login failed');
+						}
+	
+						return {
+							name: user.name,
+							email: user.email,
+							isAdmin: user.isAdmin,
+							isGamemaster: user.isGamemaster,
+							test: 'test'
+						};
+					}
 					
-					const {client, database} = await mongoDbHelper.connect();
-					const collection = database.collection('users');
-
-					const user = await collection.findOne<User>({'email' : credentials.email});
-					if(!user) {
-						throw new Error('login failed');
-					}
-
-					const isValid =  await authHelper.verifyPassword(credentials.password, user.password);
-
-					if(!isValid) {
-						throw new Error('login failed');
-					}
-
-					return {
-						name: user.name,
-						email: user.email,
-						isAdmin: user.isAdmin,
-						isGamemaster: user.isGamemaster,
-						test: 'test'
-					};
+					throw new Error('bad request');
+				} catch (error : any) {
+					console.log(error);
+					throw new error;
 				}
-                
-				throw new Error('bad request');
 			},
 			credentials: {
 				email: { label: 'Email', type: 'email', placeholder: 'Email' },

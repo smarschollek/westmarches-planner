@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
-import { mongoDbHelper } from '../../../helper/mongodb';
+import { dbConnect } from '../../../helper/db-connect';
+import { UserModel } from '../../../models/user-model';
 
 type Response = {
 }
@@ -20,22 +22,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const hashedPassword = await authHelper.hashPassword(req.body.password);
 		
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('users');
-
-		const existingUsers = await collection.findOne({'email' : user.email });
+		dbConnect();
+		const existingUsers = await UserModel.findOne({'email' : user.email });
 		if(existingUsers) {
 			throw new Error('user with same email already exists');
 		}
 
-		await collection.insertOne({
+		await UserModel.create({
 			...user,
 			password: hashedPassword,
 			isAdmin: false,
 			isGamemaster: false
 		});
 
-		await client.close();
 		res.status(201).json({message: 'user created'});
 	} catch (error : any) {
 		res.status(500).json({message: error.message});

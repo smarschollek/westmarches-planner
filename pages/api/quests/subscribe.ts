@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mongoDbHelper } from '../../../helper/mongodb';
+import { dbConnect } from '../../../helper/db-connect';
 import { apiProtector } from '../../../helper/api-protector';
 import { object, string } from 'yup';
 import { getSession } from 'next-auth/react';
-import { User } from '../../../types/models';
-import { ObjectId } from 'mongodb';
+import { User, UserModel } from '../../../models/user-model';
+import { QuestModel } from '../../../models/quest-model';
 
 type SubscribeRequest = {
 	characterId: string
@@ -26,21 +26,30 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			throw new Error('session is not valid');
 		}
 
-		const {client, database} = await mongoDbHelper.connect();
-		const questCollection = database.collection('quests');
-		const userCollection = database.collection('users');
-
 		await schema.validate(req.body);
-		const request : SubscribeRequest = req.body;
+		const request = req.body as SubscribeRequest;
 
-
-		const user = await userCollection.findOne<User>({'email' : session.user.email});
+		dbConnect();
+		const user = await UserModel.findOne({'email' : session.user.email});
 		if(user) {
-			//character aus user holen
-			await userCollection.updateOne({'_id' : user._id}, { $push: {'subscribedQuests' : new ObjectId(request.questId)} });
-			await questCollection.updateOne({'_id' : new ObjectId(request.questId) }, { $push:{'subscribers': { user: user.name, character: 'Test' } } });
+			const character = user.characters.find((x: any)=>x.id === request.characterId);
+
+			if(character) {
+				const quest = await QuestModel.findById(request.questId);
+				if(quest) {
+					user.subscribedQuests.push(request.questId);
+					await user.save();
+
+					quest.subscriber.push({
+						name: user.name,
+						characterClass: character.class,
+						characterLevel: character.level,
+						characterName: character.name
+					});	
+					await quest.save();
+				}
+			}
 		}
-		await client.close();
 		res.status(200).send('');
 		
 	} catch (error: any) {

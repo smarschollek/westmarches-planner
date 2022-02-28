@@ -2,9 +2,15 @@ import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
 import { apiProtector } from '../../../helper/api-protector';
-import { mongoDbHelper } from '../../../helper/mongodb';
+import { dbConnect } from '../../../helper/db-connect';
+import { QuestModel } from '../../../models/quest-model';
 
-type Response = {
+interface UpdateQuestRequest {
+	_id: string
+	name: string
+	placeId: string
+	state: string,
+	description: string
 }
 
 const validationSchema = object({
@@ -19,17 +25,18 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
 
-		const id = req.body.id;
-		const quest = {
-			...req.body,
-			placeId: new ObjectId(req.body.placeId)
-		};
-		delete quest._id;
+		const body = req.body as UpdateQuestRequest;
 
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('quests');
-		await collection.updateOne({'_id' : new ObjectId(id)}, {$set: {...quest}});
-		await client.close();
+		dbConnect();
+		
+		const quest = await QuestModel.findById(body._id);
+		if(quest) {
+			quest.name = body.name;
+			quest.description = body.description;
+			quest.state = body.state;
+			quest.placeId = body.placeId;
+			await quest.save();
+		}
 		res.status(200).json('');
 	} catch (error) {
 		res.status(500).json(error);

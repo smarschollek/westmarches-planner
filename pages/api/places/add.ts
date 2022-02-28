@@ -1,7 +1,9 @@
 import { object, string } from 'yup';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mongoDbHelper } from '../../../helper/mongodb';
+
 import { apiProtector } from '../../../helper/api-protector';
+import { PlaceModel } from '../../../models/place-model';
+import { dbConnect } from '../../../helper/db-connect';
 
 const validationSchema = object({
 	name: string().required(),
@@ -13,10 +15,9 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
 
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('places');
-		await collection.insertOne(req.body);
-		await client.close();
+		dbConnect();
+		await PlaceModel.create(req.body);
+		
 		res.status(200).json('');
 	} catch (error) {
 		res.status(500).json(JSON.stringify(error));

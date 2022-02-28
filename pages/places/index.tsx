@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Button, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../../layout/layout';
-import { Place } from '../../types/dtos';
+import { Place } from '../../models/place-model';
 
 const Index : NextPage = () => {
 	const router = useRouter();
@@ -19,7 +19,7 @@ const Index : NextPage = () => {
 	},[]);
 	
 	const mapPlaces = () => {
-		return places.map((place, index) => (
+		return places?.map((place, index) => (
 			<ListGroupItem action href={`/places/details/${place._id}`} key={index}>{place.name}</ListGroupItem>
 		));
 	};

@@ -1,0 +1,38 @@
+import mongoose from 'mongoose';
+
+export interface User {
+	name: string,
+	email: string,
+	password: string,
+	isAdmin: boolean,
+	isGamemaster: boolean,
+	characters: Character[]
+	subscribedQuests: string[]
+}
+
+export interface Character {
+	_id: string,
+	name: string,
+	level: number,
+	class: string,
+	description: string
+}
+
+const userSchema = new mongoose.Schema<User>({
+	name: String,
+	email: String,
+	password: String,
+	isAdmin: Boolean,
+	isGamemaster: Boolean,
+	characters: [
+		{
+			name: String,
+			level: Number,
+			class: String,
+			comment: String
+		}
+	],
+	subscribedQuests: [String]
+});
+
+export const UserModel = mongoose.models.User || mongoose.model<User>('User', userSchema);

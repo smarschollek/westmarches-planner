@@ -1,28 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { mongoDbHelper } from '../../../helper/mongodb';
-import { Place, Quest } from '../../../types/dtos';
+import { dbConnect } from '../../../helper/db-connect';
+import { Place, PlaceModel } from '../../../models/place-model';
 
-type Response = {
+type AllPlacesRespone = Place & {
+	questCount: number
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
 
-const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {	
-	const {client, database} = await mongoDbHelper.connect();
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<AllPlacesRespone[]>) => {	
 	
-	const placesCollection = database.collection('places');
-	const questsCollection = database.collection('quests');
+	dbConnect();
 
-	const places = await placesCollection.find<Place>({}).toArray();
-
-	for (let i = 0; i < places.length; i++) {
-		const place = places[i];
-		const quest = await questsCollection.find<Quest>({'placeId': place._id }).toArray();
-		place.questCount = quest.length;
-	}
-
-	await client.close();
+	const places = await PlaceModel.find<AllPlacesRespone>();
+	
+	
 	res.status(200).json(places);
 };
 

@@ -1,8 +1,10 @@
 import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { mongoDbHelper } from '../../../helper/mongodb';
-import { Place, PlaceWithQuests, Quest } from '../../../types/dtos';
+import { dbConnect } from '../../../helper/db-connect';
+import { PlaceModel } from '../../../models/place-model';
+import { QuestModel } from '../../../models/quest-model';
+
 
 type Response = {
 }
@@ -21,16 +23,16 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 			id = id[0];
 		}
 
-		const {client, database} = await mongoDbHelper.connect();
+		dbConnect();
 
-		const data = await database.collection('places').findOne<Place>({'_id' : new ObjectId(id)});
+		const data = await PlaceModel.findOne({'_id' : new ObjectId(id)});
 		if(!data) {
 			throw new Error(`no place with ${id} found`);
 		}
 
 		if(includeQuests) {
-			const quests = await database.collection('quests').find<Quest>({'placeId' : data._id}).toArray();
-			const result: PlaceWithQuests = {
+			const quests = await QuestModel.find({'placeId' : data._id});
+			const result: any = {
 				...data,
 				quests
 			};
@@ -38,7 +40,6 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 		} else {
 			res.status(200).json(data);
 		}
-		await client.close();
 	} catch(error : any) {
 		res.status(500).json(error);
 	} finally {

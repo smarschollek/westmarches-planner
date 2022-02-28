@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { mongoDbHelper } from '../../../helper/mongodb';
+import { dbConnect } from '../../../helper/db-connect';
+import { QuestModel } from '../../../models/quest-model';
 
 type Response = {
 }
@@ -15,15 +16,14 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 			throw new Error('id is not set');
 		}
 
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('quests');
-
+		dbConnect();
+		
 		if(Array.isArray(id)) {
-			await collection.deleteOne({'_id' : id[0]});
+			await QuestModel.deleteOne({'_id' : id[0]});
 		} else{
-			await collection.deleteOne({'_id' : id});
+			await QuestModel.deleteOne({'_id' : id});
 		}
-		await client.close();
+		
 		res.status(200).json('');
 	}
 	catch(error : any) {

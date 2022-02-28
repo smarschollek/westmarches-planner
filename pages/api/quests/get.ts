@@ -1,8 +1,7 @@
-import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { mongoDbHelper } from '../../../helper/mongodb';
-import { Quest } from '../../../types/dtos';
+import { dbConnect } from '../../../helper/db-connect';
+import { QuestModel } from '../../../models/quest-model';
 
 type Response = {
 }
@@ -21,14 +20,14 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 			id = id[0];
 		}
 
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('quests');
-		const data = await collection.findOne<Quest>({'_id' : new ObjectId(id)});
+		dbConnect();
+		
+		const data = await QuestModel.findById(id);
 		
 		if(!data) {
 			throw new Error(`quest with ${id} not found`);
 		}
-		await client.close();
+		
 		res.status(200).json(data);
 	} catch(error : any) {
 		res.status(500).json(error);

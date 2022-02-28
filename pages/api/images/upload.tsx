@@ -1,6 +1,5 @@
 import { IncomingMessage } from 'http';
 import multer from 'multer';
-import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 
 type IncomingFileMessage = IncomingMessage & {

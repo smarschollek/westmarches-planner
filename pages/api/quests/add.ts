@@ -1,12 +1,13 @@
 import { object, string } from 'yup';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mongoDbHelper } from '../../../helper/mongodb';
-import { ObjectId } from 'mongodb';
+import { dbConnect } from '../../../helper/db-connect';
 import { apiProtector } from '../../../helper/api-protector';
+import { QuestModel } from '../../../models/quest-model';
 
-
-type Response = {
-
+interface AddQuestRequest {
+	name: string,
+	description?: string
+	placeId: string
 }
 
 const validationSchema = object({
@@ -20,15 +21,17 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
 		
-		const quest = {
-			...req.body,
-			placeId: new ObjectId(req.body.placeId)
-		};
+		const body = req.body as AddQuestRequest;
 
-		const {client, database} = await mongoDbHelper.connect();
-		const collection = database.collection('quests');
-		await collection.insertOne(quest);
-		await client.close();
+		dbConnect();
+		
+		QuestModel.create({
+			state: 'Planning',
+			name: body.name,
+			description: body.description ?? '',
+			placeId: body.placeId
+		});
+	
 		res.status(200).json('');
 	} catch (error) {
 		res.status(500).json(JSON.stringify(error));
