@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import { createRef, ReactElement, useState } from 'react';
-import { Accordion, Button, Col, Row, ToggleButton } from 'react-bootstrap';
+import { ReactElement, useEffect, useState } from 'react';
+import { Accordion, Button, Col, Dropdown, Form, Row, Stack } from 'react-bootstrap';
+import { CalenderWeek, getCalenderWeeks, getCurrentWeek, getWeekDays } from '../helper/dayjs-helper';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
 
 const timeValues = [
 	['1:00', '2:00', '3:00'],
@@ -14,11 +16,16 @@ const timeValues = [
 	['22:00', '23:00', '00:00'],
 ];
 
-dayjs.extend(weekOfYear);
-
 export const WeekTimeSelection = (): ReactElement => {
 	const [times, setTimes] = useState<{[key: string] : string[]}>({});
-	const focusRef = createRef<HTMLElement>();
+	const [weeks, setWeeks] = useState<CalenderWeek[]>([]);
+	const [selectedWeek, setSelectedWeek] = useState<CalenderWeek>();
+
+	useEffect(() => {
+		const weeks = getCalenderWeeks();
+		setWeeks(weeks);
+		setSelectedWeek(weeks[getCurrentWeek()]);
+	}, []);
 
 	const pushTime = (day: string, values: string[]) => {
 		const temp = {...times};
@@ -42,35 +49,43 @@ export const WeekTimeSelection = (): ReactElement => {
 				temp[day] = values;
 			}
 		}
-		
 
 		setTimes(temp);
 	}; 
 
-	const renderAccordion = (days : string[]) => {
+	const renderAccordion = (days : Date[]) => {
 		return (
-			<Accordion defaultActiveKey='0'>
+			<Accordion>
 				{days.map((day, i) => {
+					
+					if(dayjs(day).isBefore(dayjs())) {
+						return(
+							<Accordion.Item eventKey={i.toString()} key={i}>
+								<Accordion.Header className='text-decoration-line-through opacity-50' onClick={() => {}}>{day.toDateString()}</Accordion.Header>
+							</Accordion.Item>
+						);
+					}
+					
 					return(
 						<Accordion.Item eventKey={i.toString()} key={i}>
-							<Accordion.Header>{day}</Accordion.Header>
+							<Accordion.Header>{day.toDateString()}</Accordion.Header>
 							<Accordion.Body>
-								<Row>
+								<Row key='-1'>
 									<Col className='d-grid'>
 										<Button
 											id={'toggle-check-all'}
 											variant='light'
 											onClick={() => {
-												pushTime(day, timeValues.flat());
+												pushTime(day.toDateString(), timeValues.flat());
 											}}
 										>
-								            {times[day] && times[day].length > 0 ? 'Clear' : 'All' }
+								            {times[day.toDateString()] && times[day.toDateString()].length > 0 ? 'Clear' : 'All' }
 										</Button>
 									</Col>
 									<Col/>
 									<Col/>
 								</Row>
-								{mapTimes(day)}
+								{mapTimes(day.toDateString())}
 							</Accordion.Body>
 						</Accordion.Item>
 					);
@@ -90,10 +105,7 @@ export const WeekTimeSelection = (): ReactElement => {
 							        <Button
 										id={`toggle-check-${col}`}
 										variant={times[day] && times[day].includes(col) ? 'dark' : 'light'}
-										onClick={() => {
-											pushTime(day, [col]);
-											focusRef.current && focusRef.current.focus();
-										}}
+										onClick={() => pushTime(day, [col])}
 									>
 										{col}
 									</Button>
@@ -106,12 +118,27 @@ export const WeekTimeSelection = (): ReactElement => {
 		});
 	};
     
-	console.log(dayjs(dayjs().year(2022)).week(2));
+	if(!weeks || !selectedWeek) {
+		return <></>;
+	}
 
 	return(
-		<>
-			<div ref={focusRef}/>
-			{renderAccordion(['KW1', 'KW2', 'KW3', 'KW4', 'KW5', 'KW6','KW7' ])}
-		</>
+		<Stack>
+			<Dropdown className='d-grid mb-2'>
+				<Dropdown.Toggle id='dropdown-basic'>
+					<span className='overflow-hidden'>
+						<FontAwesomeIcon icon={faCalendarAlt}/>
+						<span className='mx-3'>{`${selectedWeek.name}, ${dayjs(selectedWeek.start).format('MM/D/YYYY')} - ${dayjs(selectedWeek.stop).format('MM/D/YYYY')}`}</span>
+					</span>
+				</Dropdown.Toggle>
+
+				<Dropdown.Menu className='w-100 overflow-auto' style={{maxHeight: '250px'}}>
+					{weeks.map(week => {
+						return <Dropdown.Item disabled={dayjs(week.stop).isBefore(dayjs())} onClick={() => setSelectedWeek(week)} key={week.weekIndex}>{`${week.name} # ${week.start.toDateString()} - ${week.stop.toDateString()}`}</Dropdown.Item>;
+					})}
+				</Dropdown.Menu>
+			</Dropdown>
+			{renderAccordion(getWeekDays(selectedWeek.weekIndex))}
+		</Stack>
 	);
 };
