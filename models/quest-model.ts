@@ -36,4 +36,4 @@ const questSchema = new mongoose.Schema<Quest>({
 	]
 });
 
-export const QuestModel = mongoose.models.Quest || mongoose.model<Quest>('Quest', questSchema);
+export const QuestModel = mongoose.models.Quest as mongoose.Model<Quest, {}, {}, {}> || mongoose.model<Quest>('Quest', questSchema);

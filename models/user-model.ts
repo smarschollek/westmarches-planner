@@ -35,4 +35,4 @@ const userSchema = new mongoose.Schema<User>({
 	subscribedQuests: [String]
 });
 
-export const UserModel = mongoose.models.User || mongoose.model<User>('User', userSchema);
+export const UserModel = mongoose.models.User as mongoose.Model<User, {}, {}, {}> || mongoose.model<User>('User', userSchema);

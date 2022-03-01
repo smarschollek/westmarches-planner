@@ -13,4 +13,4 @@ const placeSchema = new mongoose.Schema<Place>({
 	imageGuid: String
 });
 
-export const PlaceModel = mongoose.models.Place || mongoose.model<Place>('Place', placeSchema);
+export const PlaceModel = mongoose.models.Place as mongoose.Model<Place, {}, {}, {}> || mongoose.model<Place>('Place', placeSchema);
