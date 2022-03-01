@@ -4,7 +4,9 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Badge, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { Layout } from '../layout/layout';
-import { Place, Quest } from '../types/dtos';
+import { Place } from '../models/place-model';
+import { Quest } from '../models/quest-model';
+
 
 const Home: NextPage = () => {
 	const [quests, setQuests] = useState<Quest[]>([]);
@@ -50,7 +52,7 @@ const Home: NextPage = () => {
 								key={index}
 							>
 								<span className='text-truncate'>{place.name}</span>
-								{ place.questCount > 0 && <Badge>{place.questCount} Quest(s)</Badge>}
+								{/* { place.questCount > 0 && <Badge>{place.questCount} Quest(s)</Badge>} */}
 							</ListGroupItem>
 						))}
 					</ListGroup>
