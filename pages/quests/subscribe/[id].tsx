@@ -9,6 +9,7 @@ import { Character } from '../../../models/user-model';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { WeekTimeSelection } from '../../../components/week-time-selection';
 
 type QuestSubscribeFromValues = {
     characterId: string
@@ -69,7 +70,7 @@ const Subscribe : NextPage = () => {
 	return (
 		<Layout>
 			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
+				{/* <Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
 					<Form onSubmit={handleSubmit(onSubmit)}>
 						<Form.Group>
 							<Form.Label>Character</Form.Label>
@@ -94,7 +95,8 @@ const Subscribe : NextPage = () => {
 							</ButtonGroup>
 						</Form.Group>
 					</Form>
-				</Col>
+				</Col> */}
+				<WeekTimeSelection />
 			</Row>
 		</Layout>
 	);
