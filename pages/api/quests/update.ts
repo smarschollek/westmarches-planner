@@ -34,7 +34,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		if(quest) {
 			quest.name = body.name;
 			quest.description = body.description;
-			quest.state = body.state;
+			quest.questState = body.state;
 			quest.placeId = body.placeId;
 			quest.imageGuid = body.imageGuid;
 			await quest.save();

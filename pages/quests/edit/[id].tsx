@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QuestEdit, QuestEditFormValues } from '../../../components/quest-edit';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../types/dtos';
+import { Quest } from '../../../models/quest-model';
 
 const Page : NextPage = () => {
 	const router  = useRouter();

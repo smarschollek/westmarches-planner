@@ -5,6 +5,7 @@ import { object, string } from 'yup';
 import { getSession } from 'next-auth/react';
 import { User, UserModel } from '../../../models/user-model';
 import { QuestModel } from '../../../models/quest-model';
+import { ObjectId } from 'mongodb';
 
 type SubscribeRequest = {
 	characterId: string
@@ -41,6 +42,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 					await user.save();
 
 					quest.subscriber.push({
+						_id: ObjectId.generate().toString(),
 						name: user.name,
 						characterClass: character.class,
 						characterLevel: character.level,

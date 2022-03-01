@@ -26,7 +26,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const request = req.body as UnsubscribeQuestRequest;
     
 		dbConnect();
-		const quest : Quest | null = await QuestModel.findById<Quest & Document>(request.questId);
+		const quest = await QuestModel.findById(request.questId);
 		if(quest) {
 			const index = quest.subscriber.findIndex(c => c._id == request.subscriberId );
 			if(index === -1) {

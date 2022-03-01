@@ -1,7 +1,7 @@
 import mongoose, {Document} from 'mongoose';
 
-export interface Quest extends Document {
-	_id: string,
+export interface Quest {
+	_id: string;
 	creator: string,
     name: string,
 	description: string,
@@ -12,7 +12,7 @@ export interface Quest extends Document {
 }
 
 export interface Subscriber {
-    _id: string,
+	_id: string;
 	name: string,
     characterName: string,
     characterClass: string,
