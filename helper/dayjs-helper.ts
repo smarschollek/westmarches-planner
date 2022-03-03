@@ -45,10 +45,30 @@ export const getCurrentWeek = () : number => {
 	return dayjs().isoWeek();
 };
 
-export const groupTimes = (times: string[]) : string[] => {
-	if(times.length === 24) {
-		return ['Whole Day'];
+export const groupTimes = (times: number[]) : number[][] => {
+	if(times.length === 0) {
+		return [];
 	}
-		
-	return times;
+	if(times.length === 24) {
+		return [[times[0], times[23]]];
+	}
+	
+	const values : number[][] = [];
+	let temp : number[] = [];
+	
+	temp.push(times[0]);
+	for (let i = 1; i < times.length; i++) {
+		const time = times[i];
+		temp.push(time);
+		if((time - temp[i-1]) > 1) {
+			values.push([temp[0],temp[temp.length-2]]);
+			temp=[time];
+		}
+	}
+
+	if(temp.length !== 0) {
+		values.push([temp[0],temp[temp.length-1]]);
+	}
+
+	return values;
 };

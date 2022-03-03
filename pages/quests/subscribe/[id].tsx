@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Row, Col, Button, ButtonGroup, Stack } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { WeekTimeSelection } from '../../../components/week-time-selection';
+import { SelectedTimes, WeekTimeSelection } from '../../../components/week-time-selection';
 import { CharackterSelection } from '../../../components/charackter-selection';
 import { Character } from '../../../models/user-model';
 import axios from 'axios';
@@ -13,7 +13,7 @@ import { SubscribeSummary } from '../../../components/subscribe-summary';
 const Subscribe : NextPage = () => {
 	const [pageIndex, setPageIndex] = useState(0);
 	const [character, setCharacter] = useState<Character>();
-	const [times, setTimes] = useState<{[key: string] : string[]}>({});
+	const [times, setTimes] = useState<SelectedTimes>({});
 	const [quest, setQuest] = useState<Quest>();
 	const router = useRouter();
 
