@@ -12,11 +12,12 @@ export interface Quest {
 }
 
 export interface Subscriber {
-	_id: string;
+	_id?: string;
 	name: string,
     characterName: string,
     characterClass: string,
     characterLevel: number
+	times: {[key: string] : string[]}
 }
 
 const questSchema = new mongoose.Schema<Quest>({
@@ -31,7 +32,8 @@ const questSchema = new mongoose.Schema<Quest>({
 			name: String,
 			characterName: String,
 			characterClass: String,
-			characterLevel: Number
+			characterLevel: Number,
+			times: [Object]
 		}
 	]
 });

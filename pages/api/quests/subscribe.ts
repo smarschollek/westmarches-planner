@@ -10,6 +10,7 @@ import { ObjectId } from 'mongodb';
 type SubscribeRequest = {
 	characterId: string
 	questId: string
+	times: {[key: string] : string[]}
 }
 
 const schema = object({
@@ -42,11 +43,12 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 					await user.save();
 
 					quest.subscriber.push({
-						_id: ObjectId.generate().toString(),
+						
 						name: user.name,
 						characterClass: character.class,
 						characterLevel: character.level,
-						characterName: character.name
+						characterName: character.name,
+						times: request.times
 					});	
 					await quest.save();
 				}

@@ -12,12 +12,13 @@ export interface CalenderWeek {
     name: string,
     start: Date,
     stop: Date
+	toString: () => string
 }
 
 export const getCalenderWeeks = () : CalenderWeek[] => {
 	const result : CalenderWeek[] = [];
 
-	for (let i = 0; i < dayjs().isoWeeksInYear(); i++) {
+	for (let i = 0; i <= dayjs().isoWeeksInYear(); i++) {
 		const week = dayjs().isoWeek(i);
 
 		result.push({
@@ -42,4 +43,12 @@ export const getWeekDays = (weekIndex : number) : Date[] => {
 
 export const getCurrentWeek = () : number => {
 	return dayjs().isoWeek();
+};
+
+export const groupTimes = (times: string[]) : string[] => {
+	if(times.length === 24) {
+		return ['Whole Day'];
+	}
+		
+	return times;
 };

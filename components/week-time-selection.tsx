@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import { ReactElement, useEffect, useState } from 'react';
-import { Accordion, Button, Col, Dropdown, Form, Row, Stack } from 'react-bootstrap';
+import { Accordion, Button, ButtonGroup, Col, Dropdown, Form, Row, Stack } from 'react-bootstrap';
 import { CalenderWeek, getCalenderWeeks, getCurrentWeek, getWeekDays } from '../helper/dayjs-helper';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
+import {faCalendarAlt, faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 const timeValues = [
 	['1:00', '2:00', '3:00'],
@@ -16,10 +16,21 @@ const timeValues = [
 	['22:00', '23:00', '00:00'],
 ];
 
-export const WeekTimeSelection = (): ReactElement => {
-	const [times, setTimes] = useState<{[key: string] : string[]}>({});
+export type SelectedTimes = {[key: string] : string[]};
+
+interface WeekTimeSelectionProps {
+	onChange: (selectedTimes: SelectedTimes) => void
+	values: SelectedTimes
+}
+
+export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): ReactElement => {
+	const [times, setTimes] = useState<SelectedTimes>(values);
 	const [weeks, setWeeks] = useState<CalenderWeek[]>([]);
 	const [selectedWeek, setSelectedWeek] = useState<CalenderWeek>();
+
+	useEffect(() => {
+		onChange(times);
+	}, [onChange, times]);
 
 	useEffect(() => {
 		const weeks = getCalenderWeeks();
@@ -52,6 +63,24 @@ export const WeekTimeSelection = (): ReactElement => {
 
 		setTimes(temp);
 	}; 
+
+	const prevWeek = () => {
+		if(selectedWeek) {
+			const index = weeks.indexOf(selectedWeek);
+			if(index > 0) {
+				setSelectedWeek(weeks[index-1]);
+			}
+		}
+	};
+
+	const nextWeek = () => {
+		if(selectedWeek) {
+			const index = weeks.indexOf(selectedWeek);
+			if(index < weeks.length - 1) {
+				setSelectedWeek(weeks[index+1]);
+			}
+		}
+	};
 
 	const renderAccordion = (days : Date[]) => {
 		return (
@@ -105,7 +134,9 @@ export const WeekTimeSelection = (): ReactElement => {
 							        <Button
 										id={`toggle-check-${col}`}
 										variant={times[day] && times[day].includes(col) ? 'dark' : 'light'}
-										onClick={() => pushTime(day, [col])}
+										onClick={() => {
+											pushTime(day, [col]);
+										}}
 									>
 										{col}
 									</Button>
@@ -122,19 +153,33 @@ export const WeekTimeSelection = (): ReactElement => {
 		return <></>;
 	}
 
+	const renderDropdownValue = (item: CalenderWeek) : string => {
+		return `${item.name}, ${dayjs(item.start).format('MM/D/YYYY')} - ${dayjs(item.stop).format('MM/D/YYYY')}`;
+	};
+
 	return(
 		<Stack>
 			<Dropdown className='d-grid mb-2'>
-				<Dropdown.Toggle id='dropdown-basic'>
-					<span className='overflow-hidden'>
+				<ButtonGroup>
+					<Button onClick={prevWeek} variant='outline-primary'>
+						<FontAwesomeIcon icon={faAngleLeft}/>
+					</Button>
+					<Dropdown.Toggle variant='outline-primary' id='dropdown-basic' className='d-flex justify-content-center align-items-center p-0' style={{fontSize: '0.9rem', borderRadius: 0}}>
 						<FontAwesomeIcon icon={faCalendarAlt}/>
-						<span className='mx-3'>{`${selectedWeek.name}, ${dayjs(selectedWeek.start).format('MM/D/YYYY')} - ${dayjs(selectedWeek.stop).format('MM/D/YYYY')}`}</span>
-					</span>
-				</Dropdown.Toggle>
+						<span className='ms-2'>{renderDropdownValue(selectedWeek)}</span>
+					</Dropdown.Toggle>
+					<Button onClick={nextWeek} variant='outline-primary'>
+						<FontAwesomeIcon icon={faAngleRight}/>
+					</Button>
+				</ButtonGroup>
 
-				<Dropdown.Menu className='w-100 overflow-auto' style={{maxHeight: '250px'}}>
+				<Dropdown.Menu className='overflow-auto' style={{maxHeight: '250px'}}>
 					{weeks.map(week => {
-						return <Dropdown.Item disabled={dayjs(week.stop).isBefore(dayjs())} onClick={() => setSelectedWeek(week)} key={week.weekIndex}>{`${week.name} # ${week.start.toDateString()} - ${week.stop.toDateString()}`}</Dropdown.Item>;
+						return (
+							<Dropdown.Item disabled={dayjs(week.stop).isBefore(dayjs())} onClick={() => setSelectedWeek(week)} key={week.weekIndex}>
+								{renderDropdownValue(week)}
+							</Dropdown.Item>
+						);
 					})}
 				</Dropdown.Menu>
 			</Dropdown>
