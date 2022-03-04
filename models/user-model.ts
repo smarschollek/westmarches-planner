@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface Character {
-	_id: string,
+	_id?: string,
 	name: string,
 	level: number,
 	class: string,

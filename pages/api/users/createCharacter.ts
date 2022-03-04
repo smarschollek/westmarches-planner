@@ -37,7 +37,6 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const user = await UserModel.findOne({'email' : session.user!.email});
 		if(user) {
 			user.characters.push({
-				_id: ObjectId.generate().toString(),
 				class: body.class,
 				description: body.description ?? '',
 				level: body.level,
