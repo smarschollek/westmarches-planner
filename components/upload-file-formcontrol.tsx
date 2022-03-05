@@ -1,3 +1,4 @@
+import { Input, InputBase, Stack } from '@mui/material';
 import axios from 'axios';
 import { ChangeEvent, ReactElement, useState } from 'react';
 import { Form, Spinner } from 'react-bootstrap';
@@ -83,11 +84,16 @@ export const UploadFileFormControl = ({onUploadFinished, onUploadStarted, accept
 	};
 
 	return(
-		<Form.Group className='mb-3'>
-			<Form.Label>Image</Form.Label>
-			<Form.Control type='file' onChange={handleUploadImage} accept={accept}/>
+	// <Form.Group className='mb-3'>
+	// 	<Form.Label>Image</Form.Label>
+	// 	<Form.Control type='file' onChange={handleUploadImage} accept={accept}/>
+	// 	{renderText()}
+	// </Form.Group>
+
+		<Stack gap={1}>
+			<input type='file' onChange={handleUploadImage} accept={accept}/>
 			{renderText()}
-		</Form.Group>
+		</Stack>
 	);
 };
 

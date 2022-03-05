@@ -1,4 +1,4 @@
-import { Grid, CardContent, TextField,Card, Stack, Button } from '@mui/material';
+import { Grid, CardContent, TextField,Card, Stack, Button, Typography } from '@mui/material';
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -32,12 +32,12 @@ const Register : NextPage = () => {
 			<Card sx={{minWidth: '330px'}}>
 				<CardContent>
 					<form onSubmit={handleSubmit(onSubmit)}>
-						<Stack gap={2}>
+						<Typography variant='h6' textAlign='center'>Register new user</Typography>
+						<Stack gap={2} sx={{marginTop: 2}}>
 							<TextField 
 								id='input-name' 
 								type='text'
-								label='Name'
-					  			variant='standard'
+								placeholder='Name'
 								inputProps={{
 									autocomplete: 'off',
 								}}
@@ -46,8 +46,7 @@ const Register : NextPage = () => {
 							<TextField 
 								id='input-email' 
 								type='email'
-								label='Email'
-					  			variant='standard'
+								placeholder='Email'
 								inputProps={{
 									autocomplete: 'off',
 								}}
@@ -56,8 +55,8 @@ const Register : NextPage = () => {
 							<TextField 
 								id='input-password' 
 								type='password' 
-								label='Password' 
-								variant='standard' 
+								placeholder='Password' 
+								
 								{...register('password', {required: true})}
 							/>
 							<Button 

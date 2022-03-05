@@ -1,7 +1,8 @@
+import { Typography, Button, Stack, ListItemButton } from '@mui/material';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Button, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { MyList } from '../../components/my-list';
 import { Layout } from '../../layout/layout';
 import { Place } from '../../models/place-model';
 
@@ -18,27 +19,27 @@ const Index : NextPage = () => {
 		})();
 	},[]);
 	
-	const mapPlaces = () => {
-		return places?.map((place, index) => (
-			<ListGroupItem action href={`/places/details/${place._id}`} key={index}>{place.name}</ListGroupItem>
-		));
+	const handleRenderCallback = (place: Place) : JSX.Element => {
+		return (
+			<ListItemButton component='a' href={`/places/details/${place._id}`}>
+				{place.name}
+			</ListItemButton>
+		);
 	};
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h5>Places</h5>
-					<hr className='my-4'></hr>
-					<ListGroup>
-						{mapPlaces()}
-					</ListGroup>
-					<hr className='my-4'></hr>
-					<div className='d-grid'>
-						<Button onClick={() => router.push('/places/add')}>Add Place</Button>
-					</div>	
-				</Col>
-			</Row>	
+			<Stack gap={1} sx={{marginTop: 2}}>
+				<Typography gutterBottom variant='h6' component='div' sx={{paddingLeft: 2, paddingTop: 1}}>
+	  				Places
+				</Typography>
+				<MyList items={places} renderCallback={handleRenderCallback}/>
+				<Button 
+					component='a'
+					href='/places/add'
+					variant='contained'
+				> Add Place </Button>		
+			</Stack>			
 		</Layout>
 	);
 };

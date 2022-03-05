@@ -52,18 +52,14 @@ const Login : NextPage = () => {
 							<TextField 
 								id='input-email' 
 								type='email'
-								label='Email'
-								inputProps={{
-									autocomplete: 'off',
-								}}
-					  variant='standard'
+								placeholder='Email'
 								{...register('email', {required: true})}
 							/>
 							<TextField 
 								id='input-password' 
 								type='password' 
-								label='Password' 
-								variant='standard' 
+								placeholder='Password' 
+								
 								{...register('password', {required: true})}
 							/>
 							<Button 
@@ -71,7 +67,7 @@ const Login : NextPage = () => {
 								variant='contained'
 								disabled={!formState.isValid}
 							>
-					Login
+								Login
 							</Button>
 							<Button variant='contained' color='secondary' href='/register'>Register</Button>
 						</Stack>

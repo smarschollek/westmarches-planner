@@ -1,5 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 type ThemeTypes = 'dark' | 'light'
 type LanguageTypes = 'de' | 'en'
@@ -24,9 +24,22 @@ export const useUserConfig = ()  => useContext(userConfigContext);
 import { ReactElement } from 'react';
 
 export const UserConfigProvider = ({children} : PropsWithChildren<unknown>): ReactElement => {
-	const [theme, setTheme] = useState<ThemeTypes>('dark');
+	const [theme, setTheme] = useState<ThemeTypes>('light');
 	const [language, setLanguage] = useState<LanguageTypes>('en');
     
+	useEffect(() => {
+		setTheme(localStorage.getItem('theme') as ThemeTypes);
+		setLanguage(localStorage.getItem('language') as LanguageTypes);
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem('theme', theme);			
+	}, [theme]);
+
+	useEffect(() => {
+		localStorage.setItem('language', language);
+	}, [language]);
+
 	const activeTheme = createTheme({
 		palette: {
 		  mode: theme,

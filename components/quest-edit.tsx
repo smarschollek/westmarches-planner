@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-import { Form, Row, Col, Button, Image, ButtonGroup } from 'react-bootstrap';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Place } from '../models/place-model';
 import { UploadFileFormControl } from './upload-file-formcontrol';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSave, faCancel} from '@fortawesome/free-solid-svg-icons';
+import { Button, Card, CardContent, CardMedia, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 
 export type QuestEditFormValues = {
 	name: string,
@@ -17,7 +15,8 @@ export type QuestEditFormValues = {
 }
 
 type QuestEditProps = {
-	defaultValues?: QuestEditFormValues
+	defaultValues: QuestEditFormValues,
+	places: Place[]
 	onSubmit: (formValues: QuestEditFormValues) => void
 }
 
@@ -27,24 +26,15 @@ const questStates = [
 	'Close'
 ];
 
-export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElement => {
+export const QuestEdit = ({defaultValues, places, onSubmit} : QuestEditProps): ReactElement => {
 	const router = useRouter();
-	const [places, setPlaces] = useState<Place[]>();
 	const [uploading, setUploading] = useState(false);
 	const [imageGuid, setImageGuid] = useState(defaultValues?.imageGuid ?? '');
 
-	const { register, handleSubmit, setValue, formState } = useForm<QuestEditFormValues>({
+	const { control, handleSubmit, setValue, formState } = useForm<QuestEditFormValues>({
 		defaultValues,
 		mode: 'onChange'
 	});
-
-
-	useEffect(() => {
-		(async () => {
-			const response = await axios.get<Place[]>('/api/places/all');
-			setPlaces(response.data);
-		})();
-	}, []);
 
 	const handleOnUploadFinished = (guid: string) => {
 		setImageGuid(guid);
@@ -61,64 +51,92 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 	}
     
 	return(
-		<Form className='mt-3' onSubmit={handleSubmit(onSubmit)}>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					{
-						imageGuid && (
-							<div className='d-flex justify-content-center'>
-								<Image fluid src={`/api/images/${imageGuid}`} style={{maxHeight: '500px'}} alt='quest'/>
-							</div>
-						)
-					}
+		<form onSubmit={handleSubmit(onSubmit)} style={{marginTop: 16}}>
+			<Card>
+				{
+					defaultValues?.imageGuid && (
+						<CardMedia
+							component='img'
+							image={`/api/images/${imageGuid}`}
+						/>
+					)
+				}
 
-					<UploadFileFormControl onUploadStarted={() => setUploading(true)} onUploadFinished={handleOnUploadFinished} accept='image/*'/>
-
-					<Form.Group className='mb-3'>
-						<Form.Label>Titel</Form.Label>
-						<Form.Control type='text' {...register('name', {required: true})}/>
-					</Form.Group>
-
-					<Form.Group className='mb-3'>
-						<Form.Label>Place</Form.Label>
-						<Form.Select {...register('placeId')}>
-							{ places.map((place, index) => {
-								return <option key={index} value={place._id.toString()}>{place.name}</option>;
-							}) }
-						</Form.Select>
-					</Form.Group>
-
-					<Form.Group className='mb-3'>
-						<Form.Label>Status</Form.Label>
-						<Form.Select {...register('questState')}>
-							{ questStates.map((value, index) => {
-								return <option key={index} value={value}>{value}</option>;
-							}) }
-						</Form.Select>
-					</Form.Group>
-
-					<Form.Group className='mb-3'>
-						<Form.Label>Description</Form.Label>
-						<Form.Control as='textarea' {...register('description')} rows={5} style={{resize: 'none'}}/>
-					</Form.Group>
-
-					<Form.Group className='mb-3 d-grid'>
-						<ButtonGroup>
-							<Button variant='danger' onClick={() => router.back()}>
-								<FontAwesomeIcon icon={faCancel} className='me-2'/>
-								Cancel
-							</Button>
-							<Button 
-								type='submit'
-								disabled={!formState.isValid || uploading}
-							>
-								<FontAwesomeIcon icon={faSave} className='me-2'/>
+				<CardContent>
+					<Stack gap={2}>
+						<UploadFileFormControl onUploadStarted={() => setUploading(true)} onUploadFinished={handleOnUploadFinished} accept='image/*'/>
+						<Controller
+							render={({field, fieldState}) => (
+								<TextField fullWidth id='input-name' placeholder='Name' 
+									value={field.value}
+									onChange={field.onChange}
+									label={'Name'}
+									error={!!fieldState.error}
+									helperText={fieldState.error && 'Error'}
+								/>
+							)}
+							control={control}
+							name='name'
+							rules={{required: true}}
+						/>
+						<Controller
+							render={({field}) => (
+								<FormControl fullWidth>
+									<Select
+										value={field.value}
+										onChange={field.onChange}
+									>
+										{ questStates.map((value, index) => {
+											return <MenuItem  key={index} value={value}>{value}</MenuItem>;
+										}) }
+									</Select>
+								</FormControl>)}
+							control={control}
+							name='questState'
+							defaultValue={defaultValues.questState}
+						/>
+						<Controller
+							render={({field}) => (
+								<FormControl fullWidth>
+									<Select
+										value={field.value}
+										onChange={field.onChange}
+									>
+										{ places.map((place, index) => {
+	 										return <MenuItem key={index} value={place._id.toString()}>{place.name}</MenuItem>;
+	 									}) }
+									</Select>
+								</FormControl>)}
+							control={control}
+							name='placeId'
+							defaultValue={defaultValues.placeId}
+						/>
+						<Controller
+							render={({field, fieldState}) => (
+								<TextField fullWidth id='input-description' 
+									value={field.value}
+									onChange={field.onChange}	
+									placeholder='Description' 
+									multiline minRows={5} maxRows={15}
+									label={'Description'}
+									error={!!fieldState.error}
+									helperText={fieldState.error && 'Error'}
+								/>)}
+							control={control}
+							name='description'
+							defaultValue={defaultValues?.description}
+						/>
+						<Button 
+							type='submit'
+							variant='contained'
+							disabled={!formState.isValid}
+						>
 								Save
-							</Button>
-						</ButtonGroup>
-					</Form.Group>
-				</Col>
-			</Row>
-		</Form>
+						</Button>
+						<Button variant='contained' color='secondary' onClick={() => router.back()}>Cancel</Button>
+					</Stack>
+				</CardContent>
+			</Card>
+		</form>
 	);
 };

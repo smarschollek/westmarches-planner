@@ -1,16 +1,18 @@
 import Image from 'next/image';
-import { ReactElement, useState, MouseEvent } from 'react';
+import { ReactElement, useState } from 'react';
 import {useSession, signOut} from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { AppBar, Avatar, Box, Button, Container, Divider, IconButton, List, ListItem, ListItemText, Menu, MenuItem, SwipeableDrawer, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Button, Container, Divider, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuIcon from '@mui/icons-material/Menu';
 import MapIcon from '@mui/icons-material/Map';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { Logout } from '@mui/icons-material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import GroupIcon from '@mui/icons-material/Group';
+import { ExtendedSession } from '../helper/validate-session';
 
 export const Navigation = (): ReactElement => {
-	const {data} = useSession();
+	const data = useSession().data as ExtendedSession;
 	const router = useRouter();
 	const [drawerState, setDrawerState] = useState(false);
 
@@ -20,50 +22,6 @@ export const Navigation = (): ReactElement => {
 	};
    
 	return(
-		// <Navbar bg='light' expand='lg' collapseOnSelect>
-		// 	<Container>
-		// 		<Navbar.Brand>
-		// 			<Image
-		// 				src='/images/ac.svg'
-		// 				width='30'
-		// 				height='30'
-		// 				className='d-inline-block align-top'
-		// 				alt='logo'
-		// 			/>
-		// 		</Navbar.Brand>
-		// 		<Navbar.Toggle aria-controls='navbar' />
-		// 		<Navbar.Collapse id='navbar'>
-		// 			<Nav className='me-auto'>
-		// 				<Nav.Link eventKey='Dashboard' href={'/'}>
-		// 					<FontAwesomeIcon icon={faColumns} className='me-2' style={{width: '16px'}}/>
-		// 					Dashboard
-		// 				</Nav.Link>
-		// 				{ data && data.isGamemaster && <Nav.Link eventKey='/places' href='/places'>
-		// 					<FontAwesomeIcon icon={faMap} className='me-2' style={{width: '16px'}}/>
-		// 					Places
-		// 				</Nav.Link> }
-		// 				{ data && data.isGamemaster && <Nav.Link eventKey='/quests' href='/quests'>
-		// 					<FontAwesomeIcon icon={faQuestion} className='me-2' style={{width: '16px'}}/>
-		// 					Quests
-		// 				</Nav.Link> }
-		// 				{ data && data.isAdmin && <Nav.Link eventKey='/users' href='/users'>
-		// 					<FontAwesomeIcon icon={faUserFriends} className='me-2' style={{width: '16px'}}/>
-		// 					Users
-		// 				</Nav.Link> }
-		// 			</Nav>
-		// 			<Nav>
-		// 				<Nav.Link eventKey='my' href={'/user'}>
-		// 					<FontAwesomeIcon icon={faUser} className='me-2' style={{width: '16px'}}/>
-		// 					{data?.user?.name}
-		// 				</Nav.Link>
-		// 				<Nav.Link onClick={handleLogout}>
-		// 					<FontAwesomeIcon icon={faPowerOff} className='me-2' style={{width: '16px'}}/>
-		// 					Logout
-		// 				</Nav.Link>
-		// 			</Nav>
-		// 		</Navbar.Collapse>
-		// 	</Container>
-		// </Navbar>
 		<>
 			<SwipeableDrawer
 				
@@ -74,23 +32,59 @@ export const Navigation = (): ReactElement => {
 			>
 				<Box sx={{width: 250}}>
 					<List>
-						<ListItem button>
-							<DashboardIcon sx={{marginRight: 1}}/>
-							<ListItemText>Dashboard</ListItemText>
+						<ListItem >
+							<ListItemButton component='a' href='/'>
+								<ListItemIcon>
+									<DashboardIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Dashboard</Typography>
+							</ListItemButton>
 						</ListItem>
-						<ListItem button>
-							<MapIcon sx={{marginRight: 1}}/>
-							<ListItemText>Places</ListItemText>
-						</ListItem>
-						<ListItem button>
-							<QuestionMarkIcon sx={{marginRight: 1}}/>
-							<ListItemText>Quests</ListItemText>
-						</ListItem>
+						{
+							data && data.isGamemaster && (
+								<ListItem>
+									<ListItemButton component='a' href='/places'>
+										<ListItemIcon>
+											<MapIcon/>
+										</ListItemIcon>
+										<Typography textAlign='center'>Places</Typography>
+									</ListItemButton>
+								</ListItem>
+							)
+						}
+						{
+							data && data.isGamemaster && (
+								<ListItem>
+									<ListItemButton component='a' href='/quests'>
+										<ListItemIcon>
+											<QuestionMarkIcon/>
+										</ListItemIcon>
+										<Typography textAlign='center'>Quests</Typography>
+									</ListItemButton>	
+								</ListItem>
+							)
+						}
+						{
+							data && data.isAdmin && (
+								<>
+									<Divider/>
+									<ListItem>
+										<ListItemButton component='a' href='/users'>
+											<ListItemIcon>
+												<GroupIcon/>
+											</ListItemIcon>
+											<Typography textAlign='center'>Users</Typography>
+										</ListItemButton>
+									</ListItem>
+								</>
+							)
+						}
 						<Divider/>
-						<ListItem button onClick={handleLogout}>
-							<Logout sx={{marginRight: 1}}/>
-							<ListItemText>Logout</ListItemText>
-						</ListItem>
+						<div style={{padding: 8}}>
+							<Button fullWidth onClick={handleLogout} variant='contained' color='error' startIcon={<LogoutIcon/>}>
+									Logout
+							</Button>
+						</div>
 					</List>
 				</Box>
 			</SwipeableDrawer>
@@ -139,14 +133,60 @@ export const Navigation = (): ReactElement => {
 		 					alt='logo'
 		 				/>
 						</Typography>
-						<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-							<Button>Hello</Button>
+						<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>							
+							<MenuItem component='a' href='/'>
+								<ListItemIcon>
+									<DashboardIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Dashboard</Typography>
+							</MenuItem>
+							{
+								data && data.isGamemaster && (
+									<MenuItem component='a' href='/places'>
+										<ListItemIcon>
+											<MapIcon/>
+										</ListItemIcon>
+										<Typography textAlign='center'>Places</Typography>
+									</MenuItem>
+								)
+							}
+							{
+								data && data.isGamemaster && (
+									<MenuItem component='a' href='/quests'>
+										<ListItemIcon>
+											<QuestionMarkIcon/>
+										</ListItemIcon>
+										<Typography textAlign='center'>Quests</Typography>
+									</MenuItem>
+								)
+							}
+							{
+								data && data.isAdmin && (
+									<MenuItem component='a' href='/users'>
+										<ListItemIcon>
+											<GroupIcon/>
+										</ListItemIcon>
+										<Typography textAlign='center'>Users</Typography>
+									</MenuItem>
+								)
+							}
 						</Box>
 
 						<Box sx={{ flexGrow: 0 }}>
-							<IconButton onClick={() => {}} sx={{ p: 0 }}>
-								<Avatar alt={data?.user?.name!} src='/static/images/avatar/2.jpg' />
-							</IconButton>
+							<Stack direction={'row'} alignItems='center' gap={3}>
+								<Button 
+									variant='contained'
+									color='error'
+									startIcon={<LogoutIcon/>}
+									sx={{ display: { xs: 'none', md: 'flex' } }}
+									onClick={handleLogout}
+								>
+									Logout
+								</Button>
+								<IconButton href='/user' sx={{ p: 0 }}>
+									<Avatar alt={data?.user?.name!} src='/static/images/avatar/2.jpg' />
+								</IconButton>
+							</Stack>
 						</Box>
 					</Toolbar>
 				</Container>

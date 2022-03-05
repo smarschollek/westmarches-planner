@@ -2,13 +2,12 @@ import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button,Image, ButtonGroup, ListGroupItem, Badge } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faUnlink, faAngleLeft, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Quest, Subscriber } from '../../../models/quest-model';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { useSession } from 'next-auth/react';
+import { CardMedia, CardContent, Typography, Stack, Card, CardActions, Button, ListItemButton, Chip, ListItemText } from '@mui/material';
+import { MyList } from '../../../components/my-list';
 
 const Page : NextPage = () => {
 	const router = useRouter();
@@ -32,12 +31,10 @@ const Page : NextPage = () => {
 		if(data.user?.name === quest.creator) {
 			return (
 				<>
-					<Button href={`/quests/edit/${quest._id}`}>
-						<FontAwesomeIcon icon={faPen} className='me-2'/>
+					<Button variant='contained' href={`/quests/edit/${quest._id}`}>
 						Edit
 					</Button>
-					<Button disabled variant='danger' href={`/quests/delete/${quest._id}`}>
-						<FontAwesomeIcon icon={faTrash} className='me-2'/>
+					<Button disabled variant='contained' color='error' href={`/quests/delete/${quest._id}`}>
 						Delete
 					</Button>
 				</>
@@ -47,69 +44,64 @@ const Page : NextPage = () => {
 		
 		if(quest.subscriber.findIndex(x=>x.name === data.user?.name) !== -1) {
 			return (
-				<Button href={`/quests/unsubscribe/${quest._id}`}>
-					<FontAwesomeIcon icon={faUnlink} className='me-2'/>
+				<Button variant='contained' href={`/quests/unsubscribe/${quest._id}`}>
 					Unsubscribe
 				</Button>
 			);	
 		}
 
 		return (
-			<Button href={`/quests/subscribe/${quest._id}`}>
-				<FontAwesomeIcon icon={faLink} className='me-2'/>
+			<Button variant='contained' href={`/quests/subscribe/${quest._id}`}>
 				Subscribe
 			</Button>
 		);
 	};
 
-	const mapSubscriber = () => {
-		return quest.subscriber.map((sub, index) => {
-			return (
-				<ListGroupItem key={index}>
-					<div className='d-flex justify-content-between align-items-center'>
-						<span>{sub.characterName}</span>
-						<Badge>{`${sub.characterClass} (${sub.characterLevel})`}</Badge>
-					</div>
-					<div className='fw-bold' style={{fontSize: '0.9rem'}}>
-						{sub.name}
-					</div>
-				</ListGroupItem>
-			);
-		});
+	const handleRenderCallback = (subscriber: Subscriber) => {
+		return (
+			<ListItemButton>
+				<ListItemText 
+					primary={subscriber.characterName}
+					secondary={subscriber.name}
+				/>
+				<Chip size='small' label={`${subscriber.characterClass} (${subscriber.characterLevel})`}></Chip>
+			</ListItemButton>
+		);
 	};
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h4>{quest.name}</h4>
-					<hr className='my-4'></hr>
+			<Stack sx={{marginTop: 2}}>
+				<Card>
 					{
 						quest.imageGuid && (
-							<div className='d-flex justify-content-center'>
-								<Image fluid style={{maxHeight: '500px'}} rounded src={`/api/images/${quest.imageGuid}`} alt='quest'/>
-							</div>
+							<CardMedia
+								component='img'
+								image={`/api/images/${quest.imageGuid}`}
+							/>
 						)
 					}
-					<hr className='my-4'></hr>
-					<h6>Description</h6>
-					<div>{quest.description}</div>
-					<hr className='my-4'></hr>
-					{mapSubscriber()}
-					<hr className='my-4'></hr>
-					
-					<div className='d-grid mt-4'>			
-
-						<ButtonGroup>
-							<Button variant='success' onClick={() => router.back()}>
-								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
-								Back
-							</Button>
+					<CardContent>
+						<Stack gap={2}>
+							<Typography variant='h6' color='text.secondary'>
+								{quest.name}
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								{quest.description}
+							</Typography>
+							<Typography variant='h6' color='text.secondary'>
+								Subscriber
+							</Typography>
+							<MyList items={quest.subscriber} renderCallback={handleRenderCallback}/>
+						</Stack>
+					</CardContent>
+					<CardActions>
+						<Stack direction='row' gap={1}>
 							{renderSubscribeOrUnsubscribeButton()}
-						</ButtonGroup>
-					</div>	
-				</Col>
-			</Row>
+						</Stack>
+					</CardActions>
+				</Card>
+			</Stack>
 		</Layout>
 	);
 };

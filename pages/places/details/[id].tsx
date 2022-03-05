@@ -1,15 +1,18 @@
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { ListGroup, Button, ListGroupItem, Image, Col, Row, ButtonGroup } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faPen } from '@fortawesome/free-solid-svg-icons';
 import { Quest } from '../../../models/quest-model';
 import { GetPlaceResponse } from '../../api/places/get';
+import { Button, Card, CardActions, CardContent, CardMedia, ListItemButton, Stack, Typography } from '@mui/material';
+import { MyList } from '../../../components/my-list';
+import { useSession } from 'next-auth/react';
+import { ExtendedSession } from '../../../helper/validate-session';
 
 const Details : NextPage = () => {
 	const router  = useRouter();
+	const session = useSession().data as ExtendedSession;
 	const [place, setPlace] = useState<GetPlaceResponse>();
 	
 	useEffect(() => {
@@ -22,12 +25,12 @@ const Details : NextPage = () => {
 		})();
 	},[router.query.id]);
 
-	const mapQuests = (quests: Quest[]) => {
-		return quests.map((quest, index) => {
-			return (
-				<ListGroupItem key={index}>{quest.name}</ListGroupItem>
-			);
-		});
+	const handleRenderCallback = (quest: Quest) => {
+		return (
+			<ListItemButton>
+				{quest.name}
+			</ListItemButton>
+		);
 	};
 
 	if(!place) {
@@ -36,50 +39,35 @@ const Details : NextPage = () => {
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h4>{place.name}</h4>
-					<hr className='my-4'></hr>
+			<Stack sx={{marginTop: 2}}>
+				<Card>
 					{
 						place.imageGuid && (
-							<>
-								<div className='d-flex justify-content-center'>
-									<Image fluid src={`/api/images/${place.imageGuid}`} rounded alt='place' style={{maxHeight: '400px'}}/>
-								</div>
-								<hr className='my-4'></hr>
-							</>
+							<CardMedia
+								component='img'
+								image={`/api/images/${place.imageGuid}`}
+							/>
 						)
 					}
-					<h6>Description</h6>
-					<div>{place.description}</div>
-					<hr className='my-4'></hr>
-					{
-						place.quests && (
-							<>
-								<h6>Quests</h6>
-								<ListGroup>
-									{mapQuests(place.quests ?? [])}
-								</ListGroup>
-								<hr className='my-4'></hr>
-							</>
-						)
-					}
-					<div className='d-grid'>
-						<ButtonGroup>
-							<Button variant='success' onClick={() => router.back()}>
-								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
-								Back
-							</Button>
-							<Button href={`/places/edit/${place._id}`}> 
-								<FontAwesomeIcon icon={faPen} className='me-2'/>
-								Edit
-							</Button>
-						</ButtonGroup>
-						
-					</div>
-				</Col>
-			</Row>
-			
+					
+					<CardContent>
+						<Stack gap={2}>
+							<Typography variant='h5' color='text.secondary'>
+								{place.name}
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								{place.description}
+							</Typography>
+							<MyList items={place.quests} renderCallback={handleRenderCallback}/>
+						</Stack>
+					</CardContent>
+					<CardActions>
+						<Stack direction='row' gap={1}>
+							{ session.isGamemaster && <Button variant='contained' href={`/places/edit/${place._id}`}>Edit</Button>}
+						</Stack>
+					</CardActions>
+				</Card>
+			</Stack>
 		</Layout>
 	);
 };
