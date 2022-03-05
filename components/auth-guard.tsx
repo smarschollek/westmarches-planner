@@ -1,17 +1,27 @@
-import { PropsWithChildren, ReactElement } from 'react';
-import { useSession } from 'next-auth/react';
+import { PropsWithChildren, ReactElement, useEffect, useState } from 'react';
+import { getSession} from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-interface AuthGuardProps {
-	componentName: string
-}
 
-export const AuthGuard = ({children, componentName} : PropsWithChildren<AuthGuardProps>): ReactElement => {
-	const {status} = useSession();
+const unprotectedComponents = ['/login', '/register'];
+
+export const AuthGuard = ({children} : PropsWithChildren<unknown>): ReactElement => {
 	const router = useRouter();
-	const unprotectedComponents = ['Login', 'Register'];
-	
-	if(unprotectedComponents.includes(componentName)) {
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		if(!unprotectedComponents.includes(router.pathname)) {
+			getSession().then(session => {
+				if(!session) {
+					router.push('/login');
+				} else {
+					setLoading(false);
+				}
+			});
+		}
+	}, [router]);
+
+	if(unprotectedComponents.includes(router.pathname)) {
 		return(
 			<>
 				{children}
@@ -19,15 +29,10 @@ export const AuthGuard = ({children, componentName} : PropsWithChildren<AuthGuar
 		);
 	}
 
-	if(status === 'loading') {
-		return <>Loading...</>;
+	if(loading) {
+		return <>authorize loading</>;
 	}
 
-	if(status === 'unauthenticated') {
-		router.push('/login');
-		return <></>;
-	}
-    
 	return(
 		<>
 			{children}

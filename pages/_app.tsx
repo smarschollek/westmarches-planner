@@ -5,13 +5,13 @@ import { SessionProvider } from 'next-auth/react';
 import { AuthGuard } from '../components/auth-guard';
 
 function MyApp({ Component, pageProps }: AppProps) {
-	
-
-	return <SessionProvider>
-		<AuthGuard componentName={Component.name} >
-			<Component {...pageProps} />
-		</AuthGuard>
-	</SessionProvider>;
+	return (
+		<SessionProvider session={pageProps.session} refetchInterval={0}>
+			<AuthGuard>
+				<Component {...pageProps} />
+			</AuthGuard>
+		</SessionProvider>
+	);
 }
 
 export default MyApp;

@@ -4,12 +4,15 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import {useSession, signOut} from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap, faQuestion, faColumns, faUserFriends, faPowerOff, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
 
 export const Navigation = (): ReactElement => {
 	const {data} = useSession();
-	
-	const handleLogout = () => {
-		signOut();
+	const router = useRouter();
+
+	const handleLogout = async () => {
+		await signOut();
+		router.push('/login');
 	};
 
 	return(
