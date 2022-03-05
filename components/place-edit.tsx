@@ -19,16 +19,18 @@ type PlaceEditProps = {
 
 export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElement => {
 	const router = useRouter();
+	const [uploading, setUploading] = useState(false);
 
 	const [imageGuid, setImageGuid] = useState(defaultValues?.imageGuid ?? '');
 
-	const { register, handleSubmit, setValue } = useForm<PlaceEditForm>({
+	const { register, handleSubmit, setValue, formState } = useForm<PlaceEditForm>({
 		defaultValues
 	});
 
 	const handleOnUploadFinished = (guid: string) => {
 		setValue('imageGuid', guid);
 		setImageGuid(guid);
+		setUploading(false);
 	};
 
 	return(
@@ -43,11 +45,11 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 						)
 					}
 
-					<UploadFileFormControl onUploadFinished={handleOnUploadFinished} accept='image/*'/>
+					<UploadFileFormControl onUploadStarted={() => setUploading(true)} onUploadFinished={handleOnUploadFinished} accept='image/*'/>
 
 					<Form.Group className='mb-3'>
 						<Form.Label>Titel</Form.Label>
-						<Form.Control type='text' {...register('name')}/>
+						<Form.Control type='text' {...register('name', {required: true})}/>
 					</Form.Group>
 
 					<Form.Group className='mb-3'>
@@ -61,7 +63,7 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 								<FontAwesomeIcon icon={faCancel} className='me-2'/>
 								Cancel
 							</Button>
-							<Button type='submit'>
+							<Button type='submit' disabled={!formState.isValid || uploading}>
 								<FontAwesomeIcon icon={faSave} className='me-2'/>
 								Save
 							</Button>

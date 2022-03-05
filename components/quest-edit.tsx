@@ -30,6 +30,7 @@ const questStates = [
 export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElement => {
 	const router = useRouter();
 	const [places, setPlaces] = useState<Place[]>();
+	const [uploading, setUploading] = useState(false);
 	const [imageGuid, setImageGuid] = useState(defaultValues?.imageGuid ?? '');
 
 	const { register, handleSubmit, setValue, formState } = useForm<QuestEditFormValues>({
@@ -48,6 +49,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 	const handleOnUploadFinished = (guid: string) => {
 		setImageGuid(guid);
 		setValue('imageGuid', guid);
+		setUploading(false);
 	};
 
 	if(!places) {
@@ -70,7 +72,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 						)
 					}
 
-					<UploadFileFormControl onUploadFinished={handleOnUploadFinished} accept='image/*'/>
+					<UploadFileFormControl onUploadStarted={() => setUploading(true)} onUploadFinished={handleOnUploadFinished} accept='image/*'/>
 
 					<Form.Group className='mb-3'>
 						<Form.Label>Titel</Form.Label>
@@ -108,7 +110,7 @@ export const QuestEdit = ({defaultValues, onSubmit} : QuestEditProps): ReactElem
 							</Button>
 							<Button 
 								type='submit'
-								disabled={!formState.isValid}
+								disabled={!formState.isValid || uploading}
 							>
 								<FontAwesomeIcon icon={faSave} className='me-2'/>
 								Save
