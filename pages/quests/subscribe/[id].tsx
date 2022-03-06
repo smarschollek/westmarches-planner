@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button, ButtonGroup, Stack } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
 import { SelectedTimes, WeekTimeSelection } from '../../../components/week-time-selection';
 import { CharackterSelection } from '../../../components/charackter-selection';
@@ -9,6 +8,7 @@ import { Character } from '../../../models/user-model';
 import axios from 'axios';
 import { Quest } from '../../../models/quest-model';
 import { SubscribeSummary } from '../../../components/subscribe-summary';
+import { Button, Stack } from '@mui/material';
 
 const Subscribe : NextPage = () => {
 	const [pageIndex, setPageIndex] = useState(0);
@@ -68,17 +68,11 @@ const Subscribe : NextPage = () => {
 
 	return (
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >					
-					<Stack>
-						{renderPages()}
-						<ButtonGroup className='mt-2'>
-							<Button onClick={stepBack}> Back </Button>
-							<Button disabled={disableNextStep()} onClick={stepForward}> Next </Button>
-						</ButtonGroup>
-					</Stack>
-				</Col>
-			</Row>
+			<Stack gap={1}>
+				{renderPages()}
+				<Button variant='contained' disabled={disableNextStep()} onClick={stepForward}> Next </Button>
+				<Button variant='contained' color='secondary' onClick={stepBack}> Back </Button>
+			</Stack>
 		</Layout>
 	);
 };

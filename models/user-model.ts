@@ -9,6 +9,7 @@ export interface User {
 	isGamemaster: boolean,
 	characters: Character[]
 	subscribedQuests: string[]
+	favoritPlaces: string[]
 }
 
 export interface Character {
@@ -33,7 +34,8 @@ const userSchema = new mongoose.Schema<User>({
 			comment: String
 		}
 	],
-	subscribedQuests: [String]
+	subscribedQuests: [String],
+	favoritPlaces: [String]
 });
 
 export const UserModel = mongoose.models.User as mongoose.Model<User, {}, {}, {}> || mongoose.model<User>('User', userSchema);

@@ -4,8 +4,7 @@ import { useRouter } from 'next/router';
 import { PlaceEdit, PlaceEditForm } from '../../components/place-edit';
 import { Layout } from '../../layout/layout';
 
-const add : NextPage = () => {
-	// eslint-disable-next-line react-hooks/rules-of-hooks
+const Add : NextPage = () => {
 	const router = useRouter();
 
 	const handleOnSubmit = async (formValues: PlaceEditForm) => {
@@ -27,4 +26,4 @@ const add : NextPage = () => {
 	);
 };
 
-export default add;
+export default Add;

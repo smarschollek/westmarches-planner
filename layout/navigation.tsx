@@ -39,30 +39,22 @@ export const Navigation = (): ReactElement => {
 								<Typography textAlign='center'>Dashboard</Typography>
 							</ListItemButton>
 						</ListItem>
-						{
-							data && data.isGamemaster && (
-								<ListItem>
-									<ListItemButton component='a' href='/places'>
-										<ListItemIcon>
-											<MapIcon/>
-										</ListItemIcon>
-										<Typography textAlign='center'>Places</Typography>
-									</ListItemButton>
-								</ListItem>
-							)
-						}
-						{
-							data && data.isGamemaster && (
-								<ListItem>
-									<ListItemButton component='a' href='/quests'>
-										<ListItemIcon>
-											<QuestionMarkIcon/>
-										</ListItemIcon>
-										<Typography textAlign='center'>Quests</Typography>
-									</ListItemButton>	
-								</ListItem>
-							)
-						}
+						<ListItem>
+							<ListItemButton component='a' href='/places'>
+								<ListItemIcon>
+									<MapIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Places</Typography>
+							</ListItemButton>
+						</ListItem>
+						<ListItem>
+							<ListItemButton component='a' href='/quests'>
+								<ListItemIcon>
+									<QuestionMarkIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Quests</Typography>
+							</ListItemButton>	
+						</ListItem>
 						{
 							data && data.isAdmin && (
 								<>
@@ -143,26 +135,20 @@ export const Navigation = (): ReactElement => {
 								</ListItemIcon>
 								<Typography textAlign='center'>Dashboard</Typography>
 							</MenuItem>
-							{
-								data && data.isGamemaster && (
-									<MenuItem component='a' href='/places'>
-										<ListItemIcon>
-											<MapIcon/>
-										</ListItemIcon>
-										<Typography textAlign='center'>Places</Typography>
-									</MenuItem>
+							data && data.isGamemaster && (
+							<MenuItem component='a' href='/places'>
+								<ListItemIcon>
+									<MapIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Places</Typography>
+							</MenuItem>
 								)
-							}
-							{
-								data && data.isGamemaster && (
-									<MenuItem component='a' href='/quests'>
-										<ListItemIcon>
-											<QuestionMarkIcon/>
-										</ListItemIcon>
-										<Typography textAlign='center'>Quests</Typography>
-									</MenuItem>
-								)
-							}
+							<MenuItem component='a' href='/quests'>
+								<ListItemIcon>
+									<QuestionMarkIcon/>
+								</ListItemIcon>
+								<Typography textAlign='center'>Quests</Typography>
+							</MenuItem>
 							{
 								data && data.isAdmin && (
 									<MenuItem component='a' href='/users'>

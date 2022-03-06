@@ -1,9 +1,8 @@
+import { ChevronLeft, ChevronRight, ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Select, Stack, ToggleButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { ReactElement, useEffect, useState } from 'react';
-import { Accordion, Button, ButtonGroup, Col, Dropdown, Form, Row, Stack } from 'react-bootstrap';
 import { CalenderWeek, getCalenderWeeks, getCurrentWeek, getWeekDays } from '../helper/dayjs-helper';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCalendarAlt, faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 const timeValues = [
 	[1,2,3],
@@ -27,6 +26,7 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 	const [times, setTimes] = useState<SelectedTimes>(values);
 	const [weeks, setWeeks] = useState<CalenderWeek[]>([]);
 	const [selectedWeek, setSelectedWeek] = useState<CalenderWeek>();
+	const [expanded, setExpanded] = useState<string | false>(false);
 
 	useEffect(() => {
 		const keys = Object.keys(times);		
@@ -63,6 +63,10 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 			}
 		}
 
+		if(temp[day].length === 0) {
+			delete temp[day];
+		}
+
 		setTimes(temp);
 	}; 
 
@@ -71,6 +75,7 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 			const index = weeks.indexOf(selectedWeek);
 			if(index > 0) {
 				setSelectedWeek(weeks[index-1]);
+				setExpanded(false);
 			}
 		}
 	};
@@ -80,73 +85,76 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 			const index = weeks.indexOf(selectedWeek);
 			if(index < weeks.length - 1) {
 				setSelectedWeek(weeks[index+1]);
+				setExpanded(false);
 			}
 		}
 	};
 
 	const renderAccordion = (days : Date[]) => {
+		const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+    	setExpanded(newExpanded ? panel : false);
+   		 };
 		return (
-			<Accordion>
-				{days.map((day, i) => {
-					
-					if(dayjs(day).isBefore(dayjs())) {
-						return(
-							<Accordion.Item eventKey={i.toString()} key={i}>
-								<Accordion.Header className='text-decoration-line-through opacity-50' onClick={() => {}}>{day.toDateString()}</Accordion.Header>
-							</Accordion.Item>
-						);
-					}
-					
-					return(
-						<Accordion.Item eventKey={i.toString()} key={i}>
-							<Accordion.Header>{day.toDateString()}</Accordion.Header>
-							<Accordion.Body>
-								<Row key='-1'>
-									<Col className='d-grid'>
-										<Button
-											id={'toggle-check-all'}
-											variant='light'
-											onClick={() => {
-												pushTime(day.toDateString(), timeValues.flat());
-											}}
-										>
+			<>
+				{
+					days.map((day, index) => {
+						if(dayjs(day).valueOf() < (dayjs().valueOf())) {
+							return (
+								<Accordion key={index} disabled disableGutters expanded={false}>
+									<AccordionSummary  aria-controls={`panel-healder-${index}`} id={`panel-healder-${index}`}>
+										<Typography>{day.toDateString()}</Typography>
+									</AccordionSummary>		
+								</Accordion>
+							);
+						}	
+
+						return (
+							<Accordion key={index} disableGutters expanded={expanded == `${day.toDateString()}`} onChange={handleChange(`${day.toDateString()}`)}>
+								<AccordionSummary  expandIcon={<ExpandMore />} aria-controls={`panel-healder-${index}`} id={`panel-healder-${index}`}>
+									<Typography>{day.toDateString()}</Typography>
+        						</AccordionSummary>		
+								<AccordionDetails>
+									<Button
+										id={'toggle-check-all'}
+										variant='outlined'
+										fullWidth
+										onClick={() => {
+											pushTime(day.toDateString(), timeValues.flat());
+										}}
+										sx={{marginBottom: 2}}
+									>
 								            {times[day.toDateString()] && times[day.toDateString()].length > 0 ? 'Clear' : 'All' }
-										</Button>
-									</Col>
-									<Col/>
-									<Col/>
-								</Row>
-								{mapTimes(day.toDateString())}
-							</Accordion.Body>
-						</Accordion.Item>
-					);
-				})}
-			</Accordion>
+									</Button>
+									{mapTimes(day.toDateString())}
+        						</AccordionDetails>
+							</Accordion>
+						);
+					})
+				}
+			</>
 		);
 	};
 
 	const mapTimes = (day: string) => {
 		return timeValues.map((row, i) => {
 			return (
-				<>
-					<Row key={i} className='my-2'>
-						{row.map((col, j) => {
-							return (
-								<Col key={j} className='d-grid'>
-							        <Button
-										id={`toggle-check-${col}`}
-										variant={times[day] && times[day].includes(col) ? 'dark' : 'light'}
-										onClick={() => {
-											pushTime(day, [col]);
-										}}
-									>
-										{col}
-									</Button>
-						    </Col>
-							);
-						})}
-					</Row>
-				</>
+				<Stack direction='row' gap={1} key={i}>
+					{
+						row.map((col, j) => {
+							return <ToggleButton 
+								color='primary'
+								fullWidth 
+								value='check'
+								key={`${i}${j}`} 
+								sx={{marginBottom: 1}} 
+								selected={times[day] && times[day].includes(col) ? true : false}
+								onClick={() => pushTime(day, [col])}
+							>
+								{col}
+							</ToggleButton>;
+						})
+					}
+				</Stack>
 			);
 		});
 	};
@@ -160,31 +168,42 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 	};
 
 	return(
-		<Stack>
-			<Dropdown className='d-grid mb-2'>
-				<ButtonGroup>
-					<Button onClick={prevWeek} variant='outline-primary'>
-						<FontAwesomeIcon icon={faAngleLeft}/>
-					</Button>
-					<Dropdown.Toggle variant='outline-primary' id='dropdown-basic' className='d-flex justify-content-center align-items-center p-0' style={{fontSize: '0.9rem', borderRadius: 0}}>
-						<FontAwesomeIcon icon={faCalendarAlt}/>
-						<span className='ms-2'>{renderDropdownValue(selectedWeek)}</span>
-					</Dropdown.Toggle>
-					<Button onClick={nextWeek} variant='outline-primary'>
-						<FontAwesomeIcon icon={faAngleRight}/>
-					</Button>
-				</ButtonGroup>
+		<Stack sx={{marginTop: 2}}>		
+			<Stack direction='row' sx={{marginBottom: 2}}>
+				<Button variant='outlined' color='secondary' onClick={prevWeek}>
+					<ChevronLeft/>	
+				</Button>
+				<FormControl fullWidth sx={{borderRadius: 0}}>
+					<Select
+						labelId='demo-simple-select-label'
+						id='demo-simple-select'
+						value={renderDropdownValue(selectedWeek)}
+						placeholder='asd'
+						MenuProps={{
+							sx: {
+								maxHeight: '500px'
+							}
+						}}
+					>
+						{weeks.map(week => {
+							return (
+								<MenuItem 
+									value={renderDropdownValue(week)}
+									disabled={dayjs(week.stop).isBefore(dayjs())} 
+									onClick={() => setSelectedWeek(week)} 
+									key={week.weekIndex}
+								>
+									{renderDropdownValue(week)}
+								</MenuItem>
+							);
+						})}
+					</Select>
+				</FormControl>
+				<Button variant='outlined' color='secondary' onClick={nextWeek}>
+					<ChevronRight/>
+				</Button>
+			</Stack>
 
-				<Dropdown.Menu className='overflow-auto' style={{maxHeight: '250px'}}>
-					{weeks.map(week => {
-						return (
-							<Dropdown.Item disabled={dayjs(week.stop).isBefore(dayjs())} onClick={() => setSelectedWeek(week)} key={week.weekIndex}>
-								{renderDropdownValue(week)}
-							</Dropdown.Item>
-						);
-					})}
-				</Dropdown.Menu>
-			</Dropdown>
 			{renderAccordion(getWeekDays(selectedWeek.weekIndex))}
 		</Stack>
 	);
