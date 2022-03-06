@@ -24,7 +24,6 @@ export const Navigation = (): ReactElement => {
 	return(
 		<>
 			<SwipeableDrawer
-				
 				anchor='left'
 				open={drawerState}
 				onClose={() => setDrawerState(false)}
@@ -98,13 +97,15 @@ export const Navigation = (): ReactElement => {
 							component='div'
 							sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
 						>
-							<Image
-								src='/images/ac.svg'
-		 					width='40'
-		 					height='40'
-		 					className='d-inline-block align-top'
-		 					alt='logo'
-		 				/>
+							<a href='https://strixhaven.vttrpg.de/' target='_blank' rel='noreferrer'>
+								<Image
+									src='/images/ac.svg'
+									width='40'
+									height='40'
+									className='d-inline-block align-top'
+									alt='logo'
+								/>
+							 </a>
 						</Typography>
 
 						<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -125,13 +126,15 @@ export const Navigation = (): ReactElement => {
 							component='div'
 							sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
 						>
-							<Image
-								src='/images/ac.svg'
-		 					width='40'
-		 					height='40'
-		 					className='d-inline-block align-top'
-		 					alt='logo'
-		 				/>
+							<a href='https://strixhaven.vttrpg.de/' target='_blank' rel='noreferrer'>
+								<Image
+									src='/images/ac.svg'
+									width='40'
+									height='40'
+									className='d-inline-block align-top'
+									alt='logo'
+								/>
+							 </a>
 						</Typography>
 						<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>							
 							<MenuItem component='a' href='/'>
