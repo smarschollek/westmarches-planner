@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Button, Card, CardContent, CardMedia, FormControl, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, FormControl, MenuItem, Select, Slider, Stack, TextField } from '@mui/material';
 
 const classes: string[] = [
 	'Artificer',
@@ -42,48 +42,6 @@ export const CharacterEdit = ({defaultValues, onSubmit}: CharacterEditProps): Re
 	const levelValue = watch('level');
 
 	return(
-		// <Form onSubmit={handleSubmit(onSubmit)}>
-		// 	<Form.Group className='mb-3'>
-		// 		<Form.Label>Character name:</Form.Label>
-		// 		<Form.Control {...register('name', { required: true })}/>
-		// 	</Form.Group>
-		// 	<Form.Group className='mb-3'>
-		// 		<Form.Label>Class:</Form.Label>
-		// 		<Form.Select {...register('class', { required: true })}>
-		// 			{mapClasses()}
-		// 		</Form.Select>
-		// 	</Form.Group>
-		// 	<Form.Group className='mb-3'>
-		// 		<Form.Label>Level: {levelValue}</Form.Label>
-		// 		<Form.Range min={1} max={20} {...register('level')}/>
-		// 	</Form.Group>
-		// 	<Form.Group className='mb-3'>
-		// 		<Form.Label>Comment:</Form.Label>
-		// 		<Form.Control as='textarea' rows={5} style={{resize: 'none'}} {...register('comment')}/>
-		// 	</Form.Group>
-		// 	<Form.Group className='d-grid'>
-		// 		<ButtonGroup>
-		// 			{/* <Button 
-		// 				variant='primary' 
-		// 				type='submit' 
-		// 				disabled={!formState.isValid}
-		// 			>
-	//             Submit
-		// 			</Button>
-		// 			<Button variant='danger' onClick={() => router.back()}>
-	//             Cancel
-		// 			</Button> */}
-		// 			<Button variant='danger' onClick={() => router.back()}>
-		// 				<FontAwesomeIcon icon={faCancel} className='me-2'/>
-		// 						Cancel
-		// 			</Button>
-		// 			<Button type='submit' disabled={!formState.isValid}>
-		// 				<FontAwesomeIcon icon={faSave} className='me-2'/>
-		// 						Save
-		// 			</Button>
-		// 		</ButtonGroup>
-		// 	</Form.Group>
-		// </Form>
 		<form onSubmit={handleSubmit(onSubmit)} style={{marginTop: 16}}>
 			<Card>
 				<CardContent>
@@ -118,6 +76,23 @@ export const CharacterEdit = ({defaultValues, onSubmit}: CharacterEditProps): Re
 							name='class'
 							defaultValue={defaultValues?.class}
 						/>
+						<Controller
+							render={({field}) => (
+								<FormControl fullWidth>
+									Level: {field.value}
+									<Slider
+										aria-label='Volume'
+										min={1}
+										max={20}
+										value={field.value}
+										onChange={field.onChange}
+									/>
+								</FormControl>)}
+							control={control}
+							name='level'
+							defaultValue={defaultValues?.level ?? 1}
+						/>
+						
 						<Controller
 							render={({field, fieldState}) => (
 								<TextField fullWidth id='input-description' 
