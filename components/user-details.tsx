@@ -75,7 +75,7 @@ const UserDetails = () => {
 				</Typography>
 				<Stack gap={1}>
 					<MyList items={characters} renderCallback={handleRenderCallback}/>
-					<Button fullWidth variant='contained'> Add Character </Button>
+					<Button fullWidth variant='contained' href='/characters/add'> Add Character </Button>
 				</Stack>
 			</div>
 
@@ -90,12 +90,12 @@ const UserDetails = () => {
 					</Stack>
 
 					<FormControl fullWidth>
-						<InputLabel id='demo-simple-select-label'>Language</InputLabel>
+						<InputLabel id='language-select-label'>Language</InputLabel>
 						<Select
-							labelId='demo-simple-select-label'
-							id='demo-simple-select'
+							labelId='language-select-label'
+							id='language-select'
 							value={userConfig.language}
-							label='Age'
+							label='Language'
 							onChange={e => userConfig.setLanguage(e.target.value as 'en' | 'de' ?? 'en')}
 						>
 							<MenuItem value={'en'}>English</MenuItem>
