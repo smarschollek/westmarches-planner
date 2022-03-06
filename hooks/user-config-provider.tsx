@@ -86,7 +86,7 @@ export const UserConfigProvider = ({children} : PropsWithChildren<unknown>) => {
 	const updateFavoritPlaces = (place: Place) => {
 		const temp = [...userInfo.favoritPlaces];
 
-		const index = temp.findIndex(x => x._id === place._id);
+		const index = temp.findIndex(x => x.placeId === place._id);
 		if(index !== -1) {
 			temp.splice(index,1);
 		} else {
