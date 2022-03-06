@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 
 interface MyListProps {
     items?: any[]
-    renderCallback: (item: any, index: number) => JSX.Element
+    renderCallback: (item: any) => JSX.Element
 }
 
 export const MyList = ({items, renderCallback} : MyListProps): ReactElement => {

@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { ExtendedSession } from '../helper/validate-session';
-import { Character } from '../models/user-model';
+import { Place } from '../models/place-model';
+import { Character, FavoritPlace } from '../models/user-model';
 
 type ThemeTypes = 'dark' | 'light'
 type LanguageTypes = 'de' | 'en'
@@ -11,7 +12,7 @@ type LanguageTypes = 'de' | 'en'
 type UserInfo = {
 	characters: Character[],
 	subscribedQuests: string[],
-	favoritPlaces: string[]
+	favoritPlaces: FavoritPlace[]
 }
 
 interface UserConfigContext {
@@ -20,7 +21,7 @@ interface UserConfigContext {
 	userInfo: UserInfo
     setLanguage : (value: LanguageTypes) => void
     setTheme : (value: ThemeTypes) => void
-	updateFavoritPlaces: (placeId: string) => void
+	updateFavoritPlaces: (place: Place) => void
 	
 }
 
@@ -82,14 +83,17 @@ export const UserConfigProvider = ({children} : PropsWithChildren<unknown>) => {
 		},
 	});
 
-	const updateFavoritPlaces = (placeId: string) => {
+	const updateFavoritPlaces = (place: Place) => {
 		const temp = [...userInfo.favoritPlaces];
 
-		const index = temp.indexOf(placeId);
+		const index = temp.findIndex(x => x._id === place._id);
 		if(index !== -1) {
 			temp.splice(index,1);
 		} else {
-			temp.push(placeId);
+			temp.push({
+				placeId: place._id,
+				name: place.name
+			});
 		}
 
 		setUserInfo({...userInfo, favoritPlaces: temp});

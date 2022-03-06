@@ -27,17 +27,17 @@ const Index : NextPage = () => {
 		return <></>;
 	}
 
-	const handleFavoritOnClick = async (placeId: string) => {
-		updateFavoritPlaces(placeId);
-		await axios.post('/api/places/favorit', { placeId });
+	const handleFavoritOnClick = async (place: Place) => {
+		updateFavoritPlaces(place);
+		await axios.post('/api/places/favorit', { placeId: place._id });
 	};
 
 	const handleRenderCallback = (place: Place) : JSX.Element => {
 		return (
 			<ListItem 
 				secondaryAction={
-					<IconButton edge='end' aria-label='favorit' onClick={() => handleFavoritOnClick(place._id)}>
-						{userInfo.favoritPlaces.includes(place._id) ? <Star /> : <StarOutline /> }
+					<IconButton edge='end' aria-label='favorit' onClick={() => handleFavoritOnClick(place)}>
+						{userInfo.favoritPlaces.findIndex(x => x.placeId === place._id) !== -1 ? <Star /> : <StarOutline /> }
 					</IconButton>
 				}
 			>

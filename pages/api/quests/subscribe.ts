@@ -3,9 +3,8 @@ import { dbConnect } from '../../../helper/db-connect';
 import { apiProtector } from '../../../helper/api-protector';
 import { object, string } from 'yup';
 import { getSession } from 'next-auth/react';
-import { User, UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../models/user-model';
 import { QuestModel } from '../../../models/quest-model';
-import { ObjectId } from 'mongodb';
 
 type SubscribeRequest = {
 	characterId: string
@@ -39,7 +38,10 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			if(character) {
 				const quest = await QuestModel.findById(request.questId);
 				if(quest) {
-					user.subscribedQuests.push(request.questId);
+					user.subscribedQuests.push({
+						questId: quest._id,
+						name: quest.name
+					});
 					await user.save();
 
 					quest.subscriber.push({

@@ -1,11 +1,14 @@
-import { Card, CardContent, CardHeader, Stack } from '@mui/material';
+import { AccessTime, Map, QuestionMark } from '@mui/icons-material';
+import { Card, CardContent, CardHeader, ListItemButton, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
+import { MyList } from '../components/my-list';
 import { useUserConfig } from '../hooks/user-config-provider';
 import { Layout } from '../layout/layout';
 import { Place } from '../models/place-model';
 import { Quest } from '../models/quest-model';
+import { FavoritPlace, SubscribedQuest } from '../models/user-model';
 
 
 const Home: NextPage = () => {
@@ -27,33 +30,47 @@ const Home: NextPage = () => {
 		})();
 	}, []);
 
+	const favoritPlacesRenderCallback = (place: FavoritPlace) => {
+		return (
+			<ListItemButton component='a' href={`/places/details/${place.placeId}`}>
+				{place.name}
+			</ListItemButton>
+		);
+	};
+
+	const subscribedQuestsRenderCallback = (quest: SubscribedQuest) => {
+		return (
+			<ListItemButton component='a' href={`/quests/details/${quest.questId}`}>
+				{quest.name}
+			</ListItemButton>
+		);
+	};
+
 	return (
 		<Layout>
 			<Stack gap={2} sx={{marginTop: 2}}>
-				<Card>
-					<CardHeader
-						title='Quests'
-					/>
-					<CardContent>
-						{userInfo.subscribedQuests.map(place => (<div key={place}>{place}</div>))}
-					</CardContent>
-				</Card>
-				<Card>
-					<CardHeader
-						title='Places'
-					/>
-					<CardContent>
-						{userInfo.favoritPlaces.map(place => (<div key={place}>{place}</div>))}
-					</CardContent>
-				</Card>
-				<Card>
-					<CardHeader
-						title='Sessions'
-					/>
-					<CardContent>
-					asdad
-					</CardContent>
-				</Card>
+				<Stack direction='row' alignItems='center' gap={1}>
+					<QuestionMark/>
+					<Typography variant='h6'>
+						Quests
+					</Typography>
+				</Stack>
+				<MyList items={userInfo.subscribedQuests} renderCallback={subscribedQuestsRenderCallback}/>
+
+				<Stack direction='row' alignItems='center' gap={1}>
+					<Map/>
+					<Typography variant='h6'>
+						Fav. Places
+					</Typography>
+				</Stack>
+				<MyList items={userInfo.favoritPlaces} renderCallback={favoritPlacesRenderCallback}/>
+				
+				<Stack direction='row' alignItems='center' gap={1}>
+					<AccessTime/>
+					<Typography variant='h6'>
+						Sessions
+					</Typography>
+				</Stack>
 			</Stack>
 		</Layout>
 	);

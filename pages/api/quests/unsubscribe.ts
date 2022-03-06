@@ -38,7 +38,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 			const user = await UserModel.findById(session.id);
 			if(user) {
-				const index = user.subscribedQuests.indexOf(request.questId);
+				const index = user.subscribedQuests.findIndex(x => x.questId === request.questId);
 				if(index !== -1) {
 					user.subscribedQuests.splice(index, 1);
 					user.save();

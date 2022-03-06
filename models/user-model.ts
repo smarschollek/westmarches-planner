@@ -8,8 +8,8 @@ export interface User {
 	isAdmin: boolean,
 	isGamemaster: boolean,
 	characters: Character[]
-	subscribedQuests: string[]
-	favoritPlaces: string[]
+	subscribedQuests: SubscribedQuest[]
+	favoritPlaces: FavoritPlace[]
 }
 
 export interface Character {
@@ -18,6 +18,18 @@ export interface Character {
 	level: number,
 	class: string,
 	description: string
+}
+
+export interface FavoritPlace {
+	_id?: string,
+	placeId: string,
+	name: string
+}
+
+export interface SubscribedQuest {
+	_id?: string,
+	questId: string,
+	name: string
 }
 
 const userSchema = new mongoose.Schema<User>({
@@ -34,8 +46,14 @@ const userSchema = new mongoose.Schema<User>({
 			comment: String
 		}
 	],
-	subscribedQuests: [String],
-	favoritPlaces: [String]
+	subscribedQuests: [{
+		questId: String,
+		name: String
+	}],
+	favoritPlaces: [{
+		placeId: String,
+		name: String
+	}]
 });
 
 export const UserModel = mongoose.models.User as mongoose.Model<User, {}, {}, {}> || mongoose.model<User>('User', userSchema);
