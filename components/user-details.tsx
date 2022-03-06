@@ -1,8 +1,5 @@
-import { Button, Card, Chip, Divider, Fab, FormControl, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Select, Stack, Switch, Typography } from '@mui/material';
-import axios from 'axios';
+import { Button, Chip, FormControl, InputLabel, ListItemButton, MenuItem, Select, Stack, Switch, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { ExtendedSession } from '../helper/validate-session';
 import { useUserConfig } from '../hooks/user-config-provider';
 import { Character } from '../models/user-model';
@@ -10,37 +7,27 @@ import { MyList } from './my-list';
 
 const UserDetails = () => {
 	const data = useSession().data as ExtendedSession;
-	const router = useRouter();
-	const userConfig = useUserConfig();
-	
-	const [characters, setCharacters] = useState<Character[]>([]);
-	
-	useEffect(() => {
-		(async () => {
-			const response = await axios.get('/api/users/getCharacters');
-			setCharacters(response.data);
-		})();
-	}, []);
+	const {userInfo, language, setLanguage, theme, setTheme} = useUserConfig();	
 
 	if(!data || !data.user) {
 		return <></>;
 	}
 
 	const toggleTheme = () => {
-		if(userConfig.theme === 'dark') {
-			userConfig.setTheme('light');
+		if(theme === 'dark') {
+			setTheme('light');
 		} else {
-			userConfig.setTheme('dark');
+			setTheme('dark');
 		}
 	};
 
 	const handleRenderCallback = (character: Character) : JSX.Element => {
-		return <ListItem>
+		return <ListItemButton>
 			<Stack direction='row' justifyContent='space-between' alignItems='center' sx={{width: '100%'}}>
 				<div>{character.name}</div>
 				<Chip size='small' label={`${character.class} (${character.level})`}/>
 			</Stack>
-		</ListItem>;
+		</ListItemButton>;
 	};
 
 	return(
@@ -74,7 +61,7 @@ const UserDetails = () => {
 	  				Characters
 				</Typography>
 				<Stack gap={1}>
-					<MyList items={characters} renderCallback={handleRenderCallback}/>
+					<MyList items={userInfo.characters} renderCallback={handleRenderCallback}/>
 					<Button fullWidth variant='contained' href='/characters/add'> Add Character </Button>
 				</Stack>
 			</div>
@@ -85,7 +72,7 @@ const UserDetails = () => {
 				</Typography>	
 				<Stack gap={2}>
 					<Stack direction='row' gap={1} alignItems='center'>
-						<Switch checked={userConfig.theme === 'dark'} onChange={toggleTheme}/>
+						<Switch checked={theme === 'dark'} onChange={toggleTheme}/>
 						<div>Dark Mode</div>
 					</Stack>
 
@@ -94,9 +81,9 @@ const UserDetails = () => {
 						<Select
 							labelId='language-select-label'
 							id='language-select'
-							value={userConfig.language}
+							value={language}
 							label='Language'
-							onChange={e => userConfig.setLanguage(e.target.value as 'en' | 'de' ?? 'en')}
+							onChange={e => setLanguage(e.target.value as 'en' | 'de' ?? 'en')}
 						>
 							<MenuItem value={'en'}>English</MenuItem>
 							<MenuItem value={'de'}>German</MenuItem>
