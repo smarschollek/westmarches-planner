@@ -25,7 +25,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const user = await UserModel.findById(session.id);
 		if(user) {
-			const index = user.favoritPlaces.findIndex(x=>x._id === request.placeId);
+			const index = user.favoritPlaces.findIndex(x=>x.placeId === request.placeId);
 			if(index !== -1) {
 				user.favoritPlaces.splice(index,1);
 			} else {
