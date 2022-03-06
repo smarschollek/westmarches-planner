@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
 import { validateSession } from '../../../helper/validate-session';
-import { Character, UserModel } from '../../../models/user-model';
+import { Character, FavoritPlace, SubscribedQuest, UserModel } from '../../../models/user-model';
 
 interface UserInfoResponse {
     characters: Character[],
-    subscribedQuests: string[],
-    favoritPlaces: string[]
+    subscribedQuests: SubscribedQuest[],
+    favoritPlaces: FavoritPlace[]
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);
