@@ -1,5 +1,5 @@
+import { Stack, Typography } from '@mui/material';
 import { ReactElement } from 'react';
-import { Col, Row, Stack } from 'react-bootstrap';
 import { groupTimes } from '../helper/dayjs-helper';
 import { Quest } from '../models/quest-model';
 import { Character } from '../models/user-model';
@@ -22,45 +22,46 @@ export const SubscribeSummary = ({quest, character, times}: SubscribeSummaryProp
 		return keys.map(key => {
 			const values = groupTimes(times[key]);
 			return (
-				<Row key={key}>
-					<Col className='fw-light'>{key}</Col>
-					<Col>
+				<Stack key={key} direction='row' justifyContent='space-between'>
+					<div className='fw-light'>{key}</div>
+					<div>
 						{values.map((v,i) => <div key={i}>{`${v[0]}:00 - ${v[1]}:00`}</div>)}
-					</Col>
-				</Row>
+					</div>
+				</Stack>
 			);
 		});
 	};
 	
 	return(
-		<Stack style={{fontSize: '0.9rem'}}>
-			<div className='border-bottom mb-1'>
-				<b> Quest </b>
-			</div>
-			<Row>
-				<Col className='fw-light'>Name</Col>
-				<Col>{quest?.name}</Col>
-			</Row>
+		<Stack>
+			<Typography variant='h6' sx={{marginTop: 2, marginBottom: 2}}>
+				Quest
+			</Typography>
 
-			<div className='border-bottom mt-2 mb-1'>
-				<b> Character </b>
-			</div>
-			<Row>
-				<Col className='fw-light'>Name</Col>
-				<Col>{character?.name}</Col>
-			</Row>
-			<Row>
-				<Col className='fw-light'>Class</Col>
-				<Col>{character?.class}</Col>
-			</Row>
-			<Row>
-				<Col className='fw-light'>Level</Col>
-				<Col>{character?.level}</Col>
-			</Row>
+			<Stack direction='row' justifyContent='space-between'>
+				<div className='fw-light'>Name</div>
+				<div>{quest?.name}</div>
+			</Stack>
 
-			<div className='border-bottom mt-2 mb-1'>
-				<b> Times </b>
-			</div>
+			<Typography variant='h6' sx={{marginTop: 2, marginBottom: 2}}>
+				Character
+			</Typography>
+			<Stack direction='row' justifyContent='space-between'>
+				<div className='fw-light'>Name</div>
+				<div>{character?.name}</div>
+			</Stack>
+			<Stack direction='row' justifyContent='space-between'>
+				<div className='fw-light'>Class</div>
+				<div>{character?.class}</div>
+			</Stack>
+			<Stack direction='row' justifyContent='space-between'>
+				<div className='fw-light'>Level</div>
+				<div>{character?.level}</div>
+			</Stack>
+
+			<Typography variant='h6' sx={{marginTop: 2, marginBottom: 2}}>
+				Times
+			</Typography>
 			{mapTimes()}
 		</Stack>
 	);

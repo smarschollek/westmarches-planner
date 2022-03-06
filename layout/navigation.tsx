@@ -135,14 +135,12 @@ export const Navigation = (): ReactElement => {
 								</ListItemIcon>
 								<Typography textAlign='center'>Dashboard</Typography>
 							</MenuItem>
-							data && data.isGamemaster && (
 							<MenuItem component='a' href='/places'>
 								<ListItemIcon>
 									<MapIcon/>
 								</ListItemIcon>
 								<Typography textAlign='center'>Places</Typography>
 							</MenuItem>
-								)
 							<MenuItem component='a' href='/quests'>
 								<ListItemIcon>
 									<QuestionMarkIcon/>

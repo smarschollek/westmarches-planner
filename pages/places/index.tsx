@@ -6,19 +6,18 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { MyList } from '../../components/my-list';
 import { ExtendedSession } from '../../helper/validate-session';
+import { useUserConfig } from '../../hooks/user-config-provider';
 import { Layout } from '../../layout/layout';
 import { Place } from '../../models/place-model';
 
 const Index : NextPage = () => {
 	const session = useSession().data as ExtendedSession;
 	const [places, setPlaces] = useState<Place[]>([]);
-	const [favoritPlaces, setFavoritPlaces] = useState<string[]>([]);
+	const {userInfo, updateFavoritPlaces} = useUserConfig();
+
 
 	useEffect(() => {
 		(async () => {
-			const favoritPlacesRequest = await axios.get<string[]>('/api/users/getFavoritPlaces');
-			setFavoritPlaces(favoritPlacesRequest.data);
-
 			const response = await axios.get<Place[]>('/api/places/all');
 			setPlaces(response.data);
 		})();
@@ -29,17 +28,8 @@ const Index : NextPage = () => {
 	}
 
 	const handleFavoritOnClick = async (placeId: string) => {
+		updateFavoritPlaces(placeId);
 		await axios.post('/api/places/favorit', { placeId });
-		
-		
-		const temp = [...favoritPlaces];
-		const index = temp.indexOf(placeId);
-		if(index !== -1) {
-			temp.splice(index,1); 
-		} else {
-			temp.push(placeId);
-		}
-		setFavoritPlaces(temp);
 	};
 
 	const handleRenderCallback = (place: Place) : JSX.Element => {
@@ -47,7 +37,7 @@ const Index : NextPage = () => {
 			<ListItem 
 				secondaryAction={
 					<IconButton edge='end' aria-label='favorit' onClick={() => handleFavoritOnClick(place._id)}>
-						{favoritPlaces.includes(place._id) ? <Star /> : <StarOutline /> }
+						{userInfo.favoritPlaces.includes(place._id) ? <Star /> : <StarOutline /> }
 					</IconButton>
 				}
 			>

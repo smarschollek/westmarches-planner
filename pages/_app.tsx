@@ -6,14 +6,13 @@ import { UserConfigProvider } from '../hooks/user-config-provider';
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
-
-		<UserConfigProvider>
-			<SessionProvider session={pageProps.session} refetchInterval={0}>
+		<SessionProvider session={pageProps.session} refetchInterval={0}>
+			<UserConfigProvider>
 				<AuthGuard>
 					<Component {...pageProps} />
 				</AuthGuard>
-			</SessionProvider>
-		</UserConfigProvider>
+			</UserConfigProvider>
+		</SessionProvider>
 	);
 }
 
