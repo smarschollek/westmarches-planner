@@ -6,7 +6,7 @@ import { Layout } from '../../../layout/layout';
 import { Quest, Subscriber } from '../../../models/quest-model';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { useSession } from 'next-auth/react';
-import { CardMedia, CardContent, Typography, Stack, Card, CardActions, Button, ListItemButton, Chip, ListItemText } from '@mui/material';
+import { CardMedia, CardContent, Typography, Stack, Card, CardActions, Button, ListItemButton, Chip, ListItemText, Divider } from '@mui/material';
 import { MyList } from '../../../components/my-list';
 
 const Page : NextPage = () => {
@@ -90,6 +90,7 @@ const Page : NextPage = () => {
 							<Typography variant='body2' color='text.secondary'>
 								{quest.description}
 							</Typography>
+							<Divider/>
 							<Typography variant='h6' color='text.secondary'>
 								Subscriber
 							</Typography>

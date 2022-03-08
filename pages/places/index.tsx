@@ -9,16 +9,17 @@ import { ExtendedSession } from '../../helper/validate-session';
 import { useUserConfig } from '../../hooks/user-config-provider';
 import { Layout } from '../../layout/layout';
 import { Place } from '../../models/place-model';
+import { AllPlacesRespone } from '../api/places/all';
 
 const Index : NextPage = () => {
 	const session = useSession().data as ExtendedSession;
-	const [places, setPlaces] = useState<Place[]>([]);
+	const [places, setPlaces] = useState<AllPlacesRespone[]>([]);
 	const {userInfo, updateFavoritPlaces} = useUserConfig();
 
 
 	useEffect(() => {
 		(async () => {
-			const response = await axios.get<Place[]>('/api/places/all');
+			const response = await axios.get<AllPlacesRespone[]>('/api/places/all');
 			setPlaces(response.data);
 		})();
 	},[]);
@@ -32,7 +33,7 @@ const Index : NextPage = () => {
 		await axios.post('/api/places/favorit', { placeId: place._id });
 	};
 
-	const handleRenderCallback = (place: Place) : JSX.Element => {
+	const handleRenderCallback = (place: AllPlacesRespone) : JSX.Element => {
 		return (
 			<ListItem 
 				secondaryAction={
@@ -43,7 +44,7 @@ const Index : NextPage = () => {
 			>
 				<Stack direction='row' alignItems='center' justifyContent='space-between' component='a' href={`/places/details/${place._id}`} sx={{width: '100%'}}>
 					<div>{place.name}</div>
-					<Chip label='Quests (2)' size='small'/>
+					{place.questCount > 0 &&  <Chip label={`Quests (${place.questCount})`} size='small'/>}					
 				</Stack>
 
 			</ListItem>

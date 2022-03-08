@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Layout } from '../../../layout/layout';
 import { Quest } from '../../../models/quest-model';
 import { GetPlaceResponse } from '../../api/places/get';
-import { Button, Card, CardActions, CardContent, CardMedia, ListItemButton, Stack, Typography } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardMedia, Divider, ListItemButton, Stack, Typography } from '@mui/material';
 import { MyList } from '../../../components/my-list';
 import { useSession } from 'next-auth/react';
 import { ExtendedSession } from '../../../helper/validate-session';
@@ -25,17 +25,17 @@ const Details : NextPage = () => {
 		})();
 	},[router.query.id]);
 
+	if(!place) {
+		return <></>;
+	}
+
 	const handleRenderCallback = (quest: Quest) => {
 		return (
-			<ListItemButton>
+			<ListItemButton component='a' href={`/quests/details/${quest._id}`}>
 				{quest.name}
 			</ListItemButton>
 		);
 	};
-
-	if(!place) {
-		return <></>;
-	}
 
 	return(
 		<Layout>
@@ -56,8 +56,12 @@ const Details : NextPage = () => {
 							<Typography variant='h5' color='text.secondary'>
 								{place.name}
 							</Typography>
-							<Typography variant='body2' color='text.secondary'>
+							<Typography variant='body1' color='text.secondary'>
 								{place.description}
+							</Typography>
+							<Divider/>
+							<Typography variant='h6' color='text.secondary'>
+								Quests
 							</Typography>
 							<MyList items={place.quests} renderCallback={handleRenderCallback}/>
 						</Stack>

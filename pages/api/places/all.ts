@@ -4,7 +4,7 @@ import { dbConnect } from '../../../helper/db-connect';
 import { Place, PlaceModel } from '../../../models/place-model';
 import { QuestModel } from '../../../models/quest-model';
 
-type AllPlacesRespone = Place & {
+export type AllPlacesRespone = Place & {
 	questCount: number
 }
 
