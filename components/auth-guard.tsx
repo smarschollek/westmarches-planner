@@ -30,7 +30,7 @@ export const AuthGuard = ({children} : PropsWithChildren<unknown>): ReactElement
 	}
 
 	if(loading) {
-		return <>authorize loading</>;
+		return <></>;
 	}
 
 	return(
