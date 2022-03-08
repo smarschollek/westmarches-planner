@@ -1,27 +1,37 @@
 import { PropsWithChildren, ReactElement, useEffect, useState } from 'react';
-import { getSession} from 'next-auth/react';
+import { getSession, useSession} from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { ExtendedSession } from '../helper/validate-session';
 
+interface RouteConfig {
+	unprotected: string[]
+	gamemasterOnly: string[]
+	adminOnly: string[]
+}
 
-const unprotectedComponents = ['/login', '/register'];
+const routes : RouteConfig = {
+	unprotected: ['/login', '/register'],
+	gamemasterOnly: ['/quests/edit/[id]', '/places/edit/[id]', '/places/add', '/quests/add'],
+	adminOnly: []
+};
 
 export const AuthGuard = ({children} : PropsWithChildren<unknown>): ReactElement => {
 	const router = useRouter();
-	const [loading, setLoading] = useState(true);
+	const [session, setSession] = useState<ExtendedSession>();
 
 	useEffect(() => {
-		if(!unprotectedComponents.includes(router.pathname)) {
+		if(!routes.unprotected.includes(router.pathname)) {
 			getSession().then(session => {
 				if(!session) {
 					router.push('/login');
 				} else {
-					setLoading(false);
+					setSession(session as ExtendedSession);
 				}
 			});
 		}
 	}, [router]);
 
-	if(unprotectedComponents.includes(router.pathname)) {
+	if(routes.unprotected.includes(router.pathname)) {
 		return(
 			<>
 				{children}
@@ -29,7 +39,19 @@ export const AuthGuard = ({children} : PropsWithChildren<unknown>): ReactElement
 		);
 	}
 
-	if(loading) {
+	if(!session) {
+		return <></>;
+	}
+
+	
+
+	if(routes.adminOnly.includes(router.pathname) && !session.isAdmin) {
+		router.replace('/404');
+		return <></>;
+	}
+
+	if(routes.gamemasterOnly.includes(router.pathname) && !session.isGamemaster) {
+		router.replace('/404');
 		return <></>;
 	}
 
