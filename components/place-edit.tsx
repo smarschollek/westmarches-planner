@@ -40,6 +40,7 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 						<CardMedia
 							component='img'
 							image={`/api/images/${imageGuid}`}
+							sx={{maxHeight: 400, objectFit: 'contain'}}
 						/>
 					)
 				}

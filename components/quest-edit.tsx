@@ -58,6 +58,7 @@ export const QuestEdit = ({defaultValues, places, onSubmit} : QuestEditProps): R
 						<CardMedia
 							component='img'
 							image={`/api/images/${imageGuid}`}
+							sx={{maxHeight: 400, objectFit: 'contain'}}
 						/>
 					)
 				}

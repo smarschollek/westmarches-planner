@@ -78,6 +78,7 @@ const Page : NextPage = () => {
 							<CardMedia
 								component='img'
 								image={`/api/images/${quest.imageGuid}`}
+								sx={{maxHeight: 400, objectFit: 'contain'}}
 							/>
 						)
 					}

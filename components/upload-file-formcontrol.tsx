@@ -1,7 +1,6 @@
-import { Input, InputBase, Stack } from '@mui/material';
+import { Button, Input, LinearProgress, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 import { ChangeEvent, ReactElement, useState } from 'react';
-import { Form, Spinner } from 'react-bootstrap';
 
 const supportedMedia = ['image/webp', 'image/jpeg', 'image/png'];
 
@@ -63,35 +62,32 @@ export const UploadFileFormControl = ({onUploadFinished, onUploadStarted, accept
 					<span className='me-2 fw-bold'>
 						Uploading...
 					</span>
-					<Spinner animation='border' />
+					<LinearProgress />
 				</div>
 			);
 		}
 		
 		if(error) {
 			return(
-				<Form.Label className='text-danger fw-bold mt-1'>
+				<Typography variant='caption' color='error'>
 					{error}
-				</Form.Label>
+				</Typography>
 			);
 		}
 
 		return (
-			<Form.Text className='text-muted'>
+			<Typography variant='caption'>
 				supported formats ( jpg, png, webp ) - max file site: 1MB
-			</Form.Text>
+			</Typography>
 		);
 	};
 
 	return(
-	// <Form.Group className='mb-3'>
-	// 	<Form.Label>Image</Form.Label>
-	// 	<Form.Control type='file' onChange={handleUploadImage} accept={accept}/>
-	// 	{renderText()}
-	// </Form.Group>
-
 		<Stack gap={1}>
-			<input type='file' onChange={handleUploadImage} accept={accept}/>
+			<label htmlFor='contained-button-file'>
+				<input hidden accept='image/*' id='contained-button-file' type='file' onChange={handleUploadImage}/>
+				<Button variant='contained' component='span'>Upload Image</Button>
+			</label>
 			{renderText()}
 		</Stack>
 	);
