@@ -2,7 +2,7 @@ import { AccessTime, Map, QuestionMark } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, ListItemButton, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MyList } from '../components/my-list';
 import { useUserConfig } from '../hooks/user-config-provider';
 import { Layout } from '../layout/layout';
@@ -12,23 +12,7 @@ import { FavoritPlace, SubscribedQuest } from '../models/user-model';
 
 
 const Home: NextPage = () => {
-	const [quests, setQuests] = useState<Quest[]>([]);
-	const [places, setPlaces] = useState<Place[]>([]);
 	const {userInfo} = useUserConfig();
-
-	useEffect(() => {
-		(async () => {
-			try {
-				// const responseQuests = await axios.get<Quest[]>('/api/quests/open');
-				// setQuests(responseQuests.data);
-
-				// const responsePlaces = await axios.get<Place[]>('/api/places/all');
-				// setPlaces(responsePlaces.data);
-			} catch (error) {
-				
-			}
-		})();
-	}, []);
 
 	const favoritPlacesRenderCallback = (place: FavoritPlace) => {
 		return (

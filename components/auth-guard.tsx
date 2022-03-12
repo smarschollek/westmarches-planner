@@ -11,7 +11,12 @@ interface RouteConfig {
 
 const routes : RouteConfig = {
 	unprotected: ['/login', '/register'],
-	gamemasterOnly: ['/quests/edit/[id]', '/places/edit/[id]', '/places/add', '/quests/add'],
+	gamemasterOnly: [
+		'/quests/edit/[id]', 
+		'/quests/create-session/[id]', 
+		'/places/edit/[id]', 
+		'/places/add', 
+		'/quests/add'],
 	adminOnly: []
 };
 

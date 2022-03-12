@@ -17,7 +17,7 @@ export interface Subscriber {
     characterName: string,
     characterClass: string,
     characterLevel: number
-	times: {[key: string] : string[]}
+	times: {[key: string] : number[]}
 }
 
 const questSchema = new mongoose.Schema<Quest>({

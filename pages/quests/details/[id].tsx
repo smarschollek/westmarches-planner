@@ -34,6 +34,13 @@ const Page : NextPage = () => {
 					<Button variant='contained' href={`/quests/edit/${quest._id}`}>
 						Edit
 					</Button>
+					{
+						quest.subscriber && quest.subscriber.length > 0 && (
+							<Button variant='contained' href={`/quests/create-session/${quest._id}`}>
+								Create Session
+							</Button>
+						)
+					}
 					<Button disabled variant='contained' color='error' href={`/quests/delete/${quest._id}`}>
 						Delete
 					</Button>
