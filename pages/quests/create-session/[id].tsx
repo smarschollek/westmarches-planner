@@ -118,7 +118,7 @@ const Page : NextPage = () => {
 					)
 				}
 				<Button variant='contained' onClick={() => setOpenModal(true)} disabled={selectedHours.length === 0}> OK </Button>
-				<Button variant='contained' color='secondary'> Back </Button>
+				<Button variant='contained' color='secondary' onClick={() => router.back()}> Back </Button>
 			</Stack>
 		</Layout>
 	);

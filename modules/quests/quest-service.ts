@@ -50,7 +50,7 @@ interface QuestService {
 const create = async (command: CreateQuestCommand) : Promise<void> => {
 	await dbConnect();
 	await QuestModel.create({
-		questState: 'Planning',
+		questState: 'Open',
 		creator: command.creator,
 		description: command.description,
 		imageGuid: command.imageGuid,
