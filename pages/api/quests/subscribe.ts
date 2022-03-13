@@ -31,16 +31,22 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		await schema.validate(req.body);
 		const request = req.body as SubscribeRequest;
-
 		const user = await userService.getByEmail(session.user.email!);
-		if(user) {
-			const character	= user.characters.find((x: Character) => x._id === request.characterId);
+		const quest = await questService.getById(request.questId);
+		if(user && quest) {
+			const character	= user.characters.find((x: Character) => x._id == request.characterId);
+			
 			if(character) {
 				await questService.subscribe({
 					character,
 					username: user.name,
 					questId: request.questId,
 					times: request.times
+				});
+
+				await userService.addSubscribedQuests(user._id, {
+					name: quest.name,
+					questId: quest._id,
 				});
 			}
 		}

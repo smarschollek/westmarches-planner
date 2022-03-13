@@ -6,9 +6,11 @@ import { Layout } from '../../layout/layout';
 import { Button, ListItemButton, Stack, Typography } from '@mui/material';
 import { MyList } from '../../components/my-list';
 import { Quest } from '../../modules/quests/quest-types';
+import { useSession } from 'next-auth/react';
+import { ExtendedSession } from '../../helper/validate-session';
 
 const Page : NextPage = () => {
-	const router = useRouter();
+	const session = useSession().data as (ExtendedSession | null);
 	const [quests, setQuests] = useState<Quest[]>([]);
 
 	useEffect(()=> {
@@ -17,6 +19,10 @@ const Page : NextPage = () => {
 			setQuests(response.data);
 		})();
 	}, []);
+
+	if(!session) {
+		return <></>;
+	}
 
 	const handleRenderCallback = (quest: Quest) : JSX.Element => {
 		return (
@@ -37,11 +43,16 @@ const Page : NextPage = () => {
 	  				Quests
 				</Typography>
 				<MyList items={quests} renderCallback={handleRenderCallback}/>
-				<Button 
-					variant='contained'
-					component='a'
-					href='/quests/add'
-				> Add Quest </Button>		
+				{
+					session.isGamemaster && (
+						<Button 
+							variant='contained'
+							component='a'
+							href='/quests/add'
+						> Add Quest </Button>		
+					)
+				}
+				
 			</Stack>			
 		</Layout>
 	);

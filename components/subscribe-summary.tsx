@@ -1,29 +1,23 @@
 import { Stack, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 import { groupTimes } from '../helper/dayjs-helper';
+import { DayAndTime } from '../modules/common/common-types';
 import { Quest } from '../modules/quests/quest-types';
 import { Character } from '../modules/users/user-types';
-import { SelectedTimes } from './week-time-selection';
 
 interface SubscribeSummaryProps {
 	quest?: Quest
 	character?: Character
-	times?: SelectedTimes
+	times: DayAndTime[]
 }
 
 export const SubscribeSummary = ({quest, character, times}: SubscribeSummaryProps): ReactElement => {
-	
 	const mapTimes = () => {
-		if(!times) {
-			return <></>;
-		}
-
-		const keys = Object.keys(times).sort((a,b) => (new Date(a).getTime() - new Date(b).getTime()));
-		return keys.map(key => {
-			const values = groupTimes(times[key]);
+		return times.map(time => {
+			const values = groupTimes(time.hours);
 			return (
-				<Stack key={key} direction='row' justifyContent='space-between'>
-					<div className='fw-light'>{key}</div>
+				<Stack key={time.day} direction='row' justifyContent='space-between'>
+					<div className='fw-light'>{time.day}</div>
 					<div>
 						{values.map((v,i) => <div key={i}>{`${v[0]}:00 - ${v[1]}:00`}</div>)}
 					</div>

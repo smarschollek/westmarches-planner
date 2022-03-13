@@ -1,8 +1,10 @@
 import { ChevronLeft, ChevronRight, ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, Select, Stack, ToggleButton, Typography } from '@mui/material';
+import { time } from 'console';
 import dayjs from 'dayjs';
 import { ReactElement, useEffect, useState } from 'react';
 import { CalenderWeek, getCalenderWeeks, getCurrentWeek, getWeekDays } from '../helper/dayjs-helper';
+import { DayAndTime } from '../modules/common/common-types';
 
 const timeValues = [
 	[1,2,3],
@@ -15,23 +17,20 @@ const timeValues = [
 	[22,23,24],
 ];
 
-export type SelectedTimes = {[key: string] : number[]};
-
 interface WeekTimeSelectionProps {
-	onChange: (selectedTimes: SelectedTimes) => void
-	values: SelectedTimes
+	onChange: (selectedTimes: DayAndTime[]) => void
+	values: DayAndTime[]
 }
 
 export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): ReactElement => {
-	const [times, setTimes] = useState<SelectedTimes>(values);
+	const [times, setTimes] = useState<DayAndTime[]>(values);
 	const [weeks, setWeeks] = useState<CalenderWeek[]>([]);
 	const [selectedWeek, setSelectedWeek] = useState<CalenderWeek>();
 	const [expanded, setExpanded] = useState<string | false>(false);
 
 	useEffect(() => {
-		const keys = Object.keys(times);		
-		keys.forEach(key => times[key].sort((a,b) => (a-b)));
-		onChange(times);
+		const storedTimes = times.sort((a,b) => (Date.parse(a.day) - Date.parse(b.day)));
+		onChange(storedTimes);
 	}, [onChange, times]);
 
 	useEffect(() => {
@@ -40,31 +39,35 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 		setSelectedWeek(weeks[getCurrentWeek()]);
 	}, []);
 
-	const pushTime = (day: string, values: number[]) => {
-		const temp = {...times};
-		
-		if(values.length === 1) {
-			const value = values[0];
-			if(temp[day]) {
-				const index = temp[day].indexOf(value);
-				if(index === -1) {
-					temp[day].push(value);
+	const pushTime = (day: string, hours: number[]) => {
+		const temp = [...times];
+
+		if(hours.length === 1) {
+			const item = temp.find(x => x.day === day); 
+			if(item) {
+				const index = item.hours.indexOf(hours[0]);
+				if(index !== -1) {
+					item.hours.splice(index, 1);
 				} else {
-					temp[day].splice(index, 1);
+					item.hours.push(hours[0]);
 				}
+				
 			} else {
-				temp[day] = [value];
+				temp.push({
+					day,
+					hours
+				});
 			}
 		} else {
-			if(temp[day] && temp[day].length !== 0) {
-				temp[day] = [];
+			const index = temp.findIndex(x => x.day === day); 
+			if(index !== -1) {
+				temp.splice(index, 1);
 			} else {
-				temp[day] = values;
+				temp.push({
+					day,
+					hours
+				});
 			}
-		}
-
-		if(temp[day].length === 0) {
-			delete temp[day];
 		}
 
 		setTimes(temp);
@@ -90,28 +93,43 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 		}
 	};
 
+	const isChecked = (day: string, hour: number) => {
+		const item = times.find(x => x.day === day);
+		if(item) {
+			if(hour === -1) {
+				return true;
+			}
+
+			return item.hours.includes(hour);
+		} 
+
+		return false;
+	};
+
 	const renderAccordion = (days : Date[]) => {
 		const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-    	setExpanded(newExpanded ? panel : false);
-   		 };
+    		setExpanded(newExpanded ? panel : false);
+   		};
+
 		return (
 			<>
 				{
 					days.map((day, index) => {
+						const dayString = day.toDateString();
 						if(dayjs(day).valueOf() < (dayjs().valueOf())) {
 							return (
 								<Accordion key={index} disabled disableGutters expanded={false}>
 									<AccordionSummary  aria-controls={`panel-healder-${index}`} id={`panel-healder-${index}`}>
-										<Typography>{day.toDateString()}</Typography>
+										<Typography>{dayString}</Typography>
 									</AccordionSummary>		
 								</Accordion>
 							);
 						}	
 
 						return (
-							<Accordion key={index} disableGutters expanded={expanded == `${day.toDateString()}`} onChange={handleChange(`${day.toDateString()}`)}>
+							<Accordion key={index} disableGutters expanded={expanded == dayString} onChange={handleChange(dayString)}>
 								<AccordionSummary  expandIcon={<ExpandMore />} aria-controls={`panel-healder-${index}`} id={`panel-healder-${index}`}>
-									<Typography>{day.toDateString()}</Typography>
+									<Typography>{dayString}</Typography>
         						</AccordionSummary>		
 								<AccordionDetails>
 									<Button
@@ -119,13 +137,13 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 										variant='outlined'
 										fullWidth
 										onClick={() => {
-											pushTime(day.toDateString(), timeValues.flat());
+											pushTime(dayString, timeValues.flat());
 										}}
 										sx={{marginBottom: 2}}
 									>
-								            {times[day.toDateString()] && times[day.toDateString()].length > 0 ? 'Clear' : 'All' }
+								            {isChecked(dayString, -1) ? 'Clear' : 'All' }
 									</Button>
-									{mapTimes(day.toDateString())}
+									{mapTimes(dayString)}
         						</AccordionDetails>
 							</Accordion>
 						);
@@ -140,17 +158,17 @@ export const WeekTimeSelection = ({onChange, values}: WeekTimeSelectionProps): R
 			return (
 				<Stack direction='row' gap={1} key={i}>
 					{
-						row.map((col, j) => {
+						row.map((hour, j) => {
 							return <ToggleButton 
 								color='primary'
 								fullWidth 
 								value='check'
 								key={`${i}${j}`} 
 								sx={{marginBottom: 1}} 
-								selected={times[day] && times[day].includes(col) ? true : false}
-								onClick={() => pushTime(day, [col])}
+								selected={isChecked(day, hour)}
+								onClick={() => pushTime(day, [hour])}
 							>
-								{col}
+								{hour}
 							</ToggleButton>;
 						})
 					}

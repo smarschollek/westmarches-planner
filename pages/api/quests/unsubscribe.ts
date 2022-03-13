@@ -20,6 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtecto
 
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
+		
 		const session = await validateSession(req);
 		schema.validate(req.body);
 		const request = req.body as UnsubscribeQuestRequest;

@@ -14,22 +14,35 @@ const Page : NextPage = () => {
 	const router = useRouter();
 	const [quest,setQuest] = useState<Quest>();
 	const data = useSession().data as ExtendedSession;
-	const [openModal, setOpenModal] = useState(false);
+	const [modal, setModal] = useState<{title: string, content: JSX.Element, callback: () => void} | null>(null);
 
 	useEffect(() => {
-		(async() => {
-			if(router.query.id) {
-				const response = await axios.get<Quest>(`/api/quests/get?id=${router.query.id}`);
-				setQuest(response.data);
-			}
-		})();
-	}, [router.query.id]);
+		if(modal === null) {
+			(async() => {
+				if(router.query.id) {
+					const response = await axios.get<Quest>(`/api/quests/get?id=${router.query.id}`);
+					setQuest(response.data);
+				}
+			})();
+		}
+	}, [router.query.id, modal]);
 
 	if(!quest) {
 		return <></>;
 	}
 
-	const renderSubscribeOrUnsubscribeButton = () => {				
+	const handleUnsubscribe = async () => {
+		const char = quest.subscriber.find(x => x.username === data.user?.name);
+		if(char) {
+			await axios.post('/api/quests/unsubscribe', {
+				questId: quest._id,
+				subscriberId: char._id
+			});
+			setModal(null);
+		}
+	};
+
+	const renderSubscribeOrUnsubscribeButton = () => {						
 		if(data.user?.name === quest.creator) {
 			return (
 				<>
@@ -43,7 +56,12 @@ const Page : NextPage = () => {
 							</Button>
 						)
 					}
-					<Button variant='contained' color='error' onClick={() => setOpenModal(true)}>
+
+					<Button variant='contained' color='error' onClick={() => setModal({
+						title: 'Delte Quests',
+						content: <>Are you sure you want to delete <b>{quest.name}</b> ?</>,
+						callback: () => handleDeleteQuest()
+					})}>
 						Delete
 					</Button>
 				</>
@@ -53,7 +71,11 @@ const Page : NextPage = () => {
 		
 		if(quest.subscriber.findIndex(x => x.username === data.user?.name) !== -1) {
 			return (
-				<Button variant='contained' href={`/quests/unsubscribe/${quest._id}`}>
+				<Button variant='contained' onClick={() => setModal({
+					title: 'Unsubscribe from Quest',
+					content: <>Are you sure you want to unsubscribe from <b>{quest.name}</b> ? </>,
+					callback: handleUnsubscribe
+				})}>
 					Unsubscribe
 				</Button>
 			);	
@@ -83,24 +105,28 @@ const Page : NextPage = () => {
 		router.replace('/quests');
 	};
 
-	const deleteModal = () : JSX.Element => {
-		return (
-			<Card sx={{width: 400}}>
-				<CardHeader title='Delete Quest'/>
-				<CardContent>
-					Are you sure you want to delete <b>{quest.name}</b> ?
-				</CardContent>
-				<CardActions>
-					<Button fullWidth variant='contained' onClick={handleDeleteQuest}> Yes </Button>
-					<Button fullWidth color='secondary' variant='contained' onClick={() => setOpenModal(false)}> No </Button>
-				</CardActions>
-			</Card>
-		);
+	const renderModal = () : JSX.Element => {
+		if(modal) {
+			return (
+				<Card sx={{width: 400}}>
+					<CardHeader title={modal.title}/>
+					<CardContent>
+						{modal.content}
+					</CardContent>
+					<CardActions>
+						<Button fullWidth variant='contained' onClick={() => modal.callback()}> Yes </Button>
+						<Button fullWidth color='secondary' variant='contained' onClick={() => setModal(null)}> No </Button>
+					</CardActions>
+				</Card>
+			);
+		}
+
+		return <></>;
 	};
 
 	return(
 		<Layout>
-			<MyModal open={openModal} content={deleteModal()}/>
+			<MyModal open={modal !== null} content={renderModal()}/>
 			<Stack sx={{marginTop: 2}}>
 				<Card>
 					{

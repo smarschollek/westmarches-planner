@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
+import { validateSession } from '../../../helper/validate-session';
 import { questService } from '../../../modules/quests/quest-service';
+import { userService } from '../../../modules/users/user-service';
 
 type Response = {
 }
@@ -9,8 +11,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 	try {
+		const session = await validateSession(req);
 		let {id} = req.query;
-
 		if(!id) {
 			throw new Error('id is not set');
 		}
@@ -20,6 +22,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 		}
 
 		questService.delete({_id : id});
+		userService.deleteSubscribedQuests(session.id, id);
 
 		res.status(200).json('');
 	}
