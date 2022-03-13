@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QuestEdit, QuestEditFormValues } from '../../components/quest-edit';
-import { ExtendedSession } from '../../helper/validate-session';
 import { Layout } from '../../layout/layout';
-import { Place } from '../../models/place-model';
-import { Quest } from '../../models/quest-model';
+import { Place } from '../../modules/places/place-types';
 import { AddQuestRequest } from '../api/quests/add';
 
 const Page : NextPage = () => {

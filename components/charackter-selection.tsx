@@ -3,7 +3,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { ReactElement, useEffect, useState } from 'react';
 import { Layout } from '../layout/layout';
-import { Character } from '../models/user-model';
+import { Character } from '../modules/users/user-types';
 
 interface CharackterSelectionProps {
 	onChange : (character: Character) => void

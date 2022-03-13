@@ -1,20 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { dbConnect } from '../../../helper/db-connect';
 import { apiProtector } from '../../../helper/api-protector';
-import { object, string } from 'yup';
+import { array, object, string } from 'yup';
 import { getSession } from 'next-auth/react';
-import { UserModel } from '../../../models/user-model';
-import { QuestModel } from '../../../models/quest-model';
+import { DayAndTime } from '../../../modules/common/common-types';
+import { userService } from '../../../modules/users/user-service';
+import { Character } from '../../../modules/users/user-types';
+import { questService } from '../../../modules/quests/quest-service';
+
 
 type SubscribeRequest = {
 	characterId: string
 	questId: string
-	times: {[key: string] : string[]}
+	times: DayAndTime[]
 }
 
 const schema = object({
 	characterId: string().required(),
 	questId:  string().required(),
+	times: array().required()
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
@@ -22,7 +25,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const session = await getSession({req});
-	
 		if(!session || !session.user) {
 			throw new Error('session is not valid');
 		}
@@ -30,32 +32,19 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		await schema.validate(req.body);
 		const request = req.body as SubscribeRequest;
 
-		dbConnect();
-		const user = await UserModel.findOne({'email' : session.user.email});
+		const user = await userService.getByEmail(session.user.email!);
 		if(user) {
-			const character = user.characters.find((x: any)=>x.id === request.characterId);
-
+			const character	= user.characters.find((x: Character) => x._id === request.characterId);
 			if(character) {
-				const quest = await QuestModel.findById(request.questId);
-				if(quest) {
-					user.subscribedQuests.push({
-						questId: quest._id,
-						name: quest.name
-					});
-					await user.save();
-
-					quest.subscriber.push({
-						
-						name: user.name,
-						characterClass: character.class,
-						characterLevel: character.level,
-						characterName: character.name,
-						times: request.times
-					});	
-					await quest.save();
-				}
+				await questService.subscribe({
+					character,
+					username: user.name,
+					questId: request.questId,
+					times: request.times
+				});
 			}
 		}
+
 		res.status(200).send('');
 		
 	} catch (error: any) {

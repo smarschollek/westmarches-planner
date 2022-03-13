@@ -6,8 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
-
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Unsubscribe : NextPage = () => {
 	const router = useRouter();
@@ -28,7 +27,7 @@ const Unsubscribe : NextPage = () => {
 	}
 
 	const handleUnsubscribe = async () => {
-		const char = quest.subscriber.find(x=>x.name === data.user?.name);
+		const char = quest.subscriber.find(x => x.username === data.user?.name);
 		if(char) {
 			await axios.post('/api/quests/unsubscribe', {
 				questId: router.query.id,

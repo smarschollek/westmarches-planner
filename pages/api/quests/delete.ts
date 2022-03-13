@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { dbConnect } from '../../../helper/db-connect';
-import { QuestModel } from '../../../models/quest-model';
+import { questService } from '../../../modules/quests/quest-service';
 
 type Response = {
 }
@@ -10,20 +9,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 	try {
-		const {id} = req.query;
+		let {id} = req.query;
 
 		if(!id) {
 			throw new Error('id is not set');
 		}
 
-		dbConnect();
-		
 		if(Array.isArray(id)) {
-			await QuestModel.deleteOne({'_id' : id[0]});
-		} else{
-			await QuestModel.deleteOne({'_id' : id});
+			id = id[0];
 		}
-		
+
+		questService.delete({_id : id});
+
 		res.status(200).json('');
 	}
 	catch(error : any) {

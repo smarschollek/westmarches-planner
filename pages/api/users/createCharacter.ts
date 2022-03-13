@@ -5,7 +5,7 @@ import { number, object, string } from 'yup';
 import { apiProtector } from '../../../helper/api-protector';
 import { dbConnect } from '../../../helper/db-connect';
 import { validateSession } from '../../../helper/validate-session';
-import { UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
 
 type CreateCharacterRequest = {
     name: string
@@ -32,7 +32,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const session = await validateSession(req);
 		const body = req.body as CreateCharacterRequest;
 
-		dbConnect();
+		await dbConnect();
 		
 		const user = await UserModel.findOne({'email' : session.user!.email});
 		if(user) {

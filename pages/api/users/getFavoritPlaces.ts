@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
 import { validateSession } from '../../../helper/validate-session';
-import { UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);
 

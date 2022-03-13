@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
 import { validateSession } from '../../../helper/validate-session';
-import { Character, FavoritPlace, SubscribedQuest, UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
+import { Character, FavoritPlace, SubscribedQuest } from '../../../modules/users/user-types';
 
 interface UserInfoResponse {
     characters: Character[],

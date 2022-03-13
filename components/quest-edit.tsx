@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Place } from '../models/place-model';
 import { UploadFileFormControl } from './upload-file-formcontrol';
-import { Button, Card, CardContent, CardMedia, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Button, Card, CardContent, CardMedia, FormControl, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Place } from '../modules/places/place-types';
 
 export type QuestEditFormValues = {
 	name: string,
@@ -130,7 +130,7 @@ export const QuestEdit = ({defaultValues, places, onSubmit} : QuestEditProps): R
 						<Button 
 							type='submit'
 							variant='contained'
-							disabled={!formState.isValid}
+							disabled={!formState.isValid || uploading}
 						>
 								Save
 						</Button>

@@ -8,7 +8,7 @@ import { MyList } from '../../components/my-list';
 import { ExtendedSession } from '../../helper/validate-session';
 import { useUserConfig } from '../../hooks/user-config-provider';
 import { Layout } from '../../layout/layout';
-import { Place } from '../../models/place-model';
+import { Place } from '../../modules/places/place-types';
 import { AllPlacesRespone } from '../api/places/all';
 
 const Index : NextPage = () => {

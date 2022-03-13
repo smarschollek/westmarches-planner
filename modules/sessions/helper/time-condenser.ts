@@ -1,12 +1,11 @@
-import { VaccinesOutlined } from '@mui/icons-material';
-import { Times } from '../types/session-types';
+import { DayAndTime } from '../../common/common-types';
 
 interface TimeCondenser {
-	days: (times: Times[][]) => Promise<Times[]>
-	hours: (times: Times[]) => Promise<Times | undefined>
+	days: (times: DayAndTime[][]) => Promise<DayAndTime[]>
+	hours: (times: DayAndTime[]) => Promise<DayAndTime | undefined>
 }
 
-const days = async (times: Times[][]) : Promise<Times[]> => {	
+const days = async (times: DayAndTime[][]) : Promise<DayAndTime[]> => {	
 	const flatten = times.flat();
 	
 	if(flatten.length === 0) {
@@ -26,7 +25,7 @@ const days = async (times: Times[][]) : Promise<Times[]> => {
 	});
 
 
-	let temp : Times[] = [];
+	let temp : DayAndTime[] = [];
 	days.forEach(x => {
 		const result = flatten.filter(y => y.day === x);
 		if(result.length === times.length) {
@@ -37,7 +36,7 @@ const days = async (times: Times[][]) : Promise<Times[]> => {
 	return temp;
 };
 
-const hours = async (times: Times[]) : Promise<Times | undefined> => {
+const hours = async (times: DayAndTime[]) : Promise<DayAndTime | undefined> => {
 	if(times.length === 0) {
 		return undefined;
 	}

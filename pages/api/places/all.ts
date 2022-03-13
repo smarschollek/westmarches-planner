@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
 import { dbConnect } from '../../../helper/db-connect';
-import { Place, PlaceModel } from '../../../models/place-model';
-import { QuestModel } from '../../../models/quest-model';
+import { placeService } from '../../../modules/places/place-service';
+import { Place } from '../../../modules/places/place-types';
+import { questService } from '../../../modules/quests/quest-service';
 
 export type AllPlacesRespone = Place & {
 	questCount: number
@@ -12,23 +13,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<AllPlacesRespone[]>) => {	
 	
-	dbConnect();
+	await dbConnect();
 	const result : AllPlacesRespone[] = [];
-	const places = await PlaceModel.find<Place>({});
-	
-	for (let i = 0; i < places.length; i++) {
-		const place = places[i];
-		const quests = await QuestModel.where('placeId').equals(place._id);	
-		
-		result.push({
-			_id: place._id,
-			name: place.name,
-			description: place.description,
-			imageGuid: place.imageGuid,
-			questCount: quests.length
-		});
-	}
-	
+	const places = await placeService.getAll();
+	places.forEach(async (place) => {
+		const quests = await questService.getByPlaceId(place._id);
+		result.push({ ...place, questCount: quests.length });
+	});
 	res.status(200).json(result);
 };
 

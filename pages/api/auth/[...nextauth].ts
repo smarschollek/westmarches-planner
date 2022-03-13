@@ -4,7 +4,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
 import { dbConnect } from '../../../helper/db-connect';
-import { UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
 
 type User = {
 	_id: ObjectId
@@ -34,7 +34,7 @@ export default NextAuth({
 	callbacks: {
 		async session({ session , token, user }) {
 			if(session.user && session.user.email) {
-				dbConnect();				
+				await dbConnect();				
 				const storeUser = await UserModel.findOne<User>({'email' : session.user.email});
 
 				if(storeUser) {
@@ -55,7 +55,7 @@ export default NextAuth({
 					if(credentials) {
 						await authorizeSchema.validate(credentials);
 						
-						dbConnect();	
+						await dbConnect();	
 						const user = await UserModel.findOne({'email' : credentials.email});
 						if(!user) {
 							throw new Error('login failed');

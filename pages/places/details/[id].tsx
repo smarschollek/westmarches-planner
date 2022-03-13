@@ -3,12 +3,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
 import { GetPlaceResponse } from '../../api/places/get';
 import { Button, Card, CardActions, CardContent, CardMedia, Divider, ListItemButton, Stack, Typography } from '@mui/material';
 import { MyList } from '../../../components/my-list';
 import { useSession } from 'next-auth/react';
 import { ExtendedSession } from '../../../helper/validate-session';
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Details : NextPage = () => {
 	const router  = useRouter();

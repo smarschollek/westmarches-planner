@@ -1,8 +1,8 @@
 import { Stack, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 import { groupTimes } from '../helper/dayjs-helper';
-import { Quest } from '../models/quest-model';
-import { Character } from '../models/user-model';
+import { Quest } from '../modules/quests/quest-types';
+import { Character } from '../modules/users/user-types';
 import { SelectedTimes } from './week-time-selection';
 
 interface SubscribeSummaryProps {

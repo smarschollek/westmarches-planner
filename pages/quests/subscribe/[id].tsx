@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { Layout } from '../../../layout/layout';
 import { SelectedTimes, WeekTimeSelection } from '../../../components/week-time-selection';
 import { CharackterSelection } from '../../../components/charackter-selection';
-import { Character } from '../../../models/user-model';
 import axios from 'axios';
-import { Quest } from '../../../models/quest-model';
 import { SubscribeSummary } from '../../../components/subscribe-summary';
 import { Button, Stack } from '@mui/material';
+import { Character } from '../../../modules/users/user-types';
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Subscribe : NextPage = () => {
 	const [pageIndex, setPageIndex] = useState(0);

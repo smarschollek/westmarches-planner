@@ -3,9 +3,9 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Layout } from '../../layout/layout';
-import { Quest } from '../../models/quest-model';
 import { Button, ListItemButton, Stack, Typography } from '@mui/material';
 import { MyList } from '../../components/my-list';
+import { Quest } from '../../modules/quests/quest-types';
 
 const Page : NextPage = () => {
 	const router = useRouter();

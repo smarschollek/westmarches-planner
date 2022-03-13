@@ -1,4 +1,4 @@
-import { TimeProposition, Times } from '../types/session-types';
+import { TimeProposition, Time } from '../types/session-types';
 import { timeCondenser } from './time-condenser';
 
 describe('TimeCondenser', () => {
@@ -15,7 +15,7 @@ describe('TimeCondenser', () => {
 
 		test('when called and timepropositins contains only one element returns that element', async () => {
 			//Arrange
-			const times : Times[][] = [
+			const times : Time[][] = [
 				[
 					{
 						day: 'Sun Mar 06 2022',
@@ -40,7 +40,7 @@ describe('TimeCondenser', () => {
 
 		test('when called returns all days that exists at least once in all sub arrays', async () => {
 			//Arrange
-			const times : Times[][] = [
+			const times : Time[][] = [
 				[
 					{
 						day: 'Sun Mar 06 2022',
@@ -106,7 +106,7 @@ describe('TimeCondenser', () => {
 
 		test('when called returns overlapping times', async () => {
 			//Arrange
-			const times : Times[] = [
+			const times : Time[] = [
 				{
 					day: 'Sun Mar 06 2022',
 					hours: [1,2,3]
@@ -128,7 +128,7 @@ describe('TimeCondenser', () => {
 
 		test('when called returns overlapping times even with gaps in between', async () => {
 			//Arrange
-			const times : Times[] = [
+			const times : Time[] = [
 				{
 					day: 'Sun Mar 06 2022',
 					hours: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]

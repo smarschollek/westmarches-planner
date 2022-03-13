@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
 import { dbConnect } from '../../../helper/db-connect';
-import { UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
 
 type Response = {
 }
@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const hashedPassword = await authHelper.hashPassword(req.body.password);
 		
-		dbConnect();
+		await dbConnect();
 		const existingUsers = await UserModel.findOne({'email' : user.email });
 		if(existingUsers) {
 			throw new Error('user with same email already exists');

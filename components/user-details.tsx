@@ -2,7 +2,7 @@ import { Button, Chip, FormControl, InputLabel, ListItemButton, MenuItem, Select
 import { useSession } from 'next-auth/react';
 import { ExtendedSession } from '../helper/validate-session';
 import { useUserConfig } from '../hooks/user-config-provider';
-import { Character } from '../models/user-model';
+import { Character } from '../modules/users/user-types';
 import { MyList } from './my-list';
 
 const UserDetails = () => {

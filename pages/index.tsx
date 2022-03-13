@@ -1,15 +1,10 @@
 import { AccessTime, Map, QuestionMark } from '@mui/icons-material';
-import { Card, CardContent, CardHeader, ListItemButton, Stack, Typography } from '@mui/material';
-import axios from 'axios';
+import { ListItemButton, Stack, Typography } from '@mui/material';
 import type { NextPage } from 'next';
-import { useState } from 'react';
 import { MyList } from '../components/my-list';
 import { useUserConfig } from '../hooks/user-config-provider';
 import { Layout } from '../layout/layout';
-import { Place } from '../models/place-model';
-import { Quest } from '../models/quest-model';
-import { FavoritPlace, SubscribedQuest } from '../models/user-model';
-
+import { FavoritPlace, SubscribedQuest } from '../modules/users/user-types';
 
 const Home: NextPage = () => {
 	const {userInfo} = useUserConfig();

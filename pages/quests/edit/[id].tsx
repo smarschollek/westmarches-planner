@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QuestEdit, QuestEditFormValues } from '../../../components/quest-edit';
 import { Layout } from '../../../layout/layout';
-import { Place } from '../../../models/place-model';
-import { Quest } from '../../../models/quest-model';
+import { Place } from '../../../modules/places/place-types';
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Page : NextPage = () => {
 	const router  = useRouter();

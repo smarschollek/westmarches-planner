@@ -1,23 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { dbConnect } from '../../../helper/db-connect';
-import { Quest, QuestModel } from '../../../models/quest-model';
+import { questService } from '../../../modules/quests/quest-service';
 
-type AllQuestsResponse = Quest[];
+const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
-
-const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<AllQuestsResponse>) => {
-	dbConnect();
-	const data = await QuestModel.find<Quest>({});
-	
-	const result : AllQuestsResponse = [];
-
-	data.forEach(x => {
-		result.push(JSON.parse(JSON.stringify(x)));
-	});
-
-	res.status(200).json(result);
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+	const data = await questService.getAll();
+	res.status(200).json(data);
 };
 
 export default handler;

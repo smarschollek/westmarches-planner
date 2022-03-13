@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
 import { apiProtector } from '../../../helper/api-protector';
-import { dbConnect } from '../../../helper/db-connect';
-import { PlaceModel } from '../../../models/place-model';
+
+import { placeService } from '../../../modules/places/place-service';
 
 interface UpdatePlaceRequest {
 	_id: string,
@@ -13,7 +13,9 @@ interface UpdatePlaceRequest {
 
 const validationSchema = object({
 	_id: string().required(),
-	name: string().required()
+	name: string().required(),
+	description: string(),
+	imageGuid: string()
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
@@ -21,18 +23,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {	
 		await validationSchema.validate(req.body);
-		
-		const body = req.body as UpdatePlaceRequest;
-
-		dbConnect();
-		const place = await PlaceModel.findById(req.body._id);
-		
-		if(place) {
-			place.name = body.name;
-			place.description = body.description;
-			place.imageGuid = body.imageGuid;
-			await place.save();
-		}
+		const request = req.body as UpdatePlaceRequest;
+		placeService.update(request);
 		res.status(200).json('');
 	} catch (error) {
 		res.status(500).json(error);
