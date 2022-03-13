@@ -3,25 +3,13 @@ import NextAuth, { Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { object, string } from 'yup';
 import { authHelper } from '../../../helper/auth';
-import { dbConnect } from '../../../helper/db-connect';
-import { UserModel } from '../../../modules/users/user-model';
-
-type User = {
-	_id: ObjectId
-    name: string
-	password: string
-    email: string
-	isGamemaster: boolean
-	isAdmin: boolean
-	
-}
+import { userService } from '../../../modules/users/user-service';
 
 type AuthUser = {
     name: string
 	email: string,
 	isGamemaster: boolean,
-	isAdmin: boolean,
-	test: string
+	isAdmin: boolean
 }
 
 const authorizeSchema = object({
@@ -34,9 +22,7 @@ export default NextAuth({
 	callbacks: {
 		async session({ session , token, user }) {
 			if(session.user && session.user.email) {
-				await dbConnect();				
-				const storeUser = await UserModel.findOne<User>({'email' : session.user.email});
-
+				const storeUser = await userService.getByEmail(session.user.email);
 				if(storeUser) {
 					session.isAdmin = storeUser.isAdmin;
 					session.isGamemaster = storeUser.isGamemaster;
@@ -49,20 +35,16 @@ export default NextAuth({
 	},
 	providers: [
 		Credentials({
-
 			authorize: async (credentials): Promise<AuthUser> => {
 				try {
 					if(credentials) {
 						await authorizeSchema.validate(credentials);
-						
-						await dbConnect();	
-						const user = await UserModel.findOne({'email' : credentials.email});
+						const user = await userService.getByEmail(credentials.email);
 						if(!user) {
 							throw new Error('login failed');
 						}
 	
 						const isValid =  await authHelper.verifyPassword(credentials.password, user.password);
-	
 						if(!isValid) {
 							throw new Error('login failed');
 						}
@@ -71,8 +53,7 @@ export default NextAuth({
 							name: user.name,
 							email: user.email,
 							isAdmin: user.isAdmin,
-							isGamemaster: user.isGamemaster,
-							test: 'test'
+							isGamemaster: user.isGamemaster
 						};
 					}
 					

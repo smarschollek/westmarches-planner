@@ -71,7 +71,7 @@ const Page : NextPage = () => {
 			<ListItemButton>
 				<ListItemText 
 					primary={subscriber.character.name}
-					secondary={subscriber.username}
+					secondary={`Player ( ${subscriber.username} )`}
 				/>
 				<Chip size='small' label={`${subscriber.character.class} (${subscriber.character.level})`}></Chip>
 			</ListItemButton>

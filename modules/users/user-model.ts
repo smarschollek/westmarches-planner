@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema<User>({
 			name: String,
 			level: Number,
 			class: String,
-			comment: String
+			description: String
 		}
 	],
 	subscribedQuests: [{

@@ -23,18 +23,17 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<GetPla
 			id = id[0];
 		}
 
-		const place = await placeService.getById(id);
+		const place = await placeService.getById(id) as GetPlaceResponse;
 		if(!place) {
 			throw new Error(`no place with ${id} found`);
 		}
 
-		let result : GetPlaceResponse = { ...place };
 		if(includeQuests) {
-			const quests = await questService.getByPlaceId(place._id);
-			result = { ...result, quests };
+			const quests = await questService.getByPlaceId(place._id.toString());
+			place.quests = quests;			
 		}
 
-		res.status(200).json(result);
+		res.status(200).json(place);
 	} catch(error : any) {
 		res.status(500).json(error);
 	}

@@ -36,7 +36,7 @@ export const PlaceEdit = ({defaultValues, onSubmit} : PlaceEditProps): ReactElem
 		<form onSubmit={handleSubmit(onSubmit)} style={{marginTop: 16}}>
 			<Card>
 				{
-					defaultValues?.imageGuid && (
+					imageGuid && (
 						<CardMedia
 							component='img'
 							image={`/api/images/${imageGuid}`}

@@ -54,7 +54,7 @@ export const QuestEdit = ({defaultValues, places, onSubmit} : QuestEditProps): R
 		<form onSubmit={handleSubmit(onSubmit)} style={{marginTop: 16}}>
 			<Card>
 				{
-					defaultValues?.imageGuid && (
+					imageGuid && (
 						<CardMedia
 							component='img'
 							image={`/api/images/${imageGuid}`}

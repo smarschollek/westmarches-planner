@@ -46,12 +46,12 @@ const _delete = async (command : DeletePlaceCommand) : Promise<void> => {
 
 const getById = async (id: string) : Promise<Place | null> => {
 	await dbConnect();
-	return await PlaceModel.findById(id);
+	return await PlaceModel.findById<Place>(id).exec();
 };
 
 const getAll = async () : Promise<Place[]> => {
 	await dbConnect();
-	return await PlaceModel.find({});
+	return await PlaceModel.find<Place>({}).exec();
 };
 
 export const placeService : PlaceService = {

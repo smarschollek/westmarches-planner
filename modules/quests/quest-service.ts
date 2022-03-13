@@ -77,17 +77,17 @@ const _delete = async (command: DeleteQuestCommand) : Promise<void> => {
 
 const getById = async (id: string) : Promise<Quest | null> => {
 	await dbConnect();
-	return await QuestModel.findById(id);
+	return await QuestModel.findById<Quest>(id).exec();
 };
 
 const getAll = async () : Promise<Quest[]> => {
 	await dbConnect();
-	return await QuestModel.find({});
+	return await QuestModel.find<Quest>({}).exec();
 };
 
 const getByPlaceId = async (placeId: string) : Promise<Quest[]> => {
 	await dbConnect();
-	return await QuestModel.where('placeId').equals(placeId);	
+	return await QuestModel.where<Quest>('placeId').equals(placeId).exec();	
 };
 
 const subscribe = async (command: SubscribeCommand) : Promise<void> => {
@@ -99,7 +99,7 @@ const subscribe = async (command: SubscribeCommand) : Promise<void> => {
 			character: command.character,
 			times: command.times
 		});
-		quest.save();
+		await quest.save();
 	}	
 };
 

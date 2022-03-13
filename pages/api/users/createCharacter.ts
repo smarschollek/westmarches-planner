@@ -18,6 +18,7 @@ const schema = object({
 	name: string().required(),
 	level: number().required().min(1).max(20),
 	class: string().required(),
+	description: string(),
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);

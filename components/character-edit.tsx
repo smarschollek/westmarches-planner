@@ -23,7 +23,7 @@ export type CharacterEditFormValues = {
     name: string,
     class: string,
     level: number,
-    comment: string
+    description: string
 }
 
 type CharacterEditProps = {
@@ -105,8 +105,8 @@ export const CharacterEdit = ({defaultValues, onSubmit}: CharacterEditProps): Re
 									helperText={fieldState.error && 'Error'}
 								/>)}
 							control={control}
-							name='comment'
-							defaultValue={defaultValues?.comment}
+							name='description'
+							defaultValue={defaultValues?.description}
 						/>
 						
 						<Button 
