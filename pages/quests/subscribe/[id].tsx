@@ -2,18 +2,19 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Layout } from '../../../layout/layout';
-import { SelectedTimes, WeekTimeSelection } from '../../../components/week-time-selection';
+import { WeekTimeSelection } from '../../../components/week-time-selection';
 import { CharackterSelection } from '../../../components/charackter-selection';
 import axios from 'axios';
 import { SubscribeSummary } from '../../../components/subscribe-summary';
 import { Button, Stack } from '@mui/material';
 import { Character } from '../../../modules/users/user-types';
 import { Quest } from '../../../modules/quests/quest-types';
+import { DayAndTime } from '../../../modules/common/common-types';
 
 const Subscribe : NextPage = () => {
 	const [pageIndex, setPageIndex] = useState(0);
 	const [character, setCharacter] = useState<Character>();
-	const [times, setTimes] = useState<SelectedTimes>({});
+	const [times, setTimes] = useState<DayAndTime[]>([]);
 	const [quest, setQuest] = useState<Quest>();
 	const router = useRouter();
 

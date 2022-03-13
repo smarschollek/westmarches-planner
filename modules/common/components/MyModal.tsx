@@ -11,9 +11,10 @@ const style = {
 interface MyModalProps {
     content: JSX.Element
     open: boolean
+	onClose: () => void
 }
 
-export const MyModal = ({content, open} : MyModalProps): ReactElement => {
+export const MyModal = ({content, open, onClose} : MyModalProps): ReactElement => {
 	const [modalOpen, setModalOpen] = useState(open);
 
 	useEffect(() => {
@@ -23,7 +24,7 @@ export const MyModal = ({content, open} : MyModalProps): ReactElement => {
 	return(
 		<Modal
 			open={modalOpen}
-			onClose={() => setModalOpen(false)}	>
+			onClose={onClose}	>
 			<Box sx={style}>
 				{content}
 			</Box>

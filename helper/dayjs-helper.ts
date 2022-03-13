@@ -50,6 +50,8 @@ export const getCurrentWeek = () : number => {
 };
 
 export const groupTimes = (times: number[]) : number[][] => {
+	times = times.sort((a,b) => a-b);
+	
 	if(times.length === 0) {
 		return [];
 	}

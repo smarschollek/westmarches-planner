@@ -1,5 +1,7 @@
 import { DayAndTime } from '../common/common-types';
 
+export type QuestStates = 'Open' | 'Closed'
+
 export interface Quest {
 	_id: string;
 	creator: string,
@@ -7,7 +9,7 @@ export interface Quest {
 	description: string,
 	placeId: string,
 	imageGuid: string
-	questState: string
+	questState: QuestStates
     subscriber: Subscriber[]
 }
 

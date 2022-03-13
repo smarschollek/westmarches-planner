@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => a
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<AllPlacesRespone[]>) => {	
 	const places = await placeService.getAll() as AllPlacesRespone[];
 	for(const place of places) {
-		const quests = await questService.getByPlaceId(place._id);
+		const quests = await questService.getByPlaceId(place._id.toString());
 		place.questCount = quests.length;
 	}
 	res.status(200).json(places);

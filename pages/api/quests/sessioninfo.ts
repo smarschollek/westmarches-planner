@@ -1,16 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { DayAndTime } from '../../../modules/common/common-types';
-import { QuestModel } from '../../../modules/quests/quest-model';
+import { DayAndTime, PlayerInfo } from '../../../modules/common/common-types';
 import { questService } from '../../../modules/quests/quest-service';
+import { timeCondenser } from '../../../modules/sessions/helper/time-condenser';
 
 export interface SessionInfoResponse {
-    sessionInfos: SessionInfo[]
-}
-
-export interface SessionInfo {
-    name: string,
-    times: DayAndTime[]
+    questName: string,
+    questId: string,
+	players : PlayerInfo[]
+	times: DayAndTime[]
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);
@@ -31,13 +29,21 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			throw new Error('quest not found');
 		}
 
-		const sessionInfos = quest.subscriber.map<SessionInfo>(x => ({
+		const player = quest.subscriber.map<PlayerInfo>(x => ({
 			name: x.username,
-			times: x.times
+			character: x.character
 		}));
+			
 
+		const times = quest.subscriber.map<DayAndTime[]>(x => (x.times));
+		const condensedByDay = await timeCondenser.days(times);
+		const condensedByHours = await timeCondenser.hours(condensedByDay);
+		
 		const result : SessionInfoResponse = {
-			sessionInfos
+			questId: quest._id,
+			questName: quest.name,
+			players: player,
+			times: condensedByHours.map(x => ({day: x.day, hours: x.hours}))
 		};
 
 		res.status(200).json(result);

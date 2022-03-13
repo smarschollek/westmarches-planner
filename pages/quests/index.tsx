@@ -3,12 +3,14 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Layout } from '../../layout/layout';
-import { Button, ListItemButton, Stack, Typography } from '@mui/material';
+import { Button, Chip, ListItemButton, Stack, Typography } from '@mui/material';
 import { MyList } from '../../components/my-list';
 import { Quest } from '../../modules/quests/quest-types';
+import { useSession } from 'next-auth/react';
+import { ExtendedSession } from '../../helper/validate-session';
 
 const Page : NextPage = () => {
-	const router = useRouter();
+	const session = useSession().data as (ExtendedSession | null);
 	const [quests, setQuests] = useState<Quest[]>([]);
 
 	useEffect(()=> {
@@ -18,10 +20,23 @@ const Page : NextPage = () => {
 		})();
 	}, []);
 
+	if(!session) {
+		return <></>;
+	}
+
 	const handleRenderCallback = (quest: Quest) : JSX.Element => {
 		return (
 			<ListItemButton component='a' href={`/quests/details/${quest._id}`}>
-				{quest.name}
+				<Stack sx={{width: '100%'}} direction='row' justifyContent='space-between' alignItems='center'>
+					<Stack>
+						<div>{quest.name}</div>
+						<Typography variant='caption'>{`Gamemaster: ${quest.creator}`}</Typography>
+					</Stack>
+					<Stack gap={1} direction='row'>
+						<Chip size='small' label={`Subscriber (${quest.subscriber.length})`}/>
+						<Chip size='small' label={quest.questState} color={quest.questState === 'Open' ? 'success' : 'error'}/>
+					</Stack>
+				</Stack>
 			</ListItemButton>
 		);
 	};
@@ -37,11 +52,16 @@ const Page : NextPage = () => {
 	  				Quests
 				</Typography>
 				<MyList items={quests} renderCallback={handleRenderCallback}/>
-				<Button 
-					variant='contained'
-					component='a'
-					href='/quests/add'
-				> Add Quest </Button>		
+				{
+					session.isGamemaster && (
+						<Button 
+							variant='contained'
+							component='a'
+							href='/quests/add'
+						> Add Quest </Button>		
+					)
+				}
+				
 			</Stack>			
 		</Layout>
 	);

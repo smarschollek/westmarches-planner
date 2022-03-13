@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { ExtendedSession } from '../helper/validate-session';
 import { Place } from '../modules/places/place-types';
+import { GameSession } from '../modules/sessions/session-types';
 import { Character, FavoritPlace } from '../modules/users/user-types';
 
 type ThemeTypes = 'dark' | 'light'
@@ -31,7 +32,7 @@ const userConfigContext = createContext<UserConfigContext>({
 	userInfo: {
 		characters: [],
 		subscribedQuests:[],
-		favoritPlaces: [],
+		favoritPlaces: []
 	},
 	setLanguage: () => {},
 	setTheme: () => {},
@@ -86,12 +87,12 @@ export const UserConfigProvider = ({children} : PropsWithChildren<unknown>) => {
 	const updateFavoritPlaces = (place: Place) => {
 		const temp = [...userInfo.favoritPlaces];
 
-		const index = temp.findIndex(x => x.placeId === place._id);
+		const index = temp.findIndex(x => x.placeId === place._id.toString());
 		if(index !== -1) {
 			temp.splice(index,1);
 		} else {
 			temp.push({
-				placeId: place._id,
+				placeId: place._id.toString(),
 				name: place.name
 			});
 		}
