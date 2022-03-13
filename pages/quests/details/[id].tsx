@@ -50,7 +50,7 @@ const Page : NextPage = () => {
 						Edit
 					</Button>
 					{
-						quest.subscriber && quest.subscriber.length > 0 && (
+						quest.subscriber && quest.subscriber.length > 0 && quest.questState === 'Open' && (
 							<Button variant='contained' href={`/quests/create-session/${quest._id}`}>
 								Create Session
 							</Button>
@@ -69,23 +69,26 @@ const Page : NextPage = () => {
 			);
 		}
 		
-		if(quest.subscriber.findIndex(x => x.username === data.user?.name) !== -1) {
-			return (
-				<Button variant='contained' onClick={() => setModal({
-					title: 'Unsubscribe from Quest',
-					content: <>Are you sure you want to unsubscribe from <b>{quest.name}</b> ? </>,
-					callback: handleUnsubscribe
-				})}>
+		if(quest.questState === 'Open'){
+			if(quest.subscriber.findIndex(x => x.username === data.user?.name) !== -1) {
+				return (
+					<Button variant='contained' onClick={() => setModal({
+						title: 'Unsubscribe from Quest',
+						content: <>Are you sure you want to unsubscribe from <b>{quest.name}</b> ? </>,
+						callback: handleUnsubscribe
+					})}>
 					Unsubscribe
-				</Button>
-			);	
-		}
+					</Button>
+				);	
+			}
 
-		return (
-			<Button variant='contained' href={`/quests/subscribe/${quest._id}`}>
+			return (
+				<Button variant='contained' href={`/quests/subscribe/${quest._id}`}>
 				Subscribe
-			</Button>
-		);
+				</Button>
+			);
+		}
+			
 	};
 
 	const handleRenderCallback = (subscriber: Subscriber) => {
@@ -126,7 +129,7 @@ const Page : NextPage = () => {
 
 	return(
 		<Layout>
-			<MyModal open={modal !== null} content={renderModal()}/>
+			<MyModal open={modal !== null} content={renderModal()} onClose={() => setModal(null)}/>
 			<Stack sx={{marginTop: 2}}>
 				<Card>
 					{
@@ -141,7 +144,10 @@ const Page : NextPage = () => {
 					<CardContent>
 						<Stack gap={2}>
 							<Typography variant='h6' color='text.secondary'>
-								{quest.name}
+								<Stack direction='row' sx={{width: '100%'}} justifyContent='space-between'>
+									{quest.name}
+									<Chip label={quest.questState} color={quest.questState === 'Open' ? 'success' : 'error'}/>
+								</Stack>
 							</Typography>
 							<Typography variant='body2' color='text.secondary'>
 								{quest.description}

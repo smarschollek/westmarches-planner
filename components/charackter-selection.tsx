@@ -34,11 +34,9 @@ export const CharackterSelection = ({onChange} : CharackterSelectionProps): Reac
 
 	if(fetched && characters.length === 0) {
 		return (
-			<Layout>
-				<Grid alignItems='center'>
-					You need Characters to subscribe to a Quest. Create one <Link href='/user'>here</Link>
-				</Grid>
-			</Layout>
+			<Grid container alignItems='center' justifyContent='center' sx={{height: 100}}>
+				<Link href='/user'> You need Characters to subscribe to a Quest. Create one here</Link>
+			</Grid>
 		);
 	}
 

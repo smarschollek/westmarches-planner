@@ -4,7 +4,12 @@ import { GameSession } from './session-types';
 
 const sessionSchema = new mongoose.Schema<GameSession>({
 	creator: String,
-	date: Date,
+	questId: String,
+	questName: String,
+	date: {
+		day: String,
+    	hours: [Number]
+	},
 	players: [{
 		name: String,
 		character : {
@@ -17,4 +22,4 @@ const sessionSchema = new mongoose.Schema<GameSession>({
 
 
 
-export const GameSessionModel = mongoose.models.Session as mongoose.Model<GameSession, {}, {}, {}> || mongoose.model<GameSession>('GameSession', sessionSchema);
+export const GameSessionModel = mongoose.models.GameSession as mongoose.Model<GameSession, {}, {}, {}> || mongoose.model<GameSession>('GameSession', sessionSchema);

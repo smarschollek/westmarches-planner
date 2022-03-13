@@ -35,8 +35,8 @@ const Page : NextPage = () => {
 	const defaultValues : QuestEditFormValues = {
 		name: '',
 		description: '',
-		placeId: places[0] ? places[0]._id : '',
-		questState: 'Planning',
+		placeId: places[0] ? places[0]._id.toString() : '',
+		questState: 'Open',
 		imageGuid: ''
 	};
 

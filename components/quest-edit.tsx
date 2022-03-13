@@ -21,7 +21,6 @@ type QuestEditProps = {
 }
 
 const questStates = [
-	'Planning',
 	'Open',
 	'Close'
 ];
