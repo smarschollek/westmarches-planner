@@ -38,7 +38,7 @@ const Index : NextPage = () => {
 			<ListItem 
 				secondaryAction={
 					<IconButton edge='end' aria-label='favorit' onClick={() => handleFavoritOnClick(place)}>
-						{userInfo.favoritPlaces.findIndex(x => x.placeId === place._id) !== -1 ? <Star /> : <StarOutline /> }
+						{userInfo.favoritPlaces.findIndex(x => x.placeId === place._id.toString()) !== -1 ? <Star /> : <StarOutline /> }
 					</IconButton>
 				}
 			>
