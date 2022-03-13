@@ -1,12 +1,6 @@
-import mongoose from 'mongoose';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
-import { authHelper } from '../../../helper/auth';
-import { dbConnect } from '../../../helper/db-connect';
-import { UserModel } from '../../../models/user-model';
-
-type Response = {
-}
+import { userService } from '../../../modules/users/user-service';
 
 const requestSchema = object({
 	name: string().required(),
@@ -16,25 +10,13 @@ const requestSchema = object({
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
-
-		const user = {...req.body};
-		await requestSchema.validate(user);
-
-		const hashedPassword = await authHelper.hashPassword(req.body.password);
-		
-		dbConnect();
-		const existingUsers = await UserModel.findOne({'email' : user.email });
+		await requestSchema.validate(req.body);
+		const existingUsers = await userService.getByEmail(req.body.email);
 		if(existingUsers) {
 			throw new Error('user with same email already exists');
 		}
 
-		await UserModel.create({
-			...user,
-			password: hashedPassword,
-			isAdmin: false,
-			isGamemaster: false
-		});
-
+		await userService.register(req.body);
 		res.status(201).json({message: 'user created'});
 	} catch (error : any) {
 		res.status(500).json({message: error.message});

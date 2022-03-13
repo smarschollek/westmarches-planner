@@ -1,9 +1,9 @@
+import { FormControl, Grid, MenuItem, Select, Stack } from '@mui/material';
 import axios from 'axios';
 import Link from 'next/link';
 import { ReactElement, useEffect, useState } from 'react';
-import { Row, Col, Stack, Form } from 'react-bootstrap';
 import { Layout } from '../layout/layout';
-import { Character } from '../models/user-model';
+import { Character } from '../modules/users/user-types';
 
 interface CharackterSelectionProps {
 	onChange : (character: Character) => void
@@ -26,29 +26,33 @@ export const CharackterSelection = ({onChange} : CharackterSelectionProps): Reac
 		})();
 	}, [onChange]);
     
-	const mapCharacters = (characters: Character[]) => {
+	const mapCharacters = () => {
 		return characters.map((character, index) => {
-			return <option key={index} value={index}>{character.name}</option>;
+			return <MenuItem key={index} value={index}>{character.name}</MenuItem>;
 		});
 	};
 
 	if(fetched && characters.length === 0) {
 		return (
 			<Layout>
-				<Row>
-					<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-						You need Characters to subscribe to a Quest. Create one <Link href='/user'>here</Link>
-					</Col>
-				</Row>
+				<Grid alignItems='center'>
+					You need Characters to subscribe to a Quest. Create one <Link href='/user'>here</Link>
+				</Grid>
 			</Layout>
 		);
 	}
 
 	return(
-		<Stack>
-			<Form.Select onChange={(e) => onChange(characters[parseInt(e.currentTarget.value)])}>
-				{mapCharacters(characters)}
-			</Form.Select>
+		<Stack sx={{marginTop: 2}}>
+			<FormControl fullWidth>
+				<Select
+					id='character-select'
+					value={0}
+					onChange={(e) => onChange(characters[e.target.value as number])}
+				>
+					{mapCharacters()}
+				</Select>
+			</FormControl>
 		</Stack>
 	);
 };

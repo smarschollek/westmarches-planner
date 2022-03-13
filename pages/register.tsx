@@ -1,7 +1,7 @@
+import { Grid, CardContent, TextField,Card, Stack, Button, Typography } from '@mui/material';
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
 export type RegisterFormValues = {
@@ -23,52 +23,55 @@ const Register : NextPage = () => {
 	});
 
 	return(
-		<Container className='w-100 h-100'>
-			<Row className='h-100 align-items-center'>
-				<Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}} lg={{span: 4, offset: 4}}>
-					<Card className='p-3'>
-						<h5 className='mb-4 text-center'>Register new User</h5>
-						<Form onSubmit={handleSubmit(onSubmit)}>
-							<Form.Group className='mb-3'>
-								<Form.Control 
-									type='text' 
-									placeholder='Name' 
-									autoComplete='off'
-									{...register('name', {required: true})}
-								/>
-							</Form.Group>
-
-							<Form.Group className='mb-3'>
-								<Form.Control 
-									type='email' 
-									placeholder='Email' 
-									{...register('email', {required: true})}
-								/>
-							</Form.Group>
-
-							<Form.Group className='mb-3'>
-								<Form.Control 
-									type='password' 
-									placeholder='Password' 
-									{...register('password', {required: true})}
-								/>
-							</Form.Group>
-
-							<Form.Group className='d-grid'>
-								<Button 
-									disabled={!formState.isValid}
-									className='mb-2' 
-									type='submit'
-								>
-									Register
-								</Button>
-								<Button variant='secondary' onClick={() => router.back()}>Back</Button>
-							</Form.Group>
-						</Form>
-					</Card>
-				</Col>
-			</Row>
-		</Container>
+		<Grid container
+			direction='row'
+			justifyContent='center'
+			alignItems='center'
+			sx={{height: '100%'}}
+		>
+			<Card sx={{minWidth: '330px'}}>
+				<CardContent>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Typography variant='h6' textAlign='center'>Register new user</Typography>
+						<Stack gap={2} sx={{marginTop: 2}}>
+							<TextField 
+								id='input-name' 
+								type='text'
+								placeholder='Name'
+								inputProps={{
+									autocomplete: 'off',
+								}}
+								{...register('name', {required: true})}
+							/>
+							<TextField 
+								id='input-email' 
+								type='email'
+								placeholder='Email'
+								inputProps={{
+									autocomplete: 'off',
+								}}
+								{...register('email', {required: true})}
+							/>
+							<TextField 
+								id='input-password' 
+								type='password' 
+								placeholder='Password' 
+								
+								{...register('password', {required: true})}
+							/>
+							<Button 
+								type='submit'
+								variant='contained'
+								disabled={!formState.isValid}
+							>
+								Register
+							</Button>
+							<Button variant='contained' color='secondary' href='/login'>Back</Button>
+						</Stack>
+					</form>
+				</CardContent>
+			</Card>
+		</Grid>
 	);
 };
 export default Register;

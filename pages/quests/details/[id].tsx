@@ -2,18 +2,19 @@ import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button,Image, ButtonGroup, ListGroupItem, Badge } from 'react-bootstrap';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faUnlink, faAngleLeft, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { useSession } from 'next-auth/react';
+import { CardMedia, CardContent, Typography, Stack, Card, CardActions, Button, ListItemButton, Chip, ListItemText, Divider, Modal, Box, CardHeader } from '@mui/material';
+import { MyList } from '../../../components/my-list';
+import { Quest, Subscriber } from '../../../modules/quests/quest-types';
+import { MyModal } from '../../../modules/common/components/MyModal';
 
 const Page : NextPage = () => {
 	const router = useRouter();
 	const [quest,setQuest] = useState<Quest>();
 	const data = useSession().data as ExtendedSession;
+	const [openModal, setOpenModal] = useState(false);
 
 	useEffect(() => {
 		(async() => {
@@ -32,12 +33,17 @@ const Page : NextPage = () => {
 		if(data.user?.name === quest.creator) {
 			return (
 				<>
-					<Button href={`/quests/edit/${quest._id}`}>
-						<FontAwesomeIcon icon={faPen} className='me-2'/>
+					<Button variant='contained' href={`/quests/edit/${quest._id}`}>
 						Edit
 					</Button>
-					<Button disabled variant='danger' href={`/quests/delete/${quest._id}`}>
-						<FontAwesomeIcon icon={faTrash} className='me-2'/>
+					{
+						quest.subscriber && quest.subscriber.length > 0 && (
+							<Button variant='contained' href={`/quests/create-session/${quest._id}`}>
+								Create Session
+							</Button>
+						)
+					}
+					<Button variant='contained' color='error' onClick={() => setOpenModal(true)}>
 						Delete
 					</Button>
 				</>
@@ -45,71 +51,89 @@ const Page : NextPage = () => {
 			);
 		}
 		
-		if(quest.subscriber.findIndex(x=>x.name === data.user?.name) !== -1) {
+		if(quest.subscriber.findIndex(x => x.username === data.user?.name) !== -1) {
 			return (
-				<Button href={`/quests/unsubscribe/${quest._id}`}>
-					<FontAwesomeIcon icon={faUnlink} className='me-2'/>
+				<Button variant='contained' href={`/quests/unsubscribe/${quest._id}`}>
 					Unsubscribe
 				</Button>
 			);	
 		}
 
 		return (
-			<Button href={`/quests/subscribe/${quest._id}`}>
-				<FontAwesomeIcon icon={faLink} className='me-2'/>
+			<Button variant='contained' href={`/quests/subscribe/${quest._id}`}>
 				Subscribe
 			</Button>
 		);
 	};
 
-	const mapSubscriber = () => {
-		return quest.subscriber.map((sub, index) => {
-			return (
-				<ListGroupItem key={index}>
-					<div className='d-flex justify-content-between align-items-center'>
-						<span>{sub.characterName}</span>
-						<Badge>{`${sub.characterClass} (${sub.characterLevel})`}</Badge>
-					</div>
-					<div className='fw-bold' style={{fontSize: '0.9rem'}}>
-						{sub.name}
-					</div>
-				</ListGroupItem>
-			);
-		});
+	const handleRenderCallback = (subscriber: Subscriber) => {
+		return (
+			<ListItemButton>
+				<ListItemText 
+					primary={subscriber.character.name}
+					secondary={`Player ( ${subscriber.username} )`}
+				/>
+				<Chip size='small' label={`${subscriber.character.class} (${subscriber.character.level})`}></Chip>
+			</ListItemButton>
+		);
+	};
+
+	const handleDeleteQuest = async () => {
+		await axios.get(`/api/quests/delete?id=${quest._id}`);
+		router.replace('/quests');
+	};
+
+	const deleteModal = () : JSX.Element => {
+		return (
+			<Card sx={{width: 400}}>
+				<CardHeader title='Delete Quest'/>
+				<CardContent>
+					Are you sure you want to delete <b>{quest.name}</b> ?
+				</CardContent>
+				<CardActions>
+					<Button fullWidth variant='contained' onClick={handleDeleteQuest}> Yes </Button>
+					<Button fullWidth color='secondary' variant='contained' onClick={() => setOpenModal(false)}> No </Button>
+				</CardActions>
+			</Card>
+		);
 	};
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h4>{quest.name}</h4>
-					<hr className='my-4'></hr>
+			<MyModal open={openModal} content={deleteModal()}/>
+			<Stack sx={{marginTop: 2}}>
+				<Card>
 					{
 						quest.imageGuid && (
-							<div className='d-flex justify-content-center'>
-								<Image fluid style={{maxHeight: '500px'}} rounded src={`/api/images/${quest.imageGuid}`} alt='quest'/>
-							</div>
+							<CardMedia
+								component='img'
+								image={`/api/images/${quest.imageGuid}`}
+								sx={{maxHeight: 400, objectFit: 'contain'}}
+							/>
 						)
 					}
-					<hr className='my-4'></hr>
-					<h6>Description</h6>
-					<div>{quest.description}</div>
-					<hr className='my-4'></hr>
-					{mapSubscriber()}
-					<hr className='my-4'></hr>
-					
-					<div className='d-grid mt-4'>			
-
-						<ButtonGroup>
-							<Button variant='success' onClick={() => router.back()}>
-								<FontAwesomeIcon icon={faAngleLeft} className='me-2'/>
-								Back
-							</Button>
+					<CardContent>
+						<Stack gap={2}>
+							<Typography variant='h6' color='text.secondary'>
+								{quest.name}
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								{quest.description}
+							</Typography>
+							<Divider/>
+							<Typography variant='h6' color='text.secondary'>
+								Subscriber
+							</Typography>
+							<MyList items={quest.subscriber} renderCallback={handleRenderCallback}/>
+						</Stack>
+					</CardContent>
+					<CardActions>
+						<Stack direction='row' gap={1}>
 							{renderSubscribeOrUnsubscribeButton()}
-						</ButtonGroup>
-					</div>	
-				</Col>
-			</Row>
+						</Stack>
+					</CardActions>
+				</Card>
+			</Stack>
 		</Layout>
 	);
 };

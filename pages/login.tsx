@@ -1,10 +1,8 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Container, Row, Col, Card, Form, Button, Image } from 'react-bootstrap';
 import { signIn, SignInResponse } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
-import Link from 'next/link';
-
+import { Box, Button, Card, CardContent, CardMedia, Container, Grid, Stack, TextField } from '@mui/material';
 
 type LoginFormValues = {
 	email: string,
@@ -34,44 +32,49 @@ const Login : NextPage = () => {
 		mode: 'onChange'
 	});
 
-	return(
-		<Container className='w-100 h-100 d-grid align-content-center'>
-			<Row className='h-100 align-items-center'>
-				<Col xs={12} sm={{span: 8, offset: 2}} md={{span: 6, offset: 3}} lg={{span: 4, offset: 4}}>
-					<Card className='p-3'>
-						<Image fluid src='/images/logo.png' rounded className='mb-3' alt='logo'/>
-						<Form onSubmit={handleSubmit(onSubmit)}>
-							<Form.Group className='mb-3'>
-								<Form.Control 
-									type='email'
-								 	placeholder='Email'
-									{...register('email', {required: true})}
-								 />
-							</Form.Group>
-
-							<Form.Group className='mb-3'>
-								<Form.Control 
-									type='password' 
-									placeholder='Password'
-									{...register('password', {required: true})}
-								/>
-							</Form.Group>
-
-							<Form.Group className='mb-3 d-grid'>
-								<Button 
-									disabled={!formState.isValid}
-									type='submit'
-								>Login</Button>
-							</Form.Group>
-							<div className='text-center'>
-                                or <br/>
-								<Link href='/register'>Register</Link>
-							</div>
-						</Form>
-					</Card>
-				</Col>
-			</Row>
-		</Container>
+	return(	
+		<Grid container
+			direction='row'
+			justifyContent='center'
+			alignItems='center'
+			sx={{height: '100%'}}
+		>
+			<Card sx={{minWidth: '330px'}}>
+				<CardMedia
+					component='img'
+					alt='logo'
+					height='110'
+					image='/images/logo.png'
+				/>
+				<CardContent>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Stack gap={2}>
+							<TextField 
+								id='input-email' 
+								type='email'
+								placeholder='Email'
+								{...register('email', {required: true})}
+							/>
+							<TextField 
+								id='input-password' 
+								type='password' 
+								placeholder='Password' 
+								
+								{...register('password', {required: true})}
+							/>
+							<Button 
+								type='submit'
+								variant='contained'
+								disabled={!formState.isValid}
+							>
+								Login
+							</Button>
+							<Button variant='contained' color='secondary' href='/register'>Register</Button>
+						</Stack>
+					</form>
+				</CardContent>
+			</Card>
+		</Grid>
 	);
 };
 

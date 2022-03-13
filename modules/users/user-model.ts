@@ -1,23 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface User {
-	_id: string;
-	name: string,
-	email: string,
-	password: string,
-	isAdmin: boolean,
-	isGamemaster: boolean,
-	characters: Character[]
-	subscribedQuests: string[]
-}
-
-export interface Character {
-	_id?: string,
-	name: string,
-	level: number,
-	class: string,
-	description: string
-}
+import { User } from './user-types';
 
 const userSchema = new mongoose.Schema<User>({
 	name: String,
@@ -30,10 +12,17 @@ const userSchema = new mongoose.Schema<User>({
 			name: String,
 			level: Number,
 			class: String,
-			comment: String
+			description: String
 		}
 	],
-	subscribedQuests: [String]
+	subscribedQuests: [{
+		questId: String,
+		name: String
+	}],
+	favoritPlaces: [{
+		placeId: String,
+		name: String
+	}]
 });
 
 export const UserModel = mongoose.models.User as mongoose.Model<User, {}, {}, {}> || mongoose.model<User>('User', userSchema);

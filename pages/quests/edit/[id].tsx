@@ -4,18 +4,25 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QuestEdit, QuestEditFormValues } from '../../../components/quest-edit';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
+import { Place } from '../../../modules/places/place-types';
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Page : NextPage = () => {
 	const router  = useRouter();
 	const [quest, setQuest] = useState<Quest>();
-
+	const [places, setPlaces] = useState<Place[]>([]);
+	const [fetched, setFetched] = useState(false);
+	
 	useEffect(() => {
 		(async() => {
 			try {
 				if(router.query.id) {
-					const response = await axios.get<Quest>(`/api/quests/get?id=${router.query.id}`);
-					setQuest(response.data);
+					const placesResponse = await axios.get<Place[]>('/api/places/all');
+					setPlaces(placesResponse.data);
+					
+					const questResponse = await axios.get<Quest>(`/api/quests/get?id=${router.query.id}`);
+					setQuest(questResponse.data);
+					setFetched(true);
 				}
 			} catch (error) {
 				router.back();
@@ -34,7 +41,7 @@ const Page : NextPage = () => {
 
 	return(
 		<Layout>
-			<QuestEdit onSubmit={handleOnSubmit} defaultValues={quest}/>
+			<QuestEdit onSubmit={handleOnSubmit} defaultValues={quest} places={places}/>
 		</Layout>
 		
 	);

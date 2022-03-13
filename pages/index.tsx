@@ -1,64 +1,56 @@
-import axios from 'axios';
+import { AccessTime, Map, QuestionMark } from '@mui/icons-material';
+import { ListItemButton, Stack, Typography } from '@mui/material';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import { Badge, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { MyList } from '../components/my-list';
+import { useUserConfig } from '../hooks/user-config-provider';
 import { Layout } from '../layout/layout';
-import { Place } from '../models/place-model';
-import { Quest } from '../models/quest-model';
-
+import { FavoritPlace, SubscribedQuest } from '../modules/users/user-types';
 
 const Home: NextPage = () => {
-	const [quests, setQuests] = useState<Quest[]>([]);
-	const [places, setPlaces] = useState<Place[]>([]);
+	const {userInfo} = useUserConfig();
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const responseQuests = await axios.get<Quest[]>('/api/quests/open');
-				setQuests(responseQuests.data);
+	const favoritPlacesRenderCallback = (place: FavoritPlace) => {
+		return (
+			<ListItemButton component='a' href={`/places/details/${place.placeId}`}>
+				{place.name}
+			</ListItemButton>
+		);
+	};
 
-				const responsePlaces = await axios.get<Place[]>('/api/places/all');
-				setPlaces(responsePlaces.data);
-			} catch (error) {
-				
-			}
-		})();
-	}, []);
+	const subscribedQuestsRenderCallback = (quest: SubscribedQuest) => {
+		return (
+			<ListItemButton component='a' href={`/quests/details/${quest.questId}`}>
+				{quest.name}
+			</ListItemButton>
+		);
+	};
 
 	return (
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h4>Quests</h4>						
-					<ListGroup className='mb-4'>
-						{quests.map((quest, index) => (
-							<ListGroupItem 
-								action	
-								href={`/quests/details/${quest._id}`}
-								key={index}
-							>
-								<span>{quest.name}</span>
-							</ListGroupItem>
-						))}
-					</ListGroup>
-					<h4>Places</h4>						
-					<ListGroup className='mb-4'>
-						{places.map((place, index) => (
-							<ListGroupItem 
-								action
-								className='d-flex justify-content-between'
-								href={`/places/details/${place._id}`}
-								key={index}
-							>
-								<span className='text-truncate'>{place.name}</span>
-								{/* { place.questCount > 0 && <Badge>{place.questCount} Quest(s)</Badge>} */}
-							</ListGroupItem>
-						))}
-					</ListGroup>
-					<h4>Sessions</h4>	
-				</Col>
-			</Row>					
+			<Stack gap={2} sx={{marginTop: 2}}>
+				<Stack direction='row' alignItems='center' gap={1}>
+					<QuestionMark/>
+					<Typography variant='h6'>
+						Quests
+					</Typography>
+				</Stack>
+				<MyList items={userInfo.subscribedQuests} renderCallback={subscribedQuestsRenderCallback}/>
+
+				<Stack direction='row' alignItems='center' gap={1}>
+					<Map/>
+					<Typography variant='h6'>
+						Fav. Places
+					</Typography>
+				</Stack>
+				<MyList items={userInfo.favoritPlaces} renderCallback={favoritPlacesRenderCallback}/>
+				
+				<Stack direction='row' alignItems='center' gap={1}>
+					<AccessTime/>
+					<Typography variant='h6'>
+						Sessions
+					</Typography>
+				</Stack>
+			</Stack>
 		</Layout>
 	);
 };

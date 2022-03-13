@@ -2,10 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { object, string } from 'yup';
 import { apiProtector } from '../../../helper/api-protector';
 import { dbConnect } from '../../../helper/db-connect';
-import { Quest, QuestModel } from '../../../models/quest-model';
-import {Document} from 'mongoose';
+import { QuestModel } from '../../../modules/quests/quest-model';
 import { validateSession } from '../../../helper/validate-session';
-import { User, UserModel } from '../../../models/user-model';
+import { UserModel } from '../../../modules/users/user-model';
 
 interface UnsubscribeQuestRequest {
     subscriberId: string
@@ -25,7 +24,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		schema.validate(req.body);
 		const request = req.body as UnsubscribeQuestRequest;
     
-		dbConnect();
+		await dbConnect();
 		const quest = await QuestModel.findById(request.questId);
 		if(quest) {
 			const index = quest.subscriber.findIndex(c => c._id == request.subscriberId );
@@ -38,7 +37,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 			const user = await UserModel.findById(session.id);
 			if(user) {
-				const index = user.subscribedQuests.indexOf(request.questId);
+				const index = user.subscribedQuests.findIndex(x => x.questId === request.questId);
 				if(index !== -1) {
 					user.subscribedQuests.splice(index, 1);
 					user.save();

@@ -10,7 +10,7 @@ const Page : NextPage = () => {
 	const defaultValues : CharacterEditFormValues = {
 		name: '',
 		class: 'Artificer',
-		comment: '',
+		description: '',
 		level: 1
 	};
 	

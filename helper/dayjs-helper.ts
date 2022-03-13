@@ -36,7 +36,11 @@ export const getWeekDays = (weekIndex : number) : Date[] => {
 	const result : Date[] = [];
 	const week = dayjs().isoWeek(weekIndex);
 	for (let i = 1; i < 8; i++) {
-		result.push(dayjs(week).isoWeekday(i).toDate());  
+		const day = dayjs(week).isoWeekday(i).toDate();
+		day.setHours(23);
+		day.setMinutes(59);
+		day.setSeconds(59);
+		result.push(day);  
 	}
 	return result;
 };

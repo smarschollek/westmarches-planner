@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface Place {
-    _id: string
-    name: string,
-    description: string
-    imageGuid: string
-}
+import { Place } from './place-types';
 
 const placeSchema = new mongoose.Schema<Place>({
 	name: String,

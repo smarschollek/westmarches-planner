@@ -1,87 +1,98 @@
-import axios from 'axios';
+import { Button, Chip, FormControl, InputLabel, ListItemButton, MenuItem, Select, Stack, Switch, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Row, Col, Badge, Button, Stack, ButtonGroup, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { ExtendedSession } from '../helper/validate-session';
-import { Character } from '../models/user-model';
+import { useUserConfig } from '../hooks/user-config-provider';
+import { Character } from '../modules/users/user-types';
+import { MyList } from './my-list';
 
 const UserDetails = () => {
 	const data = useSession().data as ExtendedSession;
-	const router = useRouter();
-	const [characters, setCharacters] = useState<Character[]>([]);
-	useEffect(() => {
-		(async () => {
-			const response = await axios.get('/api/users/getCharacters');
-			setCharacters(response.data);
-		})();
-	}, []);
-
-	const mapCharacters = () => {
-		return characters.map((character, index) => {
-			return (
-				<ListGroupItem 
-					action
-					href={`/character/details/${character._id}`}
-					key={index} 
-					className='d-flex justify-content-between'>
-					<span>{character.name}</span>
-					<Badge>{`${character.class} (${character.level})`}</Badge>
-				</ListGroupItem>
-			);
-		});
-	};
+	const {userInfo, language, setLanguage, theme, setTheme} = useUserConfig();	
 
 	if(!data || !data.user) {
 		return <></>;
 	}
 
+	const toggleTheme = () => {
+		if(theme === 'dark') {
+			setTheme('light');
+		} else {
+			setTheme('dark');
+		}
+	};
+
+	const handleRenderCallback = (character: Character) : JSX.Element => {
+		return <ListItemButton>
+			<Stack direction='row' justifyContent='space-between' alignItems='center' sx={{width: '100%'}}>
+				<div>{character.name}</div>
+				<Chip size='small' label={`${character.class} (${character.level})`}/>
+			</Stack>
+		</ListItemButton>;
+	};
+
 	return(
-		<Row>
-			<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
+		<Stack gap={2} sx={{marginTop: 2}}>
+			<div>
+				<Typography gutterBottom variant='h6' component='div'>
+		  			Infos
+				</Typography>	
 				<Stack gap={2}>
-					{/* <hr className='my-4'></hr>
-					<div className='d-flex justify-content-center align-content-center'>
-						<Circle className='shadow-lg'>
-							{user.name[0].toUpperCase()}
-						</Circle>
-					</div> */}
-					<hr className='my-4'></hr>
-					<div className='mb-4 mt-4 d-flex justify-content-between'>
-						<div>Name:</div>
+					<Stack direction='row' gap={1} alignItems='center' justifyContent={'space-between'}>
+						<div>Name</div>
 						<div>{data.user.name}</div>
-					</div>
-
-					<div className='mb-4 d-flex justify-content-between'>
-						<div>Roles:</div>
-						<div>
-							<Badge bg='info' className='mx-1'>User</Badge>
-							{data.isAdmin && <Badge bg='secondary' className='mx-1'>Admin</Badge>}
-							{data.isGamemaster && <Badge bg='success' className='mx-1'>Gamemaster</Badge>}
-						</div>
-					</div>
-
-					<div className='mb-4 d-flex justify-content-between'>
-						<div>Email:</div>
+					</Stack>
+					<Stack direction='row' gap={1} alignItems='center' justifyContent={'space-between'}>
+						<div>Email</div>
 						<div>{data.user.email}</div>
-					</div>
-					<hr className='my-4'></hr>
-					
-					<ListGroup>
-						{mapCharacters()}
-					</ListGroup>
-
-					<hr className='my-4'></hr>
-
-					<ButtonGroup>
-						<Button disabled onClick={() => router.push(`/changepassword/${data.id}`)}> Change Password </Button>
-						<Button variant='secondary' onClick={() => router.push('/character/add')}> Add Character </Button>
-						{data.isAdmin && <Button onClick={() => router.push(`/changeroles/${data.id}`)}> Change Roles </Button>}
-					</ButtonGroup>
-					
+					</Stack>
+					<Stack direction='row' gap={1} alignItems='center' justifyContent={'space-between'}>
+						<div>Roles</div>
+						<Stack direction='row' gap={1}>
+							<Chip size='small' label='User' />
+							{ data.isAdmin && <Chip size='small' label='Admin' /> }
+							{ data.isGamemaster && <Chip size='small' label='Gamemaster' /> }
+						</Stack>
+					</Stack>
 				</Stack>
-			</Col>
-		</Row>
+			</div>
+
+			<div>
+				<Typography gutterBottom variant='h6' component='div'>
+	  				Characters
+				</Typography>
+				<Stack gap={1}>
+					<MyList items={userInfo.characters} renderCallback={handleRenderCallback}/>
+					<Button fullWidth variant='contained' href='/characters/add'> Add Character </Button>
+				</Stack>
+			</div>
+
+			<div>
+				<Typography gutterBottom variant='h6' component='div'>
+	  				Settings
+				</Typography>	
+				<Stack gap={2}>
+					<Stack direction='row' gap={1} alignItems='center'>
+						<Switch checked={theme === 'dark'} onChange={toggleTheme}/>
+						<div>Dark Mode</div>
+					</Stack>
+
+					<FormControl fullWidth>
+						<InputLabel id='language-select-label'>Language</InputLabel>
+						<Select
+							labelId='language-select-label'
+							id='language-select'
+							value={language}
+							label='Language'
+							onChange={e => setLanguage(e.target.value as 'en' | 'de' ?? 'en')}
+						>
+							<MenuItem value={'en'}>English</MenuItem>
+							<MenuItem value={'de'}>German</MenuItem>
+						</Select>
+					</FormControl>
+					<Button disabled fullWidth variant='contained'> Change Password </Button>
+				</Stack>
+			</div>
+		</Stack>
 	);
 };
 

@@ -1,15 +1,12 @@
-import { faCancel, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Row, Col, Button, ButtonGroup, Stack } from 'react-bootstrap';
 import { ExtendedSession } from '../../../helper/validate-session';
 import { Layout } from '../../../layout/layout';
-import { Quest } from '../../../models/quest-model';
-
+import { Quest } from '../../../modules/quests/quest-types';
 
 const Unsubscribe : NextPage = () => {
 	const router = useRouter();
@@ -30,7 +27,7 @@ const Unsubscribe : NextPage = () => {
 	}
 
 	const handleUnsubscribe = async () => {
-		const char = quest.subscriber.find(x=>x.name === data.user?.name);
+		const char = quest.subscriber.find(x => x.username === data.user?.name);
 		if(char) {
 			await axios.post('/api/quests/unsubscribe', {
 				questId: router.query.id,
@@ -42,25 +39,13 @@ const Unsubscribe : NextPage = () => {
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<Stack>
-						<div className='my-4'>
-                            Are you sure to unsubscribe from <b>{quest.name}</b> ?
-						</div>
-						<ButtonGroup>
-							<Button variant='danger' onClick={() => router.back()}> 
-								<FontAwesomeIcon icon={faCancel} className='me-2'/>
-							Cancel
-							</Button>
-							<Button onClick={() => handleUnsubscribe()}>  
-								<FontAwesomeIcon icon={faCheck} className='me-2'/>
-							OK
-							</Button>
-						</ButtonGroup>
-					</Stack>
-				</Col>
-			</Row>
+			<Stack gap={2} sx={{marginTop: 2}}>
+				<Typography variant='body1'>
+					Are you sure to unsubscribe from <b>{quest.name}</b> ?
+				</Typography>
+				<Button variant='contained' onClick={() => handleUnsubscribe()}> OK </Button>
+				<Button variant='contained' color='secondary' onClick={() => router.back()}> Cancel </Button>
+			</Stack>
 		</Layout>
 	);
 };

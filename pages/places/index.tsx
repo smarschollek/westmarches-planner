@@ -1,44 +1,76 @@
+import { Star, StarOutline } from '@mui/icons-material';
+import { Typography, Button, Stack, ListItem, IconButton, Chip } from '@mui/material';
+import axios from 'axios';
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { Button, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { MyList } from '../../components/my-list';
+import { ExtendedSession } from '../../helper/validate-session';
+import { useUserConfig } from '../../hooks/user-config-provider';
 import { Layout } from '../../layout/layout';
-import { Place } from '../../models/place-model';
+import { Place } from '../../modules/places/place-types';
+import { AllPlacesRespone } from '../api/places/all';
 
 const Index : NextPage = () => {
-	const router = useRouter();
-	
-	const [places, setPlaces] = useState<Place[]>([]);
-	
+	const session = useSession().data as ExtendedSession;
+	const [places, setPlaces] = useState<AllPlacesRespone[]>([]);
+	const {userInfo, updateFavoritPlaces} = useUserConfig();
+
+
 	useEffect(() => {
 		(async () => {
-			const response = await fetch('/api/places/all');
-			const data = await response.json();
-			setPlaces(data);
+			const response = await axios.get<AllPlacesRespone[]>('/api/places/all');
+			setPlaces(response.data);
 		})();
 	},[]);
 	
-	const mapPlaces = () => {
-		return places?.map((place, index) => (
-			<ListGroupItem action href={`/places/details/${place._id}`} key={index}>{place.name}</ListGroupItem>
-		));
+	if(!session) {
+		return <></>;
+	}
+
+	const handleFavoritOnClick = async (place: Place) => {
+		updateFavoritPlaces(place);
+		await axios.post('/api/places/favorit', { placeId: place._id });
+	};
+
+	const handleRenderCallback = (place: AllPlacesRespone) : JSX.Element => {
+		return (
+			<ListItem 
+				secondaryAction={
+					<IconButton edge='end' aria-label='favorit' onClick={() => handleFavoritOnClick(place)}>
+						{userInfo.favoritPlaces.findIndex(x => x.placeId === place._id) !== -1 ? <Star /> : <StarOutline /> }
+					</IconButton>
+				}
+			>
+				<Stack direction='row' alignItems='center' justifyContent='space-between' component='a' href={`/places/details/${place._id}`} sx={{width: '100%'}}>
+					<div>{place.name}</div>
+					{place.questCount > 0 &&  <Chip label={`Quests (${place.questCount})`} size='small'/>}					
+				</Stack>
+
+			</ListItem>
+		);
 	};
 
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<h5>Places</h5>
-					<hr className='my-4'></hr>
-					<ListGroup>
-						{mapPlaces()}
-					</ListGroup>
-					<hr className='my-4'></hr>
-					<div className='d-grid'>
-						<Button onClick={() => router.push('/places/add')}>Add Place</Button>
-					</div>	
-				</Col>
-			</Row>	
+			<Stack gap={1} sx={{marginTop: 2}}>
+				<Typography gutterBottom variant='h6' component='div' sx={{paddingLeft: 2, paddingTop: 1}}>
+	  				Places
+				</Typography>
+				<MyList items={places} renderCallback={handleRenderCallback}/>
+				
+				{
+					session.isGamemaster && (
+						<Button 
+							component='a'
+							href='/places/add'
+							variant='contained'
+						> Add Place </Button>		
+					)
+				}
+				
+				
+			</Stack>			
 		</Layout>
 	);
 };

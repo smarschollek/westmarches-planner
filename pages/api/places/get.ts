@@ -1,14 +1,13 @@
-import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { apiProtector } from '../../../helper/api-protector';
-import { dbConnect } from '../../../helper/db-connect';
-import { Place, PlaceModel } from '../../../models/place-model';
-import { Quest } from '../../../models/quest-model';
+import { placeService } from '../../../modules/places/place-service';
+import { Place } from '../../../modules/places/place-types';
+import { questService } from '../../../modules/quests/quest-service';
+import { Quest } from '../../../modules/quests/quest-types';
 
 export type GetPlaceResponse = Place & {
 	quests?: Quest[]
 }
-
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
 
@@ -24,36 +23,19 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<GetPla
 			id = id[0];
 		}
 
-		dbConnect();
-
-		const place = await PlaceModel.findById<Place>(id);
+		const place = await placeService.getById(id) as GetPlaceResponse;
 		if(!place) {
 			throw new Error(`no place with ${id} found`);
 		}
 
-		const result : GetPlaceResponse = {
-			_id: place._id,
-			description: place.description,
-			name: place.name,
-			imageGuid: place.imageGuid
-		};
+		if(includeQuests) {
+			const quests = await questService.getByPlaceId(place._id.toString());
+			place.quests = quests;			
+		}
 
-		// if(includeQuests) {
-		// 	const quests = await QuestModel.find({'placeId' : place._id});
-		// 	const result: any = {
-		// 		...place,
-		// 		quests
-		// 	};
-		// 	res.status(200).json(result);
-		// } else {
-		// 	res.status(200).json(place);
-		// }
-
-		res.status(200).json(result);
+		res.status(200).json(place);
 	} catch(error : any) {
 		res.status(500).json(error);
-	} finally {
-		
 	}
 };
 
