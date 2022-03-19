@@ -48,8 +48,16 @@ export const UserConfigProvider = ({children} : PropsWithChildren<unknown>) => {
 	const [userInfo, setUserInfo] = useState<UserInfo>({characters: [], favoritPlaces:[], subscribedQuests: []});
 
 	useEffect(() => {
-		setTheme(localStorage.getItem('theme') as ThemeTypes);
-		setLanguage(localStorage.getItem('language') as LanguageTypes);
+		const storedTheme = localStorage.getItem('theme');
+		if(storedTheme) {
+			setTheme(storedTheme as ThemeTypes);
+		}
+		
+		const storedLanguage = localStorage.getItem('language');
+		if(storedLanguage) {
+			setLanguage(storedLanguage as LanguageTypes);
+		}
+		
 		if(session) {
 			(async () => {
 				try {
