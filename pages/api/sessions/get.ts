@@ -4,7 +4,7 @@ import { DayAndTime, PlayerInfo } from '../../../modules/common/common-types';
 import { questService } from '../../../modules/quests/quest-service';
 import { sessionService } from '../../../modules/sessions/session-service';
 
-interface GetSessionDetailsResponse {
+export interface GetSessionDetailsResponse {
     gamemaster: string,
     date: DayAndTime,
     quest: {
