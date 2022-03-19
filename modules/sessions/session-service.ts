@@ -8,6 +8,7 @@ interface SessionService {
     delete : (id: string) => Promise<void>
 
 	getSubscribedSessions: (username : string) => Promise<GameSession[]>
+	getById: (id: string) => Promise<GameSession | null>
 }
 
 const create = async (session: GameSession) : Promise<void> => {
@@ -30,9 +31,15 @@ const getSubscribedSessions = async (username : string) : Promise<GameSession[]>
 	return await GameSessionModel.where('player').elemMatch({name: username}).exec();
 };
 
+const getById = async (id: string) : Promise<GameSession | null> => {
+	await dbConnect();
+	return await GameSessionModel.findById(id).exec();
+};
+
 export const sessionService : SessionService = {
 	create,
 	update,
 	delete: _delete,
-	getSubscribedSessions
+	getSubscribedSessions,
+	getById
 };

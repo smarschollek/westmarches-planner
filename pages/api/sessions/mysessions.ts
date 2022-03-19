@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { apiProtector } from '../../../helper/api-protector';
 import { validateSession } from '../../../helper/validate-session';
 import { DayAndTime } from '../../../modules/common/common-types';
 import { sessionService } from '../../../modules/sessions/session-service';
@@ -8,12 +9,15 @@ export interface MySessionsResponse {
 }
 
 export interface SessionInfo {
-    questName: string,
+    sessionId?: string
+	questName: string,
     questId: string 
     date: DayAndTime
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
+
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const session = await validateSession(req);
 		if(!session || !session.user) {
@@ -25,6 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const sessions : SessionInfo[] = [];
 		for(const item of query) {
 			sessions.push({
+				sessionId: item._id,
 				questId: item.questId,
 				questName: item.questName,
 				date: item.date

@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
 	const sessionsRenderCallback = (session: SessionInfo) => {
 		return (
-			<ListItemButton component='a' href={`/session/details/${session.questId}`}>
+			<ListItemButton component='a' href={`/sessions/details/${session.sessionId}`}>
 				<Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
 					{session.questName}
 					<div> {`${session.date.day} ${session.date.hours[0]}:00 - ${session.date.hours[session.date.hours.length-1]}:00`} </div>
