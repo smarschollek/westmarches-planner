@@ -1,7 +1,7 @@
+import { Stack } from '@mui/material';
 import axios from 'axios';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Row, Col } from 'react-bootstrap';
 import { CharacterEdit, CharacterEditFormValues } from '../../components/character-edit';
 import { Layout } from '../../layout/layout';
 
@@ -25,12 +25,9 @@ const Page : NextPage = () => {
     
 	return(
 		<Layout>
-			<Row>
-				<Col lg={{span: 6, offset: 3}} md={{span: 8, offset: 2}} >
-					<CharacterEdit onSubmit={handleOnSubmit} defaultValues={defaultValues} />
-				</Col>
-			</Row>
-			
+			<Stack sx={{marginTop: 2}}>
+				<CharacterEdit onSubmit={handleOnSubmit} defaultValues={defaultValues} />			
+			</Stack>
 		</Layout>
 	);
 };
