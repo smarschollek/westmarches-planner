@@ -54,7 +54,7 @@ const Subscribe : NextPage = () => {
 				questId: quest?._id,
 				times: times
 			});
-			router.back();
+			router.replace('/');
 		} else {
 			setPageIndex(pageIndex+1);
 		}
