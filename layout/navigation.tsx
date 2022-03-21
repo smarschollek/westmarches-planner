@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { ReactElement, useState } from 'react';
 import {useSession, signOut} from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { AppBar, Avatar, Box, Button, Container, Divider, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Button, Container, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, Menu, MenuItem, Stack, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MenuIcon from '@mui/icons-material/Menu';
 import MapIcon from '@mui/icons-material/Map';
@@ -20,7 +20,12 @@ export const Navigation = (): ReactElement => {
 		await signOut();
 		router.push('/login');
 	};
-   
+	
+	if(!data) {
+		return <></>;
+	}
+	
+	
 	return(
 		<>
 			<SwipeableDrawer
@@ -171,7 +176,7 @@ export const Navigation = (): ReactElement => {
 									Logout
 								</Button>
 								<IconButton href='/user' sx={{ p: 0 }}>
-									<Avatar alt={data?.user?.name!} src='/static/images/avatar/2.jpg' />
+									<Avatar alt={data.user?.name!} src={data.user?.image!} />
 								</IconButton>
 							</Stack>
 						</Box>

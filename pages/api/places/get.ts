@@ -9,9 +9,9 @@ export type GetPlaceResponse = Place & {
 	quests?: Quest[]
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Response>) => apiProtector(req, res, protectedHandler);
+const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtector(req, res, protectedHandler);
 
-const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<GetPlaceResponse>) => {
+const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	let {id, includeQuests} = req.query;
 	
 	try {
@@ -30,7 +30,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<GetPla
 
 		if(includeQuests) {
 			const quests = await questService.getByPlaceId(place._id.toString());
-			place.quests = quests;			
+			place.quests = JSON.parse(JSON.stringify(quests));			
 		}
 
 		res.status(200).json(place);

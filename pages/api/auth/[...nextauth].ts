@@ -1,72 +1,44 @@
-import { ObjectId } from 'mongodb';
-import NextAuth, { Session } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { object, string } from 'yup';
-import { authHelper } from '../../../helper/auth';
+import NextAuth from 'next-auth';
+import DiscordProvider from 'next-auth/providers/discord';
 import { userService } from '../../../modules/users/user-service';
 
-type AuthUser = {
-    name: string
-	email: string,
-	isGamemaster: boolean,
-	isAdmin: boolean
-}
-
-const authorizeSchema = object({
-	email: string().email().required(),
-	password: string().required()
-});
-
 export default NextAuth({
+	providers: [
+		DiscordProvider({
+		  clientId: process.env.DISCORD_CLIENT_ID,
+		  clientSecret: process.env.DISCORD_CLIENT_SECRET,
+		})
+	  ],
 	secret: process.env.AUTH_SECRET,
+	jwt: {
+		maxAge: 60 * 60 * 24 * 7,
+		secret: process.env.JWT_SECRET,
+	},
 	callbacks: {
-		async session({ session , token, user }) {
-			if(session.user && session.user.email) {
-				const storeUser = await userService.getByEmail(session.user.email);
-				if(storeUser) {
-					session.isAdmin = storeUser.isAdmin;
-					session.isGamemaster = storeUser.isGamemaster;
-					session.id = storeUser._id;
-				}
+		async session({ session }) {
+			if(session.user) {
+				let user = await userService.getByEmail(session.user.email!);
+				if(!user) {
+					await userService.create({
+						name: session.user.name!,
+						email: session.user.email!,
+					});
+
+					return {
+						...session,
+						isAdmin: false,
+						isGamemaster: false
+					};
+				} 	
+				
+				return {
+					...session,
+					isAdmin: user.isAdmin,
+					isGamemaster: user.isGamemaster
+				};
 			}
-			
+
 			return session;
 		}
-	},
-	providers: [
-		Credentials({
-			authorize: async (credentials): Promise<AuthUser> => {
-				try {
-					if(credentials) {
-						await authorizeSchema.validate(credentials);
-						const user = await userService.getByEmail(credentials.email);
-						if(!user) {
-							throw new Error('login failed');
-						}
-	
-						const isValid =  await authHelper.verifyPassword(credentials.password, user.password);
-						if(!isValid) {
-							throw new Error('login failed');
-						}
-	
-						return {
-							name: user.name,
-							email: user.email,
-							isAdmin: user.isAdmin,
-							isGamemaster: user.isGamemaster
-						};
-					}
-					
-					throw new Error('bad request');
-				} catch (error : any) {
-					console.log(error);
-					throw new error;
-				}
-			},
-			credentials: {
-				email: { label: 'Email', type: 'email', placeholder: 'Email' },
-				password: {  label: 'Password', type: 'password' }
-			}
-		})
-	]
+	}
 });

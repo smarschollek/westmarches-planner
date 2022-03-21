@@ -22,7 +22,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse<Respon
 		}
 
 		questService.delete({_id : id});
-		userService.deleteSubscribedQuests(session.id, id);
+		userService.deleteSubscribedQuests(session.user?.email!, id);
 
 		res.status(200).json('');
 	}

@@ -1,9 +1,10 @@
+import { ObjectId } from 'mongoose/node_modules/mongodb';
 import { DayAndTime } from '../common/common-types';
 
 export type QuestStates = 'Open' | 'Closed'
 
 export interface Quest {
-	_id: string;
+	_id: ObjectId;
 	creator: string,
     name: string,
 	description: string,
@@ -14,7 +15,7 @@ export interface Quest {
 }
 
 export interface Subscriber {
-	_id?: string;
+	_id?: ObjectId;
 	username: string,
 	character : {
 		name: string,

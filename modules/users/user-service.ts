@@ -2,28 +2,26 @@ import { authHelper } from '../../helper/auth';
 import { dbConnect } from '../../helper/db-connect';
 import { Place } from '../places/place-types';
 import { UserModel } from './user-model';
-import { SubscribedQuest, User } from './user-types';
+import { Character, SubscribedQuest, User } from './user-types';
 
-interface RegisterUserCommand {
+interface CreateUserCommand {
 	name: string,
-	email: string,
-	password: string
+	email: string
 }
 
 interface UserService {
-	register: (command: RegisterUserCommand) => Promise<void>
+	create: (command: CreateUserCommand) => Promise<void>
     getByEmail(email: string) : Promise<User | undefined>
-	toggleFavoritPlace: ( userId: string, place: Place) => Promise<void>
-	addSubscribedQuests: (userId: string, quest: SubscribedQuest) => Promise<void>
-	deleteSubscribedQuests: (userId: string, questId: string) => Promise<void>
+	toggleFavoritPlace: ( email: string, place: Place) => Promise<void>
+	addSubscribedQuests: (email: string, quest: SubscribedQuest) => Promise<void>
+	deleteSubscribedQuests: (email: string, questId: string) => Promise<void>
+	addCharacter: (email: string, character: Character) => Promise<void>
 }
 
-const register = async (command: RegisterUserCommand) : Promise<void> => {
-	const hashedPassword = await authHelper.hashPassword(command.password);
+const register = async (command: CreateUserCommand) : Promise<void> => {
 	await dbConnect();
 	await UserModel.create({
 		...command,
-		password: hashedPassword,
 		isAdmin: false,
 		isGamemaster: false
 	});
@@ -38,9 +36,9 @@ const getByEmail = async (email: string) : Promise<User | undefined> => {
 	return user;
 };
 
-const toggleFavoritPlace = async (userId: string, place: Place) => {
+const toggleFavoritPlace = async (email: string, place: Place) => {
 	await dbConnect();
-	const user = await UserModel.findById(userId);
+	const user = await UserModel.findOne({'email': email});
 	if(user) {
 		const index = user.favoritPlaces.findIndex(x=>x.placeId == place._id.toString());
 		if(index !== -1) {
@@ -55,31 +53,41 @@ const toggleFavoritPlace = async (userId: string, place: Place) => {
 	}
 };
 
-const addSubscribedQuests = async (userId: string, quest: SubscribedQuest) : Promise<void> => {
+const addSubscribedQuests = async (email: string, quest: SubscribedQuest) : Promise<void> => {
 	await dbConnect();
-	const user = await UserModel.findById(userId);
+	const user = await UserModel.findOne({'email': email});
 	if(user) {
 		user.subscribedQuests.push(quest);
 		await user.save();
 	}
 };
 
-const deleteSubscribedQuests = async (userId: string, questId: string) => {
+const deleteSubscribedQuests = async (email: string, questId: string) => {
 	await dbConnect();
-	const user = await UserModel.findById(userId);
+	const user = await UserModel.findOne({'email': email});
 	if(user) {
 		const index = user.subscribedQuests.findIndex(x => x.questId === questId);
 		if(index !== -1) {
 			user.subscribedQuests.splice(index, 1);
+			await user.save();
 		}
-		await user.save();
+	}
+};
+
+const addCharacter = async (email: string, character: Character) : Promise<void> => {
+	await dbConnect();
+	const user = await UserModel.findOne({'email': email});
+	if(user) {
+		user.characters.push(character);
+		user.save();
 	}
 };
 
 export const userService : UserService = {
-	register,
+	create: register,
 	getByEmail,
 	toggleFavoritPlace,
 	addSubscribedQuests,
-	deleteSubscribedQuests
+	deleteSubscribedQuests,
+	addCharacter
 };

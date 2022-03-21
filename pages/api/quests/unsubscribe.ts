@@ -5,6 +5,10 @@ import { dbConnect } from '../../../helper/db-connect';
 import { QuestModel } from '../../../modules/quests/quest-model';
 import { validateSession } from '../../../helper/validate-session';
 import { UserModel } from '../../../modules/users/user-model';
+import { userService } from '../../../modules/users/user-service';
+import { Document } from 'mongodb';
+import { User } from '../../../modules/users/user-types';
+import { questService } from '../../../modules/quests/quest-service';
 
 interface UnsubscribeQuestRequest {
     subscriberId: string
@@ -20,31 +24,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => apiProtecto
 
 const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
-		
 		const session = await validateSession(req);
 		schema.validate(req.body);
 		const request = req.body as UnsubscribeQuestRequest;
-    
-		await dbConnect();
-		const quest = await QuestModel.findById(request.questId);
-		if(quest) {
-			const index = quest.subscriber.findIndex(c => c._id == request.subscriberId );
-			if(index === -1) {
-				throw new Error();
-			}
+		await questService.unsubscribe({
+			questId: request.questId,
+			subscriberId: request.subscriberId
+		});
 
-    	quest.subscriber.splice(index, 1);
-    	await quest.save();
-
-			const user = await UserModel.findById(session.id);
-			if(user) {
-				const index = user.subscribedQuests.findIndex(x => x.questId === request.questId);
-				if(index !== -1) {
-					user.subscribedQuests.splice(index, 1);
-					user.save();
-				}
-			}
-		}
+		await userService.deleteSubscribedQuests(session.user?.email!, request.questId);
 		res.status(200).send('');
 	} catch (error) {
 		res.status(500).send('');

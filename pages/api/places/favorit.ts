@@ -23,7 +23,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const request = req.body as SetFavoritPlaceRequest;
 		const place = await placeService.getById(request.placeId);
 		if(place) {
-			await userService.toggleFavoritPlace(session.id, place);
+			await userService.toggleFavoritPlace(session.user?.email!, place);
 		}
 		
 		res.status(200).json('');

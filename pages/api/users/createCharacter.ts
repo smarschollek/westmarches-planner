@@ -1,18 +1,11 @@
-import { ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import { number, object, string } from 'yup';
 import { apiProtector } from '../../../helper/api-protector';
-import { dbConnect } from '../../../helper/db-connect';
 import { validateSession } from '../../../helper/validate-session';
-import { UserModel } from '../../../modules/users/user-model';
+import { userService } from '../../../modules/users/user-service';
+import { Character } from '../../../modules/users/user-types';
 
-type CreateCharacterRequest = {
-    name: string
-    description?: string
-    level: number,
-    class: string
-}
+type CreateCharacterRequest = Character
 
 const schema = object({
 	name: string().required(),
@@ -30,22 +23,11 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
+		await schema.validate(req.body);
+
 		const session = await validateSession(req);
 		const body = req.body as CreateCharacterRequest;
-
-		await dbConnect();
-		
-		const user = await UserModel.findOne({'email' : session.user!.email});
-		if(user) {
-			user.characters.push({
-				class: body.class,
-				description: body.description ?? '',
-				level: body.level,
-				name: body.name
-			});
-			await user.save();
-		}
-
+		await userService.addCharacter(session.user?.email!, body);
 		res.status(200).json('');
 	} catch (error) {
 		res.status(500).json('');

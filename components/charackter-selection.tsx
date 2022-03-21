@@ -1,8 +1,7 @@
-import { FormControl, Grid, MenuItem, Select, Stack } from '@mui/material';
+import { FormControl, Grid, MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material';
 import axios from 'axios';
 import Link from 'next/link';
 import { ReactElement, useEffect, useState } from 'react';
-import { Layout } from '../layout/layout';
 import { Character } from '../modules/users/user-types';
 
 interface CharackterSelectionProps {
@@ -12,7 +11,8 @@ interface CharackterSelectionProps {
 export const CharackterSelection = ({onChange} : CharackterSelectionProps): ReactElement => {
 	const [characters, setCharacters] = useState<Character[]>([]);
 	const [fetched, setFetched] = useState(false);
-    
+	const [selectedIndex, setSelectedIndex] = useState(0);
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -40,13 +40,19 @@ export const CharackterSelection = ({onChange} : CharackterSelectionProps): Reac
 		);
 	}
 
+	const handleOnChange = (e : SelectChangeEvent<number>) => {
+		const index = e.target.value as number;
+		onChange(characters[index]);
+		setSelectedIndex(index);
+	};
+
 	return(
 		<Stack sx={{marginTop: 2}}>
 			<FormControl fullWidth>
 				<Select
 					id='character-select'
-					value={0}
-					onChange={(e) => onChange(characters[e.target.value as number])}
+					value={selectedIndex}
+					onChange={handleOnChange}
 				>
 					{mapCharacters()}
 				</Select>

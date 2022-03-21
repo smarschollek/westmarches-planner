@@ -40,7 +40,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const condensedByHours = await timeCondenser.hours(condensedByDay);
 		
 		const result : SessionInfoResponse = {
-			questId: quest._id,
+			questId: quest._id.toString(),
 			questName: quest.name,
 			players: player,
 			times: condensedByHours.map(x => ({day: x.day, hours: x.hours}))

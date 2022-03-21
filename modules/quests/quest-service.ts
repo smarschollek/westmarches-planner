@@ -35,12 +35,18 @@ interface SubscribeCommand {
 	times: DayAndTime[]
 }
 
+interface UnsubscribeCommand {
+	questId: string,
+	subscriberId: string
+}
+
 interface QuestService {
     create: (command: CreateQuestCommand) => Promise<void>
     update: (command: UpdateQuestCommand) => Promise<void>
     delete: (command: DeleteQuestCommand) => Promise<void>
 
 	subscribe: (command: SubscribeCommand) => Promise<void>
+	unsubscribe: (command: UnsubscribeCommand) => Promise<void>
 
     getById: (id: string) => Promise<Quest | null>
     getAll: () => Promise<Quest[]>
@@ -103,6 +109,18 @@ const subscribe = async (command: SubscribeCommand) : Promise<void> => {
 	}	
 };
 
+const unsubscribe = async (command: UnsubscribeCommand) : Promise<void> => {
+	await dbConnect();
+	const quest = await QuestModel.findById(command.questId);
+	if(quest) {
+		const index = await quest.subscriber.findIndex(x => x._id?.toString() === command.subscriberId);
+		if(index !== -1) {
+			quest.subscriber.splice(index, 1);
+			await quest.save();
+		}
+	}	
+};
+
 export const questService : QuestService = {
 	create,
 	update,
@@ -110,5 +128,6 @@ export const questService : QuestService = {
 	getById,
 	getAll,
 	getByPlaceId,
-	subscribe
+	subscribe,
+	unsubscribe,
 };

@@ -46,7 +46,10 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const quest = await questService.getById(request.questId);
 		if(quest) {
 			quest.questState = 'Closed';
-			await questService.update(quest);
+			await questService.update({
+				...quest,
+				_id: quest._id.toString(),
+			});
 		}
 
 		res.status(200).json('');

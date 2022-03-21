@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongoose/node_modules/mongodb';
+
 export interface User {
-	_id: string;
+	_id: ObjectId;
 	name: string,
 	email: string,
 	password: string,
@@ -11,7 +13,7 @@ export interface User {
 }
 
 export interface Character {
-	_id?: string,
+	_id?: ObjectId,
 	name: string,
 	level: number,
 	class: string,
@@ -19,13 +21,13 @@ export interface Character {
 }
 
 export interface FavoritPlace {
-	_id?: string,
+	_id?: ObjectId,
 	placeId: string,
 	name: string
 }
 
 export interface SubscribedQuest {
-	_id?: string,
+	_id?: ObjectId,
 	questId: string,
 	name: string
 }

@@ -4,8 +4,7 @@ import { getSession } from 'next-auth/react';
 
 export type ExtendedSession = Session & {
 	isGamemaster: boolean,
-	isAdmin: boolean,
-	id: string
+	isAdmin: boolean
 }
 
 export const validateSession = async (req : NextApiRequest) : Promise<ExtendedSession> => {

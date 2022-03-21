@@ -34,7 +34,7 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const user = await userService.getByEmail(session.user.email!);
 		const quest = await questService.getById(request.questId);
 		if(user && quest) {
-			const character	= user.characters.find((x: Character) => x._id == request.characterId);
+			const character	= user.characters.find((x: Character) => x._id?.toString() == request.characterId);
 			
 			if(character) {
 				await questService.subscribe({
@@ -44,9 +44,9 @@ const protectedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 					times: request.times
 				});
 
-				await userService.addSubscribedQuests(user._id, {
+				await userService.addSubscribedQuests(session.user.email!, {
 					name: quest.name,
-					questId: quest._id,
+					questId: quest._id.toString(),
 				});
 			}
 		}
