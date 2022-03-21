@@ -4,6 +4,7 @@ import { Place } from './place-types';
 
 interface CreatePlaceCommand {
     name: string,
+	creator: string,
     description: string,
     imageGuid: string
 }

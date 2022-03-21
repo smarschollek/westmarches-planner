@@ -56,6 +56,9 @@ const Details : NextPage = () => {
 							<Typography variant='h5' color='text.secondary'>
 								{place.name}
 							</Typography>
+							<Typography variant='caption' color='text.secondary' sx={{marginTop: -2}}>
+								Created by {place.creator}
+							</Typography>
 							<Typography variant='body1' color='text.secondary'>
 								{place.description}
 							</Typography>

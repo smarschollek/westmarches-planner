@@ -3,6 +3,7 @@ import { Place } from './place-types';
 
 const placeSchema = new mongoose.Schema<Place>({
 	name: String,
+	creator: String,
 	description: String,
 	imageGuid: String
 });
