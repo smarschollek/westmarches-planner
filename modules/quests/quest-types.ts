@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose/node_modules/mongodb';
+import { ObjectId } from 'mongodb';
 import { DayAndTime } from '../common/common-types';
 
 export type QuestStates = 'Open' | 'Closed'
