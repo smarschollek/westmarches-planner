@@ -1,11 +1,14 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear.js';
 import isLeapYear from 'dayjs/plugin/isLeapYear.js';
 import isoWeek from 'dayjs/plugin/isoWeek.js';
+import dayOfYear from 'dayjs/plugin/DayOfYear.js';
+
 
 dayjs.extend(isoWeeksInYear);
 dayjs.extend(isLeapYear);
 dayjs.extend(isoWeek);
+dayjs.extend(dayOfYear);
 
 export interface CalenderWeek {
     weekIndex: number,
@@ -14,6 +17,31 @@ export interface CalenderWeek {
     stop: Date
 	toString: () => string
 }
+
+export interface WeekDay {
+	name: string,
+	num: string
+	date: number
+} 
+
+export const getNextDays = (startDate: Dayjs, amount: number) : WeekDay[] => {
+	const result : WeekDay[] = [];	
+	for (let index = 0; index < amount; index++) {
+		result.push(convertDaysJsToWeekDay(startDate.add(index, 'day')));
+	}
+
+	return result;
+};
+
+const convertDaysJsToWeekDay = (value: Dayjs) : WeekDay => {
+	const names = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+	const name = names[value.isoWeekday()-1];
+	return {
+		name,
+		num: value.format('DD'),
+		date: value.valueOf()
+	};
+};
 
 export const getCalenderWeeks = () : CalenderWeek[] => {
 	const result : CalenderWeek[] = [];
