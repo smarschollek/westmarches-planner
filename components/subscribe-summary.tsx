@@ -1,6 +1,5 @@
 import { Stack, Typography } from '@mui/material';
 import { ReactElement } from 'react';
-import { groupTimes } from '../helper/dayjs-helper';
 import { DayAndTime } from '../modules/common/common-types';
 import { Quest } from '../modules/quests/quest-types';
 import { Character } from '../modules/users/user-types';

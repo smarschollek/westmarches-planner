@@ -1,4 +1,5 @@
 import { Stack, Button } from '@mui/material';
+import { Dayjs } from 'dayjs';
 import { ObjectId } from 'mongodb';
 import { useSession } from 'next-auth/react';
 import { ReactElement, useState } from 'react';
@@ -19,12 +20,29 @@ const convertToDayAndTime = (values: string[]) : DayAndTime[] => {
 	}));
 };
 
+const removeKnownDays = (values: string[], oldTimes : DayAndTime[]) => {
+	const knownDays = oldTimes.map(x => x.day);
+	return values.filter(x => !knownDays.includes(x));
+};
+
+const removeOldTimes = (values: string[], oldTimes : DayAndTime[]) : DayAndTime[] => {
+	return oldTimes.filter(x => values.includes(x.day));
+};
+
 const getSubscriberInfo = (quest: Quest, username: string) : Subscriber | undefined => {
 	return quest.subscriber.find(x => x.username === username);
 };
 
 const extractDays = (values: DayAndTime[]) : string[] => {
 	return values.map(x => x.day);
+};
+
+const orderDayAndTime = (values: DayAndTime[]) : DayAndTime[] => {
+	return [...values].sort((a,b) => {
+		const firstDate = new Date(a.day).getDate();
+		const secondDate = new Date(b.day).getDate();
+		return firstDate - secondDate;
+	});
 };
 
 interface SubscriptionWizardProps {
@@ -52,14 +70,16 @@ export const SubscriptionWizard = ({onCancel, onSubmit, quest} : SubscriptionWiz
 	
 	const handleOnChangeDaySelection = (value: string[]) => {
 		setSelectedDays(value);
-		setTimes([]);
+		const newValues = convertToDayAndTime(removeKnownDays(value, times));
+		const newTimes = removeOldTimes(value, times);
+		setTimes(orderDayAndTime([...newTimes, ...newValues]));
 	};
 
 	const renderPages = () => {
 		switch(pageIndex) {
 			case 0: return <CharackterSelection onChange={setCharacter} selectedCharacterName={subscriberInfo ? subscriberInfo.character.name : undefined}/>;
 			case 1: return <DaySelection onChange={handleOnChangeDaySelection} values={selectedDays}/>;
-			case 2: return <TimeRangeSelection onChange={setTimes} values={times.length ? times : convertToDayAndTime(selectedDays)}/>;
+			case 2: return <TimeRangeSelection onChange={setTimes} values={times}/>;
 			case 3: return <SubscribeSummary quest={quest} character={character} times={times}/>;
 		}
 	};
