@@ -29,8 +29,10 @@ export const DaySelection = ({onChange, values} : DaySelectionProps): ReactEleme
 	const [selectedValues, setSelectedValues] = useState<string[]>(values);
 
 	useEffect(() => {
-		onChange(selectedValues);
-	}, [onChange, selectedValues]);
+		if(values !== selectedValues) {
+			onChange(selectedValues);
+		}
+	}, [onChange, selectedValues, values]);
 
 	const handleOnClick = (value : string) => {
 		setSelectedValues(prevState => {

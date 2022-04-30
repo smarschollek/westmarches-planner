@@ -40,6 +40,17 @@ interface UnsubscribeCommand {
 	subscriberId: string
 }
 
+interface UpdateTimesCommand {
+	questId: string,
+	username: string,
+	character: {
+		name: string,
+		class: string,
+		level: number
+	}
+	times: DayAndTime[]
+}
+
 interface QuestService {
     create: (command: CreateQuestCommand) => Promise<void>
     update: (command: UpdateQuestCommand) => Promise<void>
@@ -47,6 +58,7 @@ interface QuestService {
 
 	subscribe: (command: SubscribeCommand) => Promise<void>
 	unsubscribe: (command: UnsubscribeCommand) => Promise<void>
+	updateTimes: (command: UpdateTimesCommand) => Promise<void>
 
     getById: (id: string) => Promise<Quest | null>
     getAll: () => Promise<Quest[]>
@@ -67,7 +79,7 @@ const create = async (command: CreateQuestCommand) : Promise<void> => {
 
 const update = async (command: UpdateQuestCommand) : Promise<void> => {
 	await dbConnect();
-	await QuestModel.updateOne({'_id': command._id}, {
+	QuestModel.updateOne({'_id': command._id}, {
 		questState: command.questState,
 		description: command.description,
 		imageGuid: command.imageGuid,
@@ -78,33 +90,29 @@ const update = async (command: UpdateQuestCommand) : Promise<void> => {
 
 const _delete = async (command: DeleteQuestCommand) : Promise<void> => {
 	await dbConnect();
-	await QuestModel.deleteOne({'_id': command._id});
+	QuestModel.deleteOne({'_id': command._id});
 };
 
 const getById = async (id: string) : Promise<Quest | null> => {
 	await dbConnect();
-	return await QuestModel.findById<Quest>(id).exec();
+	return QuestModel.findById<Quest>(id).exec();
 };
 
 const getAll = async () : Promise<Quest[]> => {
 	await dbConnect();
-	return await QuestModel.find<Quest>({}).exec();
+	return QuestModel.find<Quest>({}).exec();
 };
 
 const getByPlaceId = async (placeId: string) : Promise<Quest[]> => {
 	await dbConnect();
-	return await QuestModel.where<Quest>('placeId').equals(placeId).exec();	
+	return QuestModel.where<Quest>('placeId').equals(placeId).exec();	
 };
 
 const subscribe = async (command: SubscribeCommand) : Promise<void> => {
 	await dbConnect();
 	const quest = await QuestModel.findById(command.questId);
 	if(quest) {
-		quest.subscriber.push({
-			username: command.username,
-			character: command.character,
-			times: command.times
-		});
+		quest.subscriber.push(command);
 		await quest.save();
 	}	
 };
@@ -113,11 +121,21 @@ const unsubscribe = async (command: UnsubscribeCommand) : Promise<void> => {
 	await dbConnect();
 	const quest = await QuestModel.findById(command.questId);
 	if(quest) {
-		const index = await quest.subscriber.findIndex(x => x._id?.toString() === command.subscriberId);
+		const index = quest.subscriber.findIndex(x => x._id?.toString() === command.subscriberId);
 		if(index !== -1) {
 			quest.subscriber.splice(index, 1);
 			await quest.save();
 		}
+	}	
+};
+
+const updateTimes = async(command: UpdateTimesCommand) : Promise<void> => {
+	await dbConnect();
+	const quest = await QuestModel.findById(command.questId);
+	if(quest) {
+		const index = quest.subscriber.findIndex(x => x.username === command.username);
+		quest.subscriber[index] = command;
+		await quest.save();
 	}	
 };
 
@@ -130,4 +148,5 @@ export const questService : QuestService = {
 	getByPlaceId,
 	subscribe,
 	unsubscribe,
+	updateTimes
 };

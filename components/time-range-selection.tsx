@@ -1,7 +1,26 @@
-import { CheckBox } from '@mui/icons-material';
-import { Stack, Typography, Grid, ToggleButton, Switch, FormControlLabel, Slider, Divider } from '@mui/material';
+import { Stack, Typography, Switch, FormControlLabel, Slider, Divider } from '@mui/material';
 import { ReactElement, useEffect, useState } from 'react';
 import { DayAndTime } from '../modules/common/common-types';
+
+const converValues = (values: DayAndTime[]) : DayAndTimeAndFlag[] => {
+	return values.map(x => ({
+		...x,
+		fullDay: x.hours[0] === 1 && x.hours[1] === 24
+	}));	
+};
+
+const minimalDistance = 1;
+const keepMinimalDistance = (oldValue: number[], newValue: number[], activeThumb: number) : number[] => {
+	if(activeThumb === 0) {
+		return [Math.min(newValue[0], oldValue[1] - minimalDistance), oldValue[1]];
+	} else {
+		return [oldValue[0], Math.max(newValue[1], oldValue[0] + minimalDistance)];
+	}
+};
+
+type DayAndTimeAndFlag = DayAndTime & {
+	fullDay: boolean
+}
 
 interface TimeRangeSelectionProps {
     onChange: (values: DayAndTime[]) => void
@@ -9,7 +28,7 @@ interface TimeRangeSelectionProps {
 }
 
 export const TimeRangeSelection = ({onChange, values} : TimeRangeSelectionProps): ReactElement => {
-	const [state, setState] = useState<(DayAndTime & {fullDay?: boolean})[]>(values);
+	const [state, setState] = useState<DayAndTimeAndFlag[]>(converValues(values));
 
 	useEffect(() => {
 		onChange(state);
@@ -24,12 +43,15 @@ export const TimeRangeSelection = ({onChange, values} : TimeRangeSelectionProps)
 		});
 	};
 
-	const handleChangeSlider = (index: number, value: number | number[]) => {
+	const handleChangeSlider = (index: number, value: number | number[], activeThumb: number) => {
+		if(!Array.isArray(value)) {
+			return; 
+		}
+
 		setState(prevState => {
 			const newState = [...prevState];
-			if(Array.isArray(value)) {
-				newState[index].hours = value;
-			}
+			const oldValue = newState[index].hours;
+			newState[index].hours = keepMinimalDistance(oldValue, value, activeThumb);
 			return newState;
 		});
 	};
@@ -41,7 +63,15 @@ export const TimeRangeSelection = ({onChange, values} : TimeRangeSelectionProps)
 					{x.day}
 					<FormControlLabel control={<Switch checked={x.fullDay} onChange={(_, checked) => toggleSwitch(index, checked)} />} label='All Day' />
 				</Stack>
-				<Slider valueLabelDisplay='auto' disabled={x.fullDay} aria-label='Volume' min={1} max={24} value={x.hours} onChange={(_, value) => handleChangeSlider(index, value)} />
+				<Slider 
+					valueLabelDisplay='auto' 
+					disabled={x.fullDay} 
+					aria-label='Hours' 
+					min={1} max={24} 
+					value={x.hours} 
+					onChange={(_, value, activeThumb) => handleChangeSlider(index, value, activeThumb)} 
+					disableSwap
+				/>
 				<Divider/>
 			</Stack>
 		));

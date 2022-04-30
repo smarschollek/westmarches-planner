@@ -18,6 +18,7 @@ export interface Subscriber {
 	_id?: ObjectId;
 	username: string,
 	character : {
+		_id?: ObjectId;
 		name: string,
     	class: string,
     	level: number

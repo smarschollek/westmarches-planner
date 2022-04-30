@@ -6,9 +6,10 @@ import { Character } from '../modules/users/user-types';
 
 interface CharackterSelectionProps {
 	onChange : (character: Character) => void
+	selectedCharacterName?: string
 }
 
-export const CharackterSelection = ({onChange} : CharackterSelectionProps): ReactElement => {
+export const CharackterSelection = ({onChange, selectedCharacterName} : CharackterSelectionProps): ReactElement => {
 	const [characters, setCharacters] = useState<Character[]>([]);
 	const [fetched, setFetched] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(0);
@@ -28,6 +29,11 @@ export const CharackterSelection = ({onChange} : CharackterSelectionProps): Reac
     
 	const mapCharacters = () => {
 		return characters.map((character, index) => {
+			
+			if(character.name === selectedCharacterName && selectedIndex !== index) {
+				setSelectedIndex(index);
+			}
+
 			return <MenuItem key={index} value={index}>{character.name}</MenuItem>;
 		});
 	};
