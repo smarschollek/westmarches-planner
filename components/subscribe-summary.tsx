@@ -14,12 +14,11 @@ interface SubscribeSummaryProps {
 export const SubscribeSummary = ({quest, character, times}: SubscribeSummaryProps): ReactElement => {
 	const mapTimes = () => {
 		return times.map(time => {
-			const values = groupTimes(time.hours);
 			return (
 				<Stack key={time.day} direction='row' justifyContent='space-between'>
 					<div className='fw-light'>{time.day}</div>
 					<div>
-						{values.map((v,i) => <div key={i}>{`${v[0]}:00 - ${v[1]}:00`}</div>)}
+						<div>{`${time.hours[0]}:00 - ${time.hours[1]}:00`}</div>
 					</div>
 				</Stack>
 			);

@@ -72,13 +72,19 @@ const Page : NextPage = () => {
 		if(quest.questState === 'Open'){
 			if(quest.subscriber.findIndex(x => x.username === data.user?.name) !== -1) {
 				return (
-					<Button variant='contained' onClick={() => setModal({
-						title: 'Unsubscribe from Quest',
-						content: <>Are you sure you want to unsubscribe from <b>{quest.name}</b> ? </>,
-						callback: handleUnsubscribe
-					})}>
+					<>
+						<Button variant='contained' href={`/quests/edit-times/${quest._id}`}>
+							Edit Times
+						</Button>
+						<Button variant='contained' color='error' onClick={() => setModal({
+							title: 'Unsubscribe from Quest',
+							content: <>Are you sure you want to unsubscribe from <b>{quest.name}</b> ? </>,
+							callback: handleUnsubscribe
+						})}>
 					Unsubscribe
-					</Button>
+						</Button>
+						
+					</>
 				);	
 			}
 

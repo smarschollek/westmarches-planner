@@ -1,7 +1,7 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-		"indent": ["error","tab"],
+		"indent": ["error","tab", { "SwitchCase": 1 }],
 		"quotes": ["error","single"],
 		"semi": ["error","always"],
 		"jsx-quotes":  ["error", "prefer-single"],
